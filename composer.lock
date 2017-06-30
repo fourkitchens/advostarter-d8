@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "38fbd049e065401d0e3a8f7b92465485",
+    "content-hash": "86fa82d5fc415212e21fc8693e0aef06",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -615,6 +615,72 @@
                 "parser"
             ],
             "time": "2014-09-09T13:34:57+00:00"
+        },
+        {
+            "name": "drupal/lightning",
+            "version": "2.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/lightning",
+                "reference": "8.x-2.15"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/lightning-8.x-2.15-core.zip",
+                "reference": null,
+                "shasum": "6be3191833a068b56819f93dd09b0b5188c834ab"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-profile",
+            "extra": {
+                "branch-alias": {
+                    "dev-2.x": "2.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-2.15",
+                    "datestamp": "1498682042"
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Bcwald",
+                    "homepage": "https://www.drupal.org/user/215794"
+                },
+                {
+                    "name": "Devin Carlson",
+                    "homepage": "https://www.drupal.org/user/290182"
+                },
+                {
+                    "name": "balsama",
+                    "homepage": "https://www.drupal.org/user/223087"
+                },
+                {
+                    "name": "brantwynn",
+                    "homepage": "https://www.drupal.org/user/252788"
+                },
+                {
+                    "name": "phenaproxima",
+                    "homepage": "https://www.drupal.org/user/205645"
+                },
+                {
+                    "name": "samuel.mortenson",
+                    "homepage": "https://www.drupal.org/user/2582268"
+                },
+                {
+                    "name": "tim.plunkett",
+                    "homepage": "https://www.drupal.org/user/241634"
+                }
+            ],
+            "homepage": "https://www.drupal.org/project/lightning",
+            "support": {
+                "source": "http://cgit.drupalcode.org/lightning"
+            }
         },
         {
             "name": "easyrdf/easyrdf",
