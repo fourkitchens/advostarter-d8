@@ -4145,7 +4145,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/lightning-8.x-2.15-core.zip",
-            "reference": null,
+            "reference": "8.x-2.15",
             "shasum": "6be3191833a068b56819f93dd09b0b5188c834ab"
         },
         "require": {
@@ -4515,5 +4515,51 @@
             "testing",
             "xunit"
         ]
+    },
+    {
+        "name": "cweagans/composer-patches",
+        "version": "1.6.1",
+        "version_normalized": "1.6.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/cweagans/composer-patches.git",
+            "reference": "b3036f23b73570ab5d869e345277786c8eb248a9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/cweagans/composer-patches/zipball/b3036f23b73570ab5d869e345277786c8eb248a9",
+            "reference": "b3036f23b73570ab5d869e345277786c8eb248a9",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0",
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "composer/composer": "~1.0",
+            "phpunit/phpunit": "~4.6"
+        },
+        "time": "2017-03-19T18:18:52+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "class": "cweagans\\Composer\\Patches"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "cweagans\\Composer\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Cameron Eagans",
+                "email": "me@cweagans.net"
+            }
+        ],
+        "description": "Provides a way to patch Composer packages."
     }
 ]

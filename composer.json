@@ -6,7 +6,8 @@
     "require": {
         "composer/installers": "^1.0.24",
         "wikimedia/composer-merge-plugin": "~1.4",
-        "drupal/lightning": "^2.15"
+        "drupal/lightning": "^2.15",
+        "cweagans/composer-patches": "^1.6"
     },
     "replace": {
         "drupal/core": "~8.3"

@@ -20,6 +20,10 @@ class ComposerStaticInitDrupal8
     );
 
     public static $prefixLengthsPsr4 = array (
+        'c' => 
+        array (
+            'cweagans\\Composer\\' => 18,
+        ),
         'Z' => 
         array (
             'Zumba\\Mink\\Driver\\' => 18,
@@ -97,6 +101,10 @@ class ComposerStaticInitDrupal8
     );
 
     public static $prefixDirsPsr4 = array (
+        'cweagans\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
+        ),
         'Zumba\\Mink\\Driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/jcalderonzumba/mink-phantomjs-driver/src',
