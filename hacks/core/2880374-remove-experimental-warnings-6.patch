@@ -1,0 +1,106 @@
+From d10e40ebd19ca14404c8569680667ea3ec19d439 Mon Sep 17 00:00:00 2001
+From: Jakob Perry <japerry@45640.no-reply.drupal.org>
+Date: Mon, 22 May 2017 12:37:22 -0400
+Subject: [PATCH] Issue 2880374
+
+---
+ .../modules/help/src/Controller/HelpController.php |  5 --
+ .../tests/src/Functional/ExperimentalHelpTest.php  | 56 ----------------------
+ core/modules/system/system.install                 |  2 +-
+ 3 files changed, 1 insertion(+), 62 deletions(-)
+ delete mode 100644 core/modules/help/tests/src/Functional/ExperimentalHelpTest.php
+
+diff --git a/core/modules/help/src/Controller/HelpController.php b/core/modules/help/src/Controller/HelpController.php
+index 74d46ec..51dd54b 100644
+--- a/core/modules/help/src/Controller/HelpController.php
++++ b/core/modules/help/src/Controller/HelpController.php
+@@ -117,11 +117,6 @@ public function helpPage($name) {
+       $module_name = $this->moduleHandler()->getName($name);
+       $build['#title'] = $module_name;
+ 
+-      $info = system_get_info('module', $name);
+-      if ($info['package'] === 'Core (Experimental)') {
+-        drupal_set_message($this->t('This module is experimental. <a href=":url">Experimental modules</a> are provided for testing purposes only. Use at your own risk.', [':url' => 'https://www.drupal.org/core/experimental']), 'warning');
+-      }
+-
+       $temp = $this->moduleHandler()->invoke($name, 'help', ["help.page.$name", $this->routeMatch]);
+       if (empty($temp)) {
+         $build['top'] = ['#markup' => $this->t('No help is available for module %module.', ['%module' => $module_name])];
+diff --git a/core/modules/help/tests/src/Functional/ExperimentalHelpTest.php b/core/modules/help/tests/src/Functional/ExperimentalHelpTest.php
+deleted file mode 100644
+index 0eabbda..0000000
+--- a/core/modules/help/tests/src/Functional/ExperimentalHelpTest.php
++++ /dev/null
+@@ -1,56 +0,0 @@
+-<?php
+-
+-namespace Drupal\Tests\help\Functional;
+-
+-use Drupal\Tests\BrowserTestBase;
+-
+-/**
+- * Verifies help for experimental modules.
+- *
+- * @group help
+- */
+-class ExperimentalHelpTest extends BrowserTestBase {
+-
+-  /**
+-   * Modules to enable.
+-   *
+-   * The experimental_module_test module implements hook_help() and is in the
+-   * Core (Experimental) package.
+-   *
+-   * @var array
+-   */
+-  public static $modules = ['help', 'experimental_module_test', 'help_page_test'];
+-
+-  /**
+-   * The admin user.
+-   *
+-   * @var \Drupal\user\UserInterface
+-   */
+-  protected $adminUser;
+-
+-  /**
+-   * {@inheritoc}
+-   */
+-  protected function setUp() {
+-    parent::setUp();
+-    $this->adminUser = $this->drupalCreateUser(['access administration pages']);
+-  }
+-
+-  /**
+-   * Verifies that a warning message is displayed for experimental modules.
+-   */
+-  public function testExperimentalHelp() {
+-    $this->drupalLogin($this->adminUser);
+-    $this->drupalGet('admin/help/experimental_module_test');
+-    $this->assertText('This module is experimental.');
+-
+-    // Regular modules should not display the message.
+-    $this->drupalGet('admin/help/help_page_test');
+-    $this->assertNoText('This module is experimental.');
+-
+-    // Ensure the actual help page is displayed to avoid a false positive.
+-    $this->assertResponse(200);
+-    $this->assertText('online documentation for the Help Page Test module');
+-  }
+-
+-}
+diff --git a/core/modules/system/system.install b/core/modules/system/system.install
+index 614ad9e..56ce685 100644
+--- a/core/modules/system/system.install
++++ b/core/modules/system/system.install
+@@ -68,7 +68,7 @@ function system_requirements($phase) {
+       $requirements['experimental'] = [
+         'title' => t('Experimental modules enabled'),
+         'value' => t('Experimental modules found: %module_list. <a href=":url">Experimental modules</a> are provided for testing purposes only. Use at your own risk.', ['%module_list' => implode(', ', $experimental), ':url' => 'https://www.drupal.org/core/experimental']),
+-        'severity' => REQUIREMENT_WARNING,
++        'severity' => REQUIREMENT_INFO,
+       ];
+     }
+   }
+-- 
+2.6.4 (Apple Git-63)
+
