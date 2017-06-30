@@ -6,17 +6,14 @@
     "require": {
         "composer/installers": "^1.0.24",
         "wikimedia/composer-merge-plugin": "~1.4",
+        "drupal/drupal": "~8.3",
         "drupal/lightning": "^2.15",
         "cweagans/composer-patches": "^1.6"
-    },
-    "replace": {
-        "drupal/core": "~8.3"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "preferred-install": "dist",
-        "autoloader-suffix": "Drupal8"
+        "preferred-install": "source"
     },
     "extra": {
         "_readme": [
@@ -42,6 +39,16 @@
             "drush/contrib/{$name}": ["type:drupal-drush"],
             "modules/custom/{$name}": ["type:drupal-custom-module"],
             "themes/custom/{$name}": ["type:drupal-custom-theme"]
+        },
+        "patches": {
+            "drupal/drupal": {
+                "Image styles do not play nicely with SVGs" : "https://www.drupal.org/files/issues/2652138-41.patch",
+                "Allow profiles to provide a base/parent profile" : "https://www.drupal.org/files/issues/1356276-303.patch",
+                "Experimental modules should not have warnings" : "https://www.drupal.org/files/issues/2880374-remove-experimental-warnings-6.patch",
+                "Config sync should not throw a warning when not being writable" : "https://www.drupal.org/files/issues/2880445-remove-config-write-warning-2.patch",
+                "Disabled update module shouldn't produce a status report warning" : "https://www.drupal.org/files/issues/2869592-remove-update-warning-7.patch",
+                "EntityReferenceAutocompleteWidget should define its size setting as an integer" : "https://www.drupal.org/files/issues/2885441-2.patch"
+            } 
         }
     },
     "autoload": {
