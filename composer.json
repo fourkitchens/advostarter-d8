@@ -25,7 +25,8 @@
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "cweagans/composer-patches": "^1.6.0",
         "acquia/lightning": "~2.1.0",
-        "drupal/admin_toolbar": "^1.19"
+        "drupal/admin_toolbar": "^1.19",
+        "drupal/pathauto": "^1.0"
     },
     "repositories": [
         {
