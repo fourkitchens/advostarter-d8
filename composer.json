@@ -1,73 +1,67 @@
 {
-    "name": "drupal/drupal",
-    "description": "Drupal is an open source content management platform powering millions of websites and applications.",
+    "name": "acquia/lightning-project",
+    "description": "Project template for Drupal 8 sites built with the Lightning distribution.",
     "type": "project",
     "license": "GPL-2.0+",
-    "require": {
-        "composer/installers": "^1.0.24",
-        "wikimedia/composer-merge-plugin": "~1.4",
-        "drupal/drupal": "~8.3",
-        "drupal/lightning": "^2.15",
-        "cweagans/composer-patches": "^1.6"
-    },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "config": {
-        "preferred-install": "source"
+    "require-dev": {
+        "drupal/drupal-extension": "^3.2",
+        "behat/mink": "~1.7",
+        "behat/mink-goutte-driver": "~1.2",
+        "jcalderonzumba/gastonjs": "~1.0.2",
+        "drupal/coder": "8.*",
+        "mikey179/vfsStream": "~1.2",
+        "phpunit/phpunit": "~4.8",
+        "symfony/css-selector": "~2.8",
+        "behat/behat": "^3.0",
+        "se/selenium-server-standalone": "^2.53",
+        "composer/composer": "^1.3",
+        "drush/drush": "8.1.11",
+        "drupal/console": "^1.0"
     },
-    "extra": {
-        "_readme": [
-            "By default Drupal loads the autoloader from ./vendor/autoload.php.",
-            "To change the autoloader you can edit ./autoload.php.",
-            "This file specifies the packages.drupal.org repository.",
-            "You can read more about this composer repository at:",
-            "https://www.drupal.org/node/2718229"
-        ],
-        "merge-plugin": {
-            "include": [
-                "core/composer.json"
-            ],
-            "recurse": false,
-            "replace": false,
-            "merge-extra": false
-        },
-        "installer-paths": {
-            "core": ["type:drupal-core"],
-            "modules/contrib/{$name}": ["type:drupal-module"],
-            "profiles/contrib/{$name}": ["type:drupal-profile"],
-            "themes/contrib/{$name}": ["type:drupal-theme"],
-            "drush/contrib/{$name}": ["type:drupal-drush"],
-            "modules/custom/{$name}": ["type:drupal-custom-module"],
-            "themes/custom/{$name}": ["type:drupal-custom-theme"]
-        },
-        "patches": {
-            "drupal/drupal": {
-                "Image styles do not play nicely with SVGs" : "https://www.drupal.org/files/issues/2652138-41.patch",
-                "Allow profiles to provide a base/parent profile" : "https://www.drupal.org/files/issues/1356276-303.patch",
-                "Experimental modules should not have warnings" : "https://www.drupal.org/files/issues/2880374-remove-experimental-warnings-6.patch",
-                "Config sync should not throw a warning when not being writable" : "https://www.drupal.org/files/issues/2880445-remove-config-write-warning-2.patch",
-                "Disabled update module shouldn't produce a status report warning" : "https://www.drupal.org/files/issues/2869592-remove-update-warning-7.patch",
-                "EntityReferenceAutocompleteWidget should define its size setting as an integer" : "https://www.drupal.org/files/issues/2885441-2.patch"
-            } 
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "Drupal\\Core\\Composer\\": "core/lib/Drupal/Core/Composer"
-        }
-    },
-    "scripts": {
-        "pre-autoload-dump": "Drupal\\Core\\Composer\\Composer::preAutoloadDump",
-        "post-autoload-dump": [
-          "Drupal\\Core\\Composer\\Composer::ensureHtaccess"
-        ],
-        "post-package-install": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup",
-        "post-package-update": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup"
+    "require": {
+        "composer/installers": "^1.0",
+        "drupal-composer/drupal-scaffold": "^2.0.0",
+        "cweagans/composer-patches": "^1.6.0",
+        "acquia/lightning": "~2.1.0",
+        "drupal/admin_toolbar": "^1.19"
     },
     "repositories": [
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
-    ]
+    ],
+    "scripts": {
+      "post-install-cmd": [
+        "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+      ],
+      "post-update-cmd": [
+        "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+      ]
+    },
+    "config": {
+        "bin-dir": "bin/"
+    },
+    "extra": {
+        "installer-paths": {
+            "docroot/core": [
+                "type:drupal-core"
+            ],
+            "docroot/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "docroot/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "docroot/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "drush/contrib/{$name}": [
+                "type:drupal-drush"
+            ]
+        },
+        "enable-patching": true
+    }
 }
