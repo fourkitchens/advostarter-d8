@@ -1,15 +1,12 @@
-This is a Composer-based installer for the [Lightning](https://www.drupal.org/project/lightning) Drupal distribution. Welcome to the future!
+This pile of Drupal is the canonical source of our custom upstream on Pantheon. Any updates to the upstream happen here. 👋
 
-## Get Started
-```
-$ composer create-project acquia/lightning-project MY_PROJECT
-```
-Composer will create a new directory called MY_PROJECT containing a ```docroot``` directory with a full Lightning code base therein. You can then install it like you would any other Drupal site.
+## Create a new project using this upstream
 
-## Maintenance
-```drush make```, ```drush pm-download```, ```drush pm-update``` and their ilk are the old-school way of maintaining your code base. Forget them. You're in Composer land now!
+Create a new site on Pantheon, and choose Advostarter D8 for your upstream.
 
-Let this handy table be your guide:
+## Add or update a contrib project
+
+New modules for our upstream should be added using Composer. The following handy table is from Lightning's documentation.
 
 | Task                                            | Drush                                         | Composer                                          |
 |-------------------------------------------------|-----------------------------------------------|---------------------------------------------------|
@@ -18,10 +15,6 @@ Let this handy table be your guide:
 | Updating all contrib projects and Drupal core   | ```drush pm-update```                         | ```composer update```                             |
 | Updating a single contrib project               | ```drush pm-update PROJECT```                 | ```composer update drupal/PROJECT```              |
 | Updating Drupal core                            | ```drush pm-update drupal```                  | ```composer update drupal/core```                 |
-
-The magic is that Composer, unlike Drush, is a *dependency manager*. If module ```foo version: 1.0.0``` depends on ```baz version: 3.2.0```, Composer will not let you update baz to ```3.3.0``` (or downgrade it to ```3.1.0```, for that matter). Drush has no concept of dependency management. If you've ever accidentally hosed a site because of dependency issues like this, you've probably already realized how valuable Composer can be.
-
-But to be clear: it is still very helpful to use a site management tool like Drush or Drupal Console. Tasks such as database updates (```drush updatedb```) are still firmly in the province of such utilities. This installer will install a copy of Drush (local to the project) in the ```bin``` directory.
 
 ### Specifying a version
 you can specify a version from the command line with:
@@ -37,9 +30,10 @@ In these examples, the composer version 3.0.0-alpha26 maps to the drupal.org ver
 
 If you specify a branch, such as 1.x you must add -dev to the end of the version.
 
-**Composer is only responsible for maintaining the code base**.
+## Push updates downstream
 
-## Source Control
-If you peek at the ```.gitignore``` we provide, you'll see that certain directories, including all directories containing contributed projects, are excluded from source control. This might be a bit disconcerting if you're newly arrived from Planet Drush, but in a Composer-based project like this one, **you SHOULD NOT commit your installed dependencies to source control**.
+For Pantheon to show new commits from this project as mergeable updates to downstream repos, you'll need to create a new Release by adding a Git tag. Create a new release after running any security updates.
 
-When you set up the project, Composer will create a file called ```composer.lock```, which is a list of which dependencies were installed, and in which versions. **Commit ```composer.lock``` to source control!** Then, when your colleagues want to spin up their own copies of the project, all they'll have to do is run ```composer install```, which will install the correct versions of everything in ```composer.lock```.
+## Localhost setup
+
+We're following Lightning's directory structure here, so we have a nested docroot. To get this running locally, you'll need to either specify the docroot (`/web`) in your server configuration file (e.g httpd-vhosts.conf) or follow [these directions](https://www.thinktandem.io/blog/2017/05/20/using-pantheon-s-nested-docroot-with-kalabox/) for Kalabox.
