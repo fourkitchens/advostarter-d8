@@ -11,17 +11,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Console\Command\Command;
-use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
+use Drupal\Console\Core\Command\ContainerAwareCommand;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Utils\ConfigurationManager;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Console\Core\Utils\ChainQueue;
 
-class ModeCommand extends Command
+class ModeCommand extends ContainerAwareCommand
 {
-    use ContainerAwareCommandTrait;
-
     /**
      * @var ConfigFactory
      */
@@ -72,7 +69,8 @@ class ModeCommand extends Command
                 'environment',
                 InputArgument::REQUIRED,
                 $this->trans('commands.site.mode.arguments.environment')
-            );
+            )
+            ->setAliases(['smo']);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -239,17 +237,8 @@ class ModeCommand extends Command
 
     protected function loadConfigurations($env)
     {
-        $configFile = sprintf(
-            '%s/.console/site.mode.yml',
-            $this->configurationManager->getHomeDirectory()
-        );
-
-        if (!file_exists($configFile)) {
-            $configFile = sprintf(
-                '%s/config/dist/site.mode.yml',
-                $this->configurationManager->getApplicationDirectory() . DRUPAL_CONSOLE_CORE
-            );
-        }
+        $configFile = $this->configurationManager
+            ->getVendorCoreDirectory() . 'site.mode.yml';
 
         $siteModeConfiguration = Yaml::parse(file_get_contents($configFile));
         $configKeys = array_keys($siteModeConfiguration);

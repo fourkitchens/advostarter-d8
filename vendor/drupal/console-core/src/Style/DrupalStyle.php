@@ -121,8 +121,12 @@ class DrupalStyle extends SymfonyStyle
      */
     public function askEmpty($question, $validator = null)
     {
-        $question = new Question($question, ' ');
-        $question->setValidator($validator);
+        $question = new Question($question, '');
+        $question->setValidator(
+            function ($answer) {
+                return $answer;
+            }
+        );
 
         return trim($this->askQuestion($question));
     }
@@ -270,5 +274,13 @@ class DrupalStyle extends SymfonyStyle
         if ($newLine) {
             parent::newLine();
         }
+    }
+
+    /**
+     * @return InputInterface
+     */
+    public function getInput()
+    {
+        return $this->input;
     }
 }

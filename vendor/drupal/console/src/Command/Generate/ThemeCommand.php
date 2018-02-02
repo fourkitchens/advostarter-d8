@@ -14,14 +14,14 @@ use Drupal\Console\Command\Shared\ThemeRegionTrait;
 use Drupal\Console\Command\Shared\ThemeBreakpointTrait;
 use Drupal\Console\Generator\ThemeGenerator;
 use Drupal\Console\Command\Shared\ConfirmationTrait;
-use Symfony\Component\Console\Command\Command;
+use Drupal\Console\Core\Command\Command;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Extension\Manager;
 use Drupal\Console\Utils\Site;
 use Drupal\Console\Core\Utils\StringConverter;
-use Drupal\Console\Core\Command\Shared\CommandTrait;
 use Drupal\Console\Utils\Validator;
 use Drupal\Core\Extension\ThemeHandler;
+use Webmozart\PathUtil\Path;
 
 /**
  * Class ThemeCommand
@@ -33,7 +33,6 @@ class ThemeCommand extends Command
     use ConfirmationTrait;
     use ThemeRegionTrait;
     use ThemeBreakpointTrait;
-    use CommandTrait;
 
     /**
  * @var Manager
@@ -114,7 +113,7 @@ class ThemeCommand extends Command
                 'theme',
                 null,
                 InputOption::VALUE_REQUIRED,
-                $this->trans('commands.generate.theme.options.module')
+                $this->trans('commands.generate.theme.options.theme')
             )
             ->addOption(
                 'machine-name',
@@ -126,7 +125,7 @@ class ThemeCommand extends Command
                 'theme-path',
                 null,
                 InputOption::VALUE_REQUIRED,
-                $this->trans('commands.generate.theme.options.module-path')
+                $this->trans('commands.generate.theme.options.theme-path')
             )
             ->addOption(
                 'description',
@@ -170,7 +169,8 @@ class ThemeCommand extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 $this->trans('commands.generate.theme.options.breakpoints')
-            );
+            )
+            ->setAliases(['gt']);
     }
 
     /**
@@ -181,12 +181,16 @@ class ThemeCommand extends Command
         $io = new DrupalStyle($input, $output);
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($io)) {
+        if (!$this->confirmGeneration($io, $input)) {
             return 1;
         }
 
         $theme = $this->validator->validateModuleName($input->getOption('theme'));
-        $theme_path = $this->appRoot . $input->getOption('theme-path');
+        // Get the profile path and define a profile path if it is null
+        // Check that it is an absolute path or otherwise create an absolute path using appRoot
+        $theme_path = $input->getOption('theme-path');
+        $theme_path = $theme_path == null ? 'themes/custom' : $theme_path;
+        $theme_path = Path::isAbsolute($theme_path) ? $theme_path : Path::makeAbsolute($theme_path, $this->appRoot);
         $theme_path = $this->validator->validateModulePath($theme_path, true);
 
         $machine_name = $this->validator->validateMachineName($input->getOption('machine-name'));
@@ -244,7 +248,7 @@ class ThemeCommand extends Command
         }
 
         try {
-            $machine_name = $input->getOption('machine-name') ? $this->validator->validateModule($input->getOption('machine-name')) : null;
+            $machine_name = $input->getOption('machine-name') ? $this->validator->validateModuleName($input->getOption('machine-name')) : null;
         } catch (\Exception $error) {
             $io->error($error->getMessage());
 
@@ -264,18 +268,17 @@ class ThemeCommand extends Command
 
         $theme_path = $input->getOption('theme-path');
         if (!$theme_path) {
-            $drupalRoot = $this->appRoot;
             $theme_path = $io->ask(
                 $this->trans('commands.generate.theme.questions.theme-path'),
-                '/themes/custom',
-                function ($theme_path) use ($drupalRoot, $machine_name) {
-                    $theme_path = ($theme_path[0] != '/' ? '/' : '') . $theme_path;
-                    $full_path = $drupalRoot . $theme_path . '/' . $machine_name;
-                    if (file_exists($full_path)) {
+                'themes/custom',
+                function ($theme_path) use ($machine_name) {
+                    $fullPath = Path::isAbsolute($theme_path) ? $theme_path : Path::makeAbsolute($theme_path, $this->appRoot);
+                    $fullPath = $fullPath.'/'.$machine_name;
+                    if (file_exists($fullPath)) {
                         throw new \InvalidArgumentException(
                             sprintf(
                                 $this->trans('commands.generate.theme.errors.directory-exists'),
-                                $full_path
+                                $fullPath
                             )
                         );
                     } else {
@@ -290,7 +293,7 @@ class ThemeCommand extends Command
         if (!$description) {
             $description = $io->ask(
                 $this->trans('commands.generate.theme.questions.description'),
-                'My Awesome theme'
+                $this->trans('commands.generate.theme.suggestions.my-awesome-theme')
             );
             $input->setOption('description', $description);
         }
@@ -299,7 +302,7 @@ class ThemeCommand extends Command
         if (!$package) {
             $package = $io->ask(
                 $this->trans('commands.generate.theme.questions.package'),
-                'Other'
+                $this->trans('commands.generate.theme.suggestions.other')
             );
             $input->setOption('package', $package);
         }

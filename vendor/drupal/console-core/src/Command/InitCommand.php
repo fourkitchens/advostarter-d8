@@ -10,10 +10,9 @@ namespace Drupal\Console\Core\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Console\Command\Command;
-use Drupal\Console\Core\Command\Shared\CommandTrait;
 use Drupal\Console\Core\Utils\ConfigurationManager;
 use Drupal\Console\Core\Generator\InitGenerator;
 use Drupal\Console\Core\Utils\ShowFile;
@@ -26,8 +25,6 @@ use Drupal\Console\Core\Style\DrupalStyle;
  */
 class InitCommand extends Command
 {
-    use CommandTrait;
-
     /**
      * @var ShowFile
      */
@@ -61,6 +58,11 @@ class InitCommand extends Command
         'learning' => false,
         'generate_inline' => false,
         'generate_chain' => false
+    ];
+
+    private $directories = [
+      'chain',
+      'sites',
     ];
 
     /**
@@ -200,9 +202,8 @@ class InitCommand extends Command
         $finder = new Finder();
         $finder->in(
             sprintf(
-                '%s%s/config/dist/',
-                $this->configurationManager->getApplicationDirectory(),
-                DRUPAL_CONSOLE_CORE
+                '%sdist/',
+                $this->configurationManager->getVendorCoreRoot()
             )
         );
         if (!$this->configParameters['chain']) {
@@ -215,9 +216,8 @@ class InitCommand extends Command
 
         foreach ($finder as $configFile) {
             $sourceFile = sprintf(
-                '%s%s/config/dist/%s',
-                $this->configurationManager->getApplicationDirectory(),
-                DRUPAL_CONSOLE_CORE,
+                '%sdist/%s',
+                $this->configurationManager->getVendorCoreRoot(),
                 $configFile->getRelativePathname()
             );
 
@@ -226,6 +226,13 @@ class InitCommand extends Command
                 $destination,
                 $configFile->getRelativePathname()
             );
+
+            $fs = new Filesystem();
+            foreach ($this->directories as $directory) {
+                if (!$fs->exists($destination.$directory)) {
+                    $fs->mkdir($destination.$directory);
+                }
+            }
 
             if ($this->copyFile($sourceFile, $destinationFile, $override)) {
                 $copiedFiles[] = $destinationFile;

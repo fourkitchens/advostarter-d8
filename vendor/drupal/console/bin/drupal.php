@@ -10,6 +10,9 @@ use Drupal\Console\Bootstrap\Drupal;
 use Drupal\Console\Application;
 
 set_time_limit(0);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 $autoloaders = [];
 
@@ -40,27 +43,29 @@ $output = new ConsoleOutput();
 $input = new ArrayInput([]);
 $io = new DrupalStyle($input, $output);
 
+$argvInputReader = new ArgvInputReader();
+$root = $argvInputReader->get('root', getcwd());
+
 $drupalFinder = new DrupalFinder();
-if (!$drupalFinder->locateRoot(getcwd())) {
+if (!$drupalFinder->locateRoot($root)) {
     $io->error('DrupalConsole must be executed within a Drupal Site.');
 
     exit(1);
 }
 
 chdir($drupalFinder->getDrupalRoot());
-
 $configurationManager = new ConfigurationManager();
 $configuration = $configurationManager
-    ->loadConfigurationFromDirectory($drupalFinder->getComposerRoot());
+    ->loadConfiguration($drupalFinder->getComposerRoot())
+    ->getConfiguration();
 
-$argvInputReader = new ArgvInputReader();
 $debug = $argvInputReader->get('debug', false);
 if ($configuration && $options = $configuration->get('application.options') ?: []) {
     $argvInputReader->setOptionsFromConfiguration($options);
 }
 $argvInputReader->setOptionsAsArgv();
 
-if ($debug){
+if ($debug) {
     $io->writeln(
         sprintf(
             '<info>%s</info> version <comment>%s</comment>',
@@ -70,7 +75,7 @@ if ($debug){
     );
 }
 
-$drupal = new Drupal($autoload, $drupalFinder);
+$drupal = new Drupal($autoload, $drupalFinder, $configurationManager);
 $container = $drupal->boot();
 
 if (!$container) {
@@ -80,5 +85,5 @@ if (!$container) {
 }
 
 $application = new Application($container);
-$application->setDefaultCommand('about');
+$application->setDrupal($drupal);
 $application->run();
