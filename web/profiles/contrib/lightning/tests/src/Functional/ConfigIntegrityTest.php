@@ -5,6 +5,7 @@ namespace Drupal\lightning\Tests\Functional;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\Role;
+use Drupal\workflows\Entity\Workflow;
 
 /**
  * Ensures the integrity and correctness of Lightning's bundled config.
@@ -32,6 +33,8 @@ class ConfigIntegrityTest extends BrowserTestBase {
     // All users should be able to view media items.
     $this->assertPermissions('anonymous', 'view media');
     $this->assertPermissions('authenticated', 'view media');
+    // Media creators can use bulk upload.
+    $this->assertPermissions('media_creator', 'dropzone upload files');
 
     $this->assertEntityExists('node_type', [
       'page',
@@ -46,6 +49,24 @@ class ConfigIntegrityTest extends BrowserTestBase {
       'page_creator',
       'page_reviewer',
     ]);
+    $this->assertEntityExists('crop_type', 'freeform');
+    $this->assertEntityExists('image_style', 'crop_freeform');
+
+    // Assert that the editorial workflow exists and has the review state and
+    // transition.
+    $workflow = Workflow::load('editorial');
+    $this->assertInstanceOf(Workflow::class, $workflow);
+    /** @var \Drupal\workflows\WorkflowTypeInterface $type_plugin */
+    $type_plugin = $workflow->getTypePlugin();
+    // getState() throws an exception if the state does not exist.
+    $type_plugin->getState('review');
+    // getTransition() throws an exception if the transition does not exist.
+    /** @var \Drupal\workflows\TransitionInterface $transition */
+    $transition = $type_plugin->getTransition('review');
+    $this->assertEquals('review', $transition->to()->id());
+    $from = array_keys($transition->from());
+    $this->assertContainsAll(['draft', 'review'], $from);
+    $this->assertNotContains('published', $from);
 
     $permissions = [
       'use text format rich_text',
@@ -86,22 +107,8 @@ class ConfigIntegrityTest extends BrowserTestBase {
       ]);
     }
 
-    // Assert that the site-wide contact form has the expected fields.
-    $this->assertAllowed('/contact');
-    $assert->fieldExists('Your name');
-    $assert->fieldExists('Your email address');
-    $assert->fieldExists('Subject');
-    $assert->fieldExists('Message');
-
-    // The name and e-mail fields should not be present for authenticated users.
-    $account = $this->drupalCreateUser();
-    $this->drupalLogin($account);
-    $this->assertAllowed('/contact');
-    $assert->fieldNotExists('Your name');
-    $assert->fieldNotExists('Your email address');
-    $assert->fieldExists('Subject');
-    $assert->fieldExists('Message');
-    $this->drupalLogout();
+    $this->doTestCrop();
+    $this->doTestContactForm();
 
     // Assert that bundled content types have meta tags enabled.
     $this->assertMetatag(['page', 'landing_page']);
@@ -112,11 +119,6 @@ class ConfigIntegrityTest extends BrowserTestBase {
     $this->assertAllowed('/block/add');
     $assert->fieldExists('Body');
     $this->drupalLogout();
-
-    // Assert that reviewer roles can view moderation states.
-    $permission = 'view moderation states';
-    $this->assertPermissions('page_reviewer', $permission);
-    $this->assertPermissions('landing_page_reviewer', $permission);
 
     // Assert that Lightning configuration pages are accessible to users who
     // have an administrative role.
@@ -133,19 +135,9 @@ class ConfigIntegrityTest extends BrowserTestBase {
     $assert->linkByHrefExists('/admin/config/system/lightning/layout');
     $assert->linkByHrefExists('/admin/config/system/lightning/media');
     $this->assertAllowed('/admin/config/system/lightning/api');
+    $this->assertAllowed('/admin/config/system/lightning/api/keys');
     $this->assertAllowed('/admin/config/system/lightning/layout');
     $this->assertAllowed('/admin/config/system/lightning/media');
-
-    // Assert that public and private keys were generated for OAuth.
-    $oauth = $this->config('simple_oauth.settings');
-
-    $private_key = $oauth->get('private_key');
-    $this->assertNotEmpty($private_key);
-    $this->assertFileExists($private_key);
-
-    $public_key = $oauth->get('public_key');
-    $this->assertNotEmpty($public_key);
-    $this->assertFileExists($public_key);
   }
 
   /**
@@ -237,6 +229,70 @@ class ConfigIntegrityTest extends BrowserTestBase {
   protected function assertForbidden($path) {
     $this->drupalGet($path);
     $this->assertSession()->statusCodeEquals(403);
+  }
+
+  /**
+   * Asserts that a file exists and has a specific permission mask.
+   *
+   * @param int $permissions
+   *   The permission mask as an octal number (0755, 0600, etc.)
+   * @param string $file
+   *   The path to the file.
+   */
+  protected function assertFilePermissions($permissions, $file) {
+    $this->assertFileExists($file);
+    $this->assertSame($permissions, fileperms($file) & 0777);
+  }
+
+  /**
+   * Tests that cropping is enabled for image media.
+   */
+  private function doTestCrop() {
+    // Assert that a local copy of the Cropper library is being used.
+    $settings = $this->config('image_widget_crop.settings')->get('settings');
+    $lib = 'libraries/cropper/dist';
+    $this->assertContains("$lib/cropper.min.js", $settings['library_url']);
+    $this->assertContains("$lib/cropper.min.css", $settings['css_url']);
+
+    $form_displays = $this->container
+      ->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->loadByProperties([
+        'targetEntityType' => 'media',
+        'bundle' => 'image',
+      ]);
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    foreach ($form_displays as $form_display) {
+      $component = $form_display->getComponent('image');
+      $this->assertInternalType('array', $component);
+      $this->assertEquals('image_widget_crop', $component['type']);
+      $this->assertEquals(['freeform'], $component['settings']['crop_list']);
+    }
+  }
+
+  /**
+   * Tests the site-wide contact form.
+   */
+  private function doTestContactForm() {
+    $assert = $this->assertSession();
+
+    $this->assertAllowed('/contact');
+
+    $assert->fieldExists('Your name');
+    $assert->fieldExists('Your email address');
+    $assert->fieldExists('Subject');
+    $assert->fieldExists('Message');
+
+    // The name and e-mail fields should not be present for authenticated users.
+    $account = $this->drupalCreateUser();
+    $this->drupalLogin($account);
+    $this->assertAllowed('/contact');
+    $assert->fieldNotExists('Your name');
+    $assert->fieldNotExists('Your email address');
+    $assert->fieldExists('Subject');
+    $assert->fieldExists('Message');
+    $this->drupalLogout();
   }
 
 }

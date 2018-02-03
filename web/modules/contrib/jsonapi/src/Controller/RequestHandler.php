@@ -116,13 +116,11 @@ class RequestHandler implements ContainerAwareInterface, ContainerInjectionInter
       return NULL;
     }
     $format = $request->getContentType();
-    $resource_type = $current_context->getResourceType();
-    $field_related = $resource_type->getInternalName($request->get('related'));
     try {
       return $serializer->deserialize($received, $serialization_class, $format, [
-        'related' => $field_related,
+        'related' => $request->get('related'),
         'target_entity' => $request->get($current_context->getResourceType()->getEntityTypeId()),
-        'resource_type' => $resource_type,
+        'resource_type' => $current_context->getResourceType(),
       ]);
     }
     catch (UnexpectedValueException $e) {
@@ -147,7 +145,6 @@ class RequestHandler implements ContainerAwareInterface, ContainerInjectionInter
   protected function action(RouteMatchInterface $route_match, $method) {
     $on_relationship = ($route_match->getRouteObject()->getDefault('_on_relationship'));
     switch ($method) {
-      case 'head':
       case 'get':
         if ($on_relationship) {
           return 'getRelationship';
@@ -210,8 +207,7 @@ class RequestHandler implements ContainerAwareInterface, ContainerInjectionInter
       $field_manager,
       $current_context,
       $plugin_manager,
-      $link_manager,
-      $resource_type_repository
+      $link_manager
     );
     return $resource;
   }

@@ -1,3 +1,103 @@
+## 3.0.1
+* Drupal Core has been updated to 8.4.4 (Issue #2934239)
+
+## 3.0.0
+* Lightning's components are no longer bundled with the profile. They are now
+  packaged as separate components and located alongside other Drupal modules.
+  (Issue #2925010) 
+* The following unused modules have been removed from the build manifest
+  (Issue #2927527):
+  * Scheduled Updates
+  * Lighting Scheduled Updates
+  * Features
+  * Configuration Update Manager
+  * Media Entity
+  * Media Entity Document
+  * Media Entity Image
+
+## 2.2.6
+* Fixed a problem that caused errors when placing blocks that contained date
+  fields via IPE. (Issue #2825028)
+* Fixed a problem with CKEditor caused by a bug in the new Lightning Scheduler.
+  (Issue #2929997)
+* Lightning and Lightning Project no longer override the default location of
+  Composer's "bin" directory. (Issue #2927504)
+* Made the Moderation History view compatible with Content Moderation.
+  (Issue #2930288)
+* Added a Console command that will return the current version of Lightning in
+  SemVer format. (GitHub #543)
+* Upadated the following modules:
+  * DropzoneJS
+  * Media Entity (Only used by sites that have not migrated to core Media.)
+  * JSON API
+  * Simple OAuth
+  * Video Embed Field
+
+## 2.2.5
+* The `since` option used with the `update:lightning` console command has
+  been converted to an argument and is now required. See
+  "Automated configuration updates" in the UPDATE.md file for more information.
+* Drupal core has been updated to 8.4.3. (Issue #2929035)
+* Security updated Configuration Update Manager module to 8.x-1.5.
+  (SA-CONTRIB-2017-091)
+
+## 2.2.4
+* Lightning Workflow has been updated to use core Workflows and Content
+  moderation modules and existing sites will be migrated. (Issue #2863059)
+* Added a new Scheduled Publications sub-component of Lightning Workflow which
+  replaces Scheduled Updates (which is incompatible with Content Moderation).
+* Fixed a bug where media names appeared in view modes where they had previously
+  been hidden after updating to core Media. (GitHub #521)
+* Crop API was updated to 2.x. (GitHub #519)
+* Media Entity was updated to 2.x. (Issue #2927823)
+* DropzoneJS was updated to 2.x (GitHub #528)
+* Fixed a bug where it was possible that old, irrelevant configuration updates
+  (see UPDATE.md) could be run. (GitHub #531)
+* Fixed a bug where Lightning's media browser enhancements could not be used on
+  any other view, including clones of the media browser. (Issue #2905876)
+
+## 2.2.3
+* Updated to and require a minimum of Drupal Core 8.4.1.
+
+## 2.2.2
+* Fixed a bug where certain versions of Drush would erroneously report
+  unfulfilled requirements when running database updates. (Issue #2919204)
+* Removed a duplicate directory that caused problems when downloading via
+  Composer. (GitHub #502)
+* Worked around a bug where some versions of Drush run hooks that are provided
+  by uninstalled modules. (GitHub #496)
+
+## 2.2.1
+* Lightning Media has been updated to use the new Core Media system.
+* Fixed a bug where the "Publishing status" checkbox appeared on content edit
+  forms when it should have been hidden. (GitHub #479)
+
+## 2.2.0
+* Lightning has been updated to run on and now requires Drupal Core 8.4.x.
+
+## 2.1.8
+* Added the ability to easily crop images contained in media entities and use
+  the cropped version when embedding or selecting the media item.
+  (Issue #2690423)
+* Lightning Media now includes a bulk upload form that allows you to create
+  multiple image media entities at once. (#2672038)
+* You can now run Lightning's manual update steps via an interactive Drupal
+  Console command. (GitHub #462)
+* OAuth key pairs:
+  * Lightning will no longer try to guess where keys should be stored and won't
+    generate the keys until an administrator triggers that action. (GitHub #445) 
+  * Key pairs are now generated with 600 permissions. (GitHub #443)
+  * Better error messages are shown if the system encounters an error when
+    generating OAuth key pairs. (GitHub #440)
+* Lightning no longer patches Drush and therefore has no opinion about which
+  version of Drush you use in your project. (GitHub #459) 
+* Page manager is no longer included in the codebase. (GitHub #466)
+* You can now choose to hide the links to API docs shown on entity bundles via a
+  config option. (GitHub #435)
+* Fixed a bug where Entity Browser filters might not work after updating to core
+  8.3.7. (GitHub #441)
+* Operations is now the last column on the admin/content view. (GitHub #429)
+
 ## 2.1.7
 * Security updated Drupal core to 8.3.7.
 * Updated Entity Browser to 1.1.
@@ -19,7 +119,7 @@
   themes. (Issue #2899017)
 * Page Manager is no longer required by Lightning Layout. It is still shipped
   with Lightning, but is not a dependency and will be removed from Lightning in
-  the next release. If you are using Page Manager, you must explicity include
+  the next release. If you are using Page Manager, you must explicitly include
   it as a dependency of your project. Otherwise, you should uninstall it as
   soon as possible. (GitHub #410)
 * Quick Edit is no longer visible on published content when Lightning Workflow

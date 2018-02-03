@@ -120,18 +120,18 @@ interface GrantTypeInterface extends EmitterAwareInterface
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
 
     /**
+     * Set the default scope.
+     *
+     * @param string $scope
+     */
+    public function setDefaultScope($scope);
+
+    /**
      * Set the path to the private key.
      *
      * @param CryptKey $privateKey
      */
     public function setPrivateKey(CryptKey $privateKey);
-
-    /**
-     * Set the path to the public key.
-     *
-     * @param CryptKey $publicKey
-     */
-    public function setPublicKey(CryptKey $publicKey);
 
     /**
      * Set the encryption key

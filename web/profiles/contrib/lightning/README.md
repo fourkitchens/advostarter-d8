@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/acquia/lightning.svg?branch=8.x-1.x)](https://travis-ci.org/acquia/lightning)
+[![Build Status](https://travis-ci.org/acquia/lightning.svg?branch=8.x-3.x)](https://travis-ci.org/acquia/lightning)
 
 # Drupal Lightning
 Lightning's mission is to enable developers to create great authoring
@@ -15,6 +15,7 @@ The preferred way to install Lightning is using our
 [Composer-based project template][template]. It's easy!
 
 ```
+$ composer self-update
 $ composer create-project acquia/lightning-project MY_PROJECT
 ```
 
@@ -45,13 +46,17 @@ The current version of media includes the following functionality:
   * Instagram posts
   * Videos (YouTube and Vimeo supported out of the box)
   * Images
-* Drag-and-drop image uploads
+* Drag-and-drop bulk image uploads.
+* Image cropping.
 * Ability to create new media through the media library (/media/add)
 * Ability to embed tweets, Instagrams, and YouTube/Vimeo videos directly into
   CKEditor by pasting the video URL
 
 #### Extending Lightning Media (Contributed Modules)
-Drupal community members have contributed several modules which integrate Lightning Media with additional third-party media services. These modules are not packaged with Lightning or maintained by Acquia, but they are stable and you can use them in your Lightning site:
+Drupal community members have contributed several modules which integrate
+Lightning Media with additional third-party media services. These modules are
+not packaged with Lightning or maintained by Acquia, but they are stable and you
+can use them in your Lightning site:
 
   * [Facebook](https://www.drupal.org/project/lightning_media_facebook)
   * [Imgur](https://www.drupal.org/project/lightning_media_imgur)
@@ -73,17 +78,16 @@ for each view mode of that content type, which you can choose from (or override
 on a one-off basis) for individual pieces of content.
 
 Eight layouts are provided out of the box by Panels. You can create your own
-layouts (see the [Layout Plugin](https://www.drupal.org/project/layout_plugin)
-module) or install a contributed library of layouts like
-[Radix Layouts](https://www.drupal.org/project/radix_layouts).
+layouts (see the Layout Discovery module bundled with Core) or install a
+contributed library of layouts like [Radix Layouts](https://www.drupal.org/project/radix_layouts).
 
 ### Workflow
 Lightning includes tools for building organization-specific content workflows.
 Out of the box, Lightning gives you the ability to manage content in one of four
 workflow states (draft, needs review, published, and archived). You can create
 as many additional states as you like and define transitions between them. It's
-also possible to schedule content (either a single node or many at once) to be
-transitioned between states at a specific future date and time.
+also possible to schedule content to be transitioned between states at a
+specific future date and time.
 
 ### API-First
 Lightning ships with several modules which, together, quickly set up Drupal to
@@ -95,20 +99,14 @@ any of these modules, because it does not make any assumptions about how the
 API data will be consumed, but we might add support for standard use cases as
 they present themselves.
 
-If you have PHP's OpenSSL extension enabled, Lightning will attempt to create
-an asymmetric key pair for use with OAuth. You should generate a new key pair
-before putting your site into production; instructions for that can be found
-[here](https://www.drupal.org/project/simple_oauth).
+If you have PHP's OpenSSL extension enabled, Lightning can automatically create
+an asymmetric key pair for use with OAuth.
 
 ## Project Roadmap
 We publish sprint plans for each patch release. You can find a link to the
 current one in [this meta-issue][meta_releases] on Drupal.org.
 
 ## Resources
-You can find general best practices documentation inside the `help` directory of
-each Lightning "base" module. Integration with the
-[Advanced Help](https://www.drupal.org/project/advanced_help) module is planned.
-
 Demonstration videos for each of our user stories can be found [here][demo_videos].
 
 Please use the [Drupal.org issue queue][issue_queue] for latest information and
@@ -135,15 +133,19 @@ your environment, but generally you will not need to do this.
   can set the image's alt text at upload time, but that text will not be
   replicated to the image field. This is due to a limitation of Entity Browser's
   API.
+* Some of the Lightning contributed media module listed above might not yet be
+  compatible with the Core Media entity.
+* Using the bulk upload feature in environments with a load balancer might
+  result in some images not being saved.
+  
+### Inherited profiles
+Drush is not aware of the concept of inherited profiles and as a result, you
+will be unable to uninstall dependencies of any parent profile using Drush. You
+can still uninstall these dependencies via the UI at "/admin/modules/uninstall".
+We have provided patches [here](https://www.drupal.org/node/2902643)
+for Drush which allow you to uninstall dependencies of parent profiles.
 
-### Workflow
-* Lightning Workflow is based on Workbench Moderation, which is incompatible
-  with the experimental Content Moderation module included with Drupal core
-  8.3.0 and later and serves the same purpose as Workbench Moderation. We plan
-  to seamlessly migrate Lightning Workflow to Content Moderation once it is
-  stable, most likely in Drupal 8.4.0. But for now, installing Content
-  Moderation alongside Lightning Workflow may have unpredictable and dangerous
-  effects, and is best avoided.
+* [Drush 9 inherited profile dependencies patch](https://www.drupal.org/files/issues/2902643-2--drush-master.patch).
 
 [issue_queue]: https://www.drupal.org/project/issues/lightning "Lightning Issue Queue"
 [meta_release]: https://www.drupal.org/node/2670686 "Lightning Meta Releases Issue"

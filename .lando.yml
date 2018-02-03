@@ -1,0 +1,5 @@
+name: advostarter-d-8
+recipe: drupal8
+config:
+  webroot: web
+  php: 7.1

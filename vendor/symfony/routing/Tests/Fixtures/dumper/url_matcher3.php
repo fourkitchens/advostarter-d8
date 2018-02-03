@@ -5,26 +5,31 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 
 /**
+ * ProjectUrlMatcher.
+ *
  * This class has been auto-generated
  * by the Symfony Routing Component.
  */
 class ProjectUrlMatcher extends Symfony\Component\Routing\Matcher\UrlMatcher
 {
+    /**
+     * Constructor.
+     */
     public function __construct(RequestContext $context)
     {
         $this->context = $context;
     }
 
-    public function match($rawPathinfo)
+    public function match($pathinfo)
     {
         $allow = array();
-        $pathinfo = rawurldecode($rawPathinfo);
+        $pathinfo = rawurldecode($pathinfo);
         $context = $this->context;
         $request = $this->request;
 
         if (0 === strpos($pathinfo, '/rootprefix')) {
             // static
-            if ('/rootprefix/test' === $pathinfo) {
+            if ($pathinfo === '/rootprefix/test') {
                 return array('_route' => 'static');
             }
 
@@ -36,7 +41,7 @@ class ProjectUrlMatcher extends Symfony\Component\Routing\Matcher\UrlMatcher
         }
 
         // with-condition
-        if ('/with-condition' === $pathinfo && ($context->getMethod() == "GET")) {
+        if ($pathinfo === '/with-condition' && ($context->getMethod() == "GET")) {
             return array('_route' => 'with-condition');
         }
 

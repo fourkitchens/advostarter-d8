@@ -144,7 +144,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 case 'S256':
                     if (
                         hash_equals(
-                            urlencode(base64_encode(hash('sha256', $codeVerifier))),
+                            hash('sha256', strtr(rtrim(base64_encode($codeVerifier), '='), '+/', '-_')),
                             $authCodePayload->code_challenge
                         ) === false
                     ) {
@@ -240,10 +240,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
             }
+        } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
+            || empty($client->getRedirectUri())
+        ) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
         }
 
         $scopes = $this->validateScopes(
-            $this->getQueryStringParameter('scope', $request),
+            $this->getQueryStringParameter('scope', $request, $this->defaultScope),
             is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]
                 : $client->getRedirectUri()
@@ -312,29 +317,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             );
 
             $payload = [
-                'client_id'               => $authCode->getClient()->getIdentifier(),
-                'redirect_uri'            => $authCode->getRedirectUri(),
-                'auth_code_id'            => $authCode->getIdentifier(),
-                'scopes'                  => $authCode->getScopes(),
-                'user_id'                 => $authCode->getUserIdentifier(),
-                'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
-                'code_challenge'          => $authorizationRequest->getCodeChallenge(),
-                'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
+                'client_id'             => $authCode->getClient()->getIdentifier(),
+                'redirect_uri'          => $authCode->getRedirectUri(),
+                'auth_code_id'          => $authCode->getIdentifier(),
+                'scopes'                => $authCode->getScopes(),
+                'user_id'               => $authCode->getUserIdentifier(),
+                'expire_time'           => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                'code_challenge'        => $authorizationRequest->getCodeChallenge(),
+                'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
-
-            if ($this->encryptionKey === null) {
-                // Add padding to vary the length of the payload
-                $payload['_padding'] = base64_encode(random_bytes(mt_rand(8, 256)));
-                // Shuffle the payload so that the structure is no longer know and obvious
-                $keys = array_keys($payload);
-                shuffle($keys);
-                $shuffledPayload = [];
-                foreach ($keys as $key) {
-                    $shuffledPayload[$key] = $payload[$key];
-                }
-            } else {
-                $shuffledPayload = $payload;
-            }
 
             $response = new RedirectResponse();
             $response->setRedirectUri(
@@ -343,7 +334,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     [
                         'code'  => $this->encrypt(
                             json_encode(
-                                $shuffledPayload
+                                $payload
                             )
                         ),
                         'state' => $authorizationRequest->getState(),
