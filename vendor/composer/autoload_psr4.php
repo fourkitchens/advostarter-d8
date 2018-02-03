@@ -60,6 +60,7 @@ return array(
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
     'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
+    'Drupal\\redis\\' => array($baseDir . '/docroot/modules/contrib/redis/src'),
     'Drupal\\Driver\\' => array($baseDir . '/docroot/drivers/lib/Drupal/Driver'),
     'Drupal\\Core\\' => array($baseDir . '/docroot/core/lib/Drupal/Core'),
     'Drupal\\Console\\Dotenv\\' => array($vendorDir . '/drupal/console-dotenv/src'),
