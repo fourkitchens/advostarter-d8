@@ -24,7 +24,7 @@ you can specify a version from the command line with:
 For example:
 
     $ composer require drupal/ctools:3.0.0-alpha26
-    $ composer require drupal/token:1.x-dev 
+    $ composer require drupal/token:1.x-dev
 
 In these examples, the composer version 3.0.0-alpha26 maps to the drupal.org version 8.x-3.0-alpha26 and 1.x-dev maps to 8.x-1.x branch on drupal.org.
 
@@ -34,6 +34,9 @@ If you specify a branch, such as 1.x you must add -dev to the end of the version
 
 For Pantheon to show new commits from this project as mergeable updates to downstream repos, you'll need to create a new Release by adding a Git tag. Create a new release after running any security updates.
 
+When Lightning has been updated, you will also need to run these update steps on downstream sites:
+https://github.com/acquia/lightning/releases
+
 ## Localhost setup
 
-We're following Lightning's directory structure here, so we have a nested docroot. To get this running locally, you'll need to either specify the docroot (`/web`) in your server configuration file (e.g httpd-vhosts.conf) or follow [these directions](https://www.thinktandem.io/blog/2017/05/20/using-pantheon-s-nested-docroot-with-kalabox/) for Kalabox.
+We're following Lightning's directory structure here, so we have a nested docroot. To get this running locally, you'll need to either specify the docroot (`/web`) in your server configuration file (e.g httpd-vhosts.conf) or use [Lando](https://github.com/lando/lando).
