@@ -52,8 +52,10 @@
         "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
       ],
       "post-update-cmd": [
-        "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "find web vendor -name .git -type d | xargs rm -rf # Don't allow submodules because it breaks Pantheon."
+        "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+      ],
+      "post-autoload-dump": [
+        "find web/modules web/libraries web/themes web/profiles vendor -name .git -type d | xargs rm -rf # Don't allow submodules because it breaks Pantheon."
       ]
     },
     "config": {
