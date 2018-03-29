@@ -2,7 +2,11 @@
 
 namespace Drupal\jsonapi\Normalizer\Value;
 
+use Drupal\Core\Access\AccessResultInterface;
+
 /**
+ * Helps normalize relationships in compliance with the JSON API spec.
+ *
  * @internal
  */
 class RelationshipNormalizerValue extends FieldNormalizerValue {
@@ -10,7 +14,7 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
   /**
    * The link manager.
    *
-   * @param \Drupal\jsonapi\LinkManager\LinkManager
+   * @var \Drupal\jsonapi\LinkManager\LinkManager
    */
   protected $linkManager;
 
@@ -38,6 +42,8 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
   /**
    * Instantiate a EntityReferenceNormalizerValue object.
    *
+   * @param \Drupal\Core\Access\AccessResultInterface $relationship_access_result
+   *   The relationship access result.
    * @param RelationshipItemNormalizerValue[] $values
    *   The normalized result.
    * @param int $cardinality
@@ -46,7 +52,7 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
    *   All the objects and variables needed to generate the links for this
    *   relationship.
    */
-  public function __construct(array $values, $cardinality, array $link_context) {
+  public function __construct(AccessResultInterface $relationship_access_result, array $values, $cardinality, array $link_context) {
     $this->hostEntityId = $link_context['host_entity_id'];
     $this->fieldName = $link_context['field_name'];
     $this->linkManager = $link_context['link_manager'];
@@ -56,40 +62,70 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
         throw new \RuntimeException(sprintf('Unexpected normalizer item value for this %s.', get_called_class()));
       }
     });
-    parent::__construct($values, $cardinality);
+    parent::__construct($relationship_access_result, $values, $cardinality, 'relationships');
   }
 
   /**
    * {@inheritdoc}
    */
   public function rasterizeValue() {
-    if (!$value = parent::rasterizeValue()) {
-      // According to the JSON API specs empty relationships are either NULL or
-      // an empty array.
-      return $this->cardinality == 1 ? ['data' => NULL] : ['data' => []];
-    }
-    // Generate the links for the relationship.
+    $links = $this->getLinks($this->resourceType->getPublicName($this->fieldName));
+    // Empty 'to-one' relationships must be NULL.
+    // Empty 'to-many' relationships must be an empty array.
+    // @link http://jsonapi.org/format/#document-resource-object-linkage
+    $data = parent::rasterizeValue() ?: [];
+    return empty($data) && $this->cardinality == 1
+      ? ['data' => NULL, 'links' => $links]
+      : ['data' => $data, 'links' => $links];
+  }
+
+  /**
+   * Gets the links for the relationship.
+   *
+   * @param string $field_name
+   *   The public field name for the relationship.
+   *
+   * @return array
+   *   An array of links to be rasterized.
+   */
+  protected function getLinks($field_name) {
     $route_parameters = [
-      // Make sure to point to the public facing fields.
-      'related' => $this->resourceType->getPublicName($this->fieldName),
+      'related' => $field_name,
     ];
-    return [
-      'data' => $value,
-      'links' => [
-        'self' => $this->linkManager->getEntityLink(
-          $this->hostEntityId,
-          $this->resourceType,
-          $route_parameters,
-          'relationship'
-        ),
-        'related' => $this->linkManager->getEntityLink(
-          $this->hostEntityId,
-          $this->resourceType,
-          $route_parameters,
-          'related'
-        ),
-      ],
-    ];
+    $links['self'] = $this->linkManager->getEntityLink(
+      $this->hostEntityId,
+      $this->resourceType,
+      $route_parameters,
+      'relationship'
+    );
+    $resource_types = $this->resourceType->getRelatableResourceTypesByField($field_name);
+    if (static::hasNonInternalResourceType($resource_types)) {
+      $links['related'] = $this->linkManager->getEntityLink(
+        $this->hostEntityId,
+        $this->resourceType,
+        $route_parameters,
+        'related'
+      );
+    }
+    return $links;
+  }
+
+  /**
+   * Determines if a given list of resource types contains a non-internal type.
+   *
+   * @param \Drupal\jsonapi\ResourceType\ResourceType[] $resource_types
+   *   The JSON API resource types to evaluate.
+   *
+   * @return bool
+   *   FALSE if every resource type is internal, TRUE otherwise.
+   */
+  protected static function hasNonInternalResourceType(array $resource_types) {
+    foreach ($resource_types as $resource_type) {
+      if (!$resource_type->isInternal()) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }
