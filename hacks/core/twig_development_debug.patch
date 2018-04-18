@@ -1,0 +1,21 @@
+commit c096475145a16e52134508d6994eab29e57d02c1
+Author: Jeremy John <jmjohn@riseup.net>
+Date:   Tue Feb 13 16:09:11 2018 -0600
+
+    Turning off twig caching for development.
+
+diff --git a/web/sites/development.services.yml b/web/sites/development.services.yml
+index d2857c66f..0553016c1 100644
+--- a/web/sites/development.services.yml
++++ b/web/sites/development.services.yml
+@@ -4,6 +4,10 @@
+ # 'example.settings.local.php' file, which sits next to this file.
+ parameters:
+   http.response.debug_cacheability_headers: true
++  twig.config:
++    debug: true
++    auto_reload: true
++    cache: false
+ services:
+   cache.backend.null:
+     class: Drupal\Core\Cache\NullBackendFactory

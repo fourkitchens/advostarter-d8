@@ -58,6 +58,9 @@
       ],
       "post-autoload-dump": [
         "find web/modules web/libraries web/themes web/profiles vendor -name .git -type d | xargs rm -rf # Don't allow submodules because it breaks Pantheon."
+      ],
+      "post-drupal-scaffold-cmd": [
+        "patch -p1 < hacks/core/twig_development_debug.patch"
       ]
     },
     "config": {
