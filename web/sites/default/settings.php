@@ -182,6 +182,18 @@ else {
   $config['config_split.config_split.config_dev']['status'] = TRUE;
 }
 
+// Get rid of the thousands of attempted WP hacks from the logs.
+if (
+  php_sapi_name() != 'cli'
+  && !empty($_SERVER["REQUEST_URI"])
+  && ($request_9 = substr($_SERVER["REQUEST_URI"], 0, 9))
+  && in_array($request_9, array('/wp-conte', '/wp-admin', '/wp-login', '/wp-post.'))
+) {
+  header($_SERVER["SERVER_PROTOCOL"]." 418 I'm a teapot");
+  echo 'I\'m a teapot.';
+  exit();
+}
+
 /**
  * Include the Pantheon-specific settings file.
  *
