@@ -1,3 +1,26 @@
+## 2.7.0
+* Updated Drupal core to 8.5.4.
+* Drush updb failure from drush_lightning_core_pre_updatedb (Issue #2972217)
+* Tests: "When I visit" step definition is too general (Issue #2955092)
+
+## 2.6.0
+* Added a Drush 9 command hook which will clear all cached plugin definitions before
+  database updates begin. (GitHub #55)
+
+## 2.5.0
+* Security updated Drupal core to 8.5.3.
+
+## 2.4.0
+* Security updated Drupal core to 8.5.2.
+
+## 2.3.0
+* Fixed an incompatibility with Search API which would cause fatal errors under
+  certain circumstances. (Issue #2961547 and GitHub #46)
+* The Basic page content type provided by Lightning Page will now be moderated
+  only if and when Content Moderation is installed. (GitHub #40)
+* Lightning Core is now compatible with Drupal Extension 3.4 or later only.
+  (GitHub #43 and #44)
+
 ## 2.2.0
 * Security updated Drupal core to 8.5.1. (SA-2018-002)
 * When renaming the configuration which stores extension's version numbers,

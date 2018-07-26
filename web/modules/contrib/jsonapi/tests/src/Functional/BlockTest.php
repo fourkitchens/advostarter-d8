@@ -3,6 +3,7 @@
 namespace Drupal\Tests\jsonapi\Functional;
 
 use Drupal\block\Entity\Block;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 
 /**
@@ -136,6 +137,14 @@ class BlockTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
+  protected function getExpectedCacheContexts(array $sparse_fieldset = NULL) {
+    // @see ::createEntity()
+    return array_values(array_diff(parent::getExpectedCacheContexts(), ['user.permissions']));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getExpectedCacheTags(array $sparse_fieldset = NULL) {
     // Because the 'user.permissions' cache context is missing, the cache tag
     // for the anonymous user role is never added automatically.
@@ -168,6 +177,15 @@ class BlockTest extends ResourceTestBase {
         'user:2',
       ])
       ->setCacheContexts(['user.roles']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function getExpectedCollectionCacheability(array $collection, array $sparse_fieldset = NULL, AccountInterface $account) {
+    return parent::getExpectedCollectionCacheability($collection, $sparse_fieldset, $account)
+      ->addCacheTags(['user:2'])
+      ->addCacheContexts(['user.roles']);
   }
 
 }

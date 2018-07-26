@@ -15,21 +15,27 @@
             "url": "https://asset-packagist.org"
         },
         "dev": {
-            "type": "vcs",
-            "url": "https://github.com/acquia/lightning-dev"
+            "type": "github",
+            "url": "https://github.com/acquia/lightning-dev",
+            "no-api": true
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "drupal/core": "dist"
         }
     },
     "require-dev": {
         "acquia/lightning_dev": "dev-8.x-1.x"
     },
     "require": {
-        "drupal/lightning_core": "^2.1",
+        "drupal/lightning_core": "^2.7.0 || ^3.0.0",
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "oomphinc/composer-installers-extender": "^1.1",
-        "drupal/jsonapi": "1.14",
-        "drupal/openapi": "1.0-alpha1",
-        "drupal/simple_oauth": "3.5.0"
+        "drupal/jsonapi": "^1.22.0",
+        "drupal/openapi": "^1.0.0",
+        "drupal/simple_oauth": "^3.8.0"
     },
     "scripts": {
         "post-install-cmd": [
@@ -69,14 +75,6 @@
             "docroot/themes/contrib/{$name}": [
                 "type:drupal-theme"
             ]
-        },
-        "patches": {
-            "drupal/simple_oauth": {
-                "2925369 - TokenAuthUser does not fulfill RevisionableInterface, causes fatals":
-                "https://www.drupal.org/files/issues/2925369-2.patch",
-                "2945431 - Make compatible with TranslatableRevisionableInterface in 8.5.x":
-                "https://www.drupal.org/files/issues/2945431-3.patch"
-            }
         },
         "enable-patching": true
     }

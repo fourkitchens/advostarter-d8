@@ -100,10 +100,11 @@ class UserTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function createAnotherEntity() {
+  protected function createAnotherEntity($key) {
     /** @var \Drupal\user\UserInterface $user */
-    $user = $this->entity->createDuplicate();
-    $user->setUsername($user->label() . '_dupe');
+    $user = $this->getEntityDuplicate($this->entity, $key);
+    $user->setUsername($user->label() . '_' . $key);
+    $user->setEmail("$key@example.com");
     $user->save();
     return $user;
   }
@@ -183,7 +184,11 @@ class UserTest extends ResourceTestBase {
    * Tests PATCHing security-sensitive base fields of the logged in account.
    */
   public function testPatchDxForSecuritySensitiveBaseFields() {
-    $original_normalization = $this->entityToJsonApi->normalize($this->account);
+    // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
+    $url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['user' => $this->account->uuid()]);
+    /* $url = $this->account->toUrl('jsonapi'); */
+
+    $original_normalization = $this->normalize($this->account, $url);
     // @todo Remove the array_diff_key() call in https://www.drupal.org/node/2821077.
     $original_normalization['data']['attributes'] = array_diff_key(
       $original_normalization['data']['attributes'],
@@ -192,9 +197,6 @@ class UserTest extends ResourceTestBase {
 
     // Since this test must be performed by the user that is being modified,
     // we must use $this->account, not $this->entity.
-    // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-    $url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['user' => $this->account->uuid()]);
-    /* $url = $this->account->toUrl('jsonapi'); */
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
@@ -344,13 +346,14 @@ class UserTest extends ResourceTestBase {
    * Tests PATCHing security-sensitive base fields to change other users.
    */
   public function testPatchSecurityOtherUser() {
-    $original_normalization = $this->entityToJsonApi->normalize($this->account);
-
-    // Since this test must be performed by the user that is being modified,
-    // we must use $this->account, not $this->entity.
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
     $url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['user' => $this->account->uuid()]);
     /* $url = $this->account->toUrl('jsonapi'); */
+
+    $original_normalization = $this->normalize($this->account, $url);
+
+    // Since this test must be performed by the user that is being modified,
+    // we must use $this->account, not $this->entity.
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
@@ -428,7 +431,7 @@ class UserTest extends ResourceTestBase {
     $response = $this->request('GET', $collection_url, $request_options);
     $doc = Json::decode((string) $response->getBody());
     $this->assertArrayHasKey('mail', $doc['data'][1]['attributes']);
-    $this->assertArrayNotHasKey('mail', $doc['data'][3]['attributes']);
+    $this->assertArrayNotHasKey('mail', $doc['data'][count($doc['data']) - 1]['attributes']);
 
     // Now request the same URLs, but as user B (same roles/permissions).
     $this->account = $user_b;
@@ -441,7 +444,22 @@ class UserTest extends ResourceTestBase {
     $response = $this->request('GET', $collection_url, $request_options);
     $doc = Json::decode((string) $response->getBody());
     $this->assertArrayNotHasKey('mail', $doc['data'][1]['attributes']);
-    $this->assertArrayHasKey('mail', $doc['data'][3]['attributes']);
+    $this->assertArrayHasKey('mail', $doc['data'][count($doc['data']) - 1]['attributes']);
+  }
+
+  /**
+   * Test good error DX when trying to filter users by role.
+   */
+  public function testQueryInvolvingRoles() {
+    $this->setUpAuthorization('GET');
+
+    $collection_url = Url::fromRoute('jsonapi.user--user.collection', [], ['query' => ['filter[roles.uuid][value]' => 'e9b1de3f-9517-4c27-bef0-0301229de792']]);
+    $request_options = [];
+    $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+
+    $response = $this->request('GET', $collection_url, $request_options);
+    $this->assertResourceErrorResponse(400, "Filtering on config entities is not supported by Drupal's entity API. You tried to filter on a Role config entity.", $response);
   }
 
 }
