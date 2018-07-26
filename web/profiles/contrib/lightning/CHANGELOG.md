@@ -1,3 +1,23 @@
+##  3.1.4
+* Lightning Workflow has been updated to 2.0.0-rc1, which includes a completely
+  rewritten Lightning Scheduler.
+* Lightning API has been updated to 2.3.0, which includes an updated version of
+  Simple OAuth.
+* Lightning Layout has been updated to 1.2.0, which includes updated versions
+  of Panels and Panelizer.
+* Lightning Media has been updated to 2.2.0, which includes an updated version
+  of Video Embed Field.
+
+## 3.1.3
+* Drupal core has been security updated to 8.5.3. (SA-2018-004)
+* Lightning API has been updated to 2.2.0, which includes a security update
+  to JSON API.
+
+## 3.1.2
+* Drupal core has been security update to 8.5.2. (SA-2018-003)
+* Lightning Core has been updated to 2.3.0 to fix an incompatibility with
+  Search API 1.8.0.
+
 ## 3.1.1
 * Drupal core has been security update to 8.5.1 (SA-2018-002)
 * Lightning API has been updated to 2.1.0 which security updates JSON API to

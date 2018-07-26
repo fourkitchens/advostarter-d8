@@ -1,34 +1,34 @@
 [
     {
         "name": "acquia/lightning",
-        "version": "3.1.1",
-        "version_normalized": "3.1.1.0",
+        "version": "3.1.4",
+        "version_normalized": "3.1.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/acquia/lightning.git",
-            "reference": "1cffc2ffa0a09daf232c1ac31e7a4f65cd412ec9"
+            "reference": "f852dc4644e59acaa694f9d36393ea8d254f97ac"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/acquia/lightning/zipball/1cffc2ffa0a09daf232c1ac31e7a4f65cd412ec9",
-            "reference": "1cffc2ffa0a09daf232c1ac31e7a4f65cd412ec9",
+            "url": "https://api.github.com/repos/acquia/lightning/zipball/f852dc4644e59acaa694f9d36393ea8d254f97ac",
+            "reference": "f852dc4644e59acaa694f9d36393ea8d254f97ac",
             "shasum": ""
         },
         "require": {
             "cweagans/composer-patches": "^1.6.4",
             "drupal-composer/drupal-scaffold": "^2.0.0",
-            "drupal/lightning_api": "^2.1",
-            "drupal/lightning_core": "^2.2",
-            "drupal/lightning_layout": "^1.1",
-            "drupal/lightning_media": "^2.1",
-            "drupal/lightning_workflow": "^1.2",
+            "drupal/lightning_api": "^2.3",
+            "drupal/lightning_core": "^2.6",
+            "drupal/lightning_layout": "^1.2",
+            "drupal/lightning_media": "^2.3",
+            "drupal/lightning_workflow": "^2.0.0-rc2",
             "oomphinc/composer-installers-extender": "^1.1"
         },
         "require-dev": {
             "acquia/lightning_dev": "dev-8.x-1.x",
             "drupal/media_entity_generic": "1.x-dev"
         },
-        "time": "2018-03-28T23:53:13+00:00",
+        "time": "2018-05-09T15:53:55+00:00",
         "bin": [
             "lightning-subprofile"
         ],
@@ -4957,38 +4957,40 @@
     },
     {
         "name": "drupal/lightning_workflow",
-        "version": "1.2.0",
-        "version_normalized": "1.2.0.0",
+        "version": "2.1.0",
+        "version_normalized": "2.1.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupal.org/project/lightning_workflow",
-            "reference": "8.x-1.2"
+            "reference": "8.x-2.1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/lightning_workflow-8.x-1.2.zip",
-            "reference": "8.x-1.2",
-            "shasum": "8a19c28e7c5afa7ae55b9785765ccdc203c51f32"
+            "url": "https://ftp.drupal.org/files/projects/lightning_workflow-8.x-2.1.zip",
+            "reference": "8.x-2.1",
+            "shasum": "7d57549eda9c3df3d0cb1cf224ca77ac1f03ab09"
         },
         "require": {
             "cweagans/composer-patches": "^1.6.4",
             "drupal-composer/drupal-scaffold": "^2.0.0",
             "drupal/core": "*",
             "drupal/diff": "^1.0",
-            "drupal/lightning_core": "^1.0 || ^2.0",
+            "drupal/lightning_core": "^2.7.0",
             "oomphinc/composer-installers-extender": "^1.1"
         },
         "require-dev": {
-            "acquia/lightning_dev": "dev-8.x-1.x"
+            "acquia/lightning_dev": "dev-8.x-1.x",
+            "drupal/lightning_core": "*",
+            "webmozart/assert": "^1.3"
         },
         "type": "drupal-module",
         "extra": {
             "branch-alias": {
-                "dev-1.x": "1.x-dev"
+                "dev-2.x": "2.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.2",
-                "datestamp": "1522167780",
+                "version": "8.x-2.1",
+                "datestamp": "1532109781",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
