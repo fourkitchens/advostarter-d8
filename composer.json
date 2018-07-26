@@ -32,8 +32,7 @@
         "drupal/security_review": "1.x-dev",
         "drupal/stage_file_proxy": "^1.0",
         "drupal/styleguide": "^1.0",
-        "drush/drush": "^9.2",
-        "webflo/drupal-core-strict": "8.5.1"
+        "drush/drush": "^9.2"
     },
     "repositories": {
         "drupal": {
