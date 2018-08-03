@@ -3,3 +3,9 @@ recipe: drupal8
 config:
   webroot: web
   php: 7.1
+tooling:
+  push: disabled
+  drush:
+    cmd:
+      - "drush"
+      - "--root=/app/web"
