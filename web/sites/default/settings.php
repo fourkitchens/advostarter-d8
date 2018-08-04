@@ -37,6 +37,11 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
 if ($config['server_environment'] == 'local') {
   $settings['container_yamls'][] = DRUPAL_ROOT . '/sites/development.services.yml';
   $settings['skip_permissions_hardening'] = TRUE;
+  $settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null';
+  // Front-end devs will want to include the following line in a settings.local.php
+  // Back-end devs should _not_ disable render caching because it will hide
+  // bugs with cache contexts/tags.
+  # $settings['cache']['bins']['render'] = 'cache.backend.null';
 }
 
 if ($config['server_environment'] != 'local') {
