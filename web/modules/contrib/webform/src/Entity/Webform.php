@@ -23,6 +23,8 @@ use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
 use Drupal\webform\Plugin\WebformHandlerInterface;
 use Drupal\webform\Plugin\WebformHandlerPluginCollection;
+use Drupal\webform\Utility\WebformTextHelper;
+use Drupal\webform\Utility\WebformYaml;
 use Drupal\webform\WebformException;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
@@ -44,6 +46,7 @@ use Drupal\webform\WebformSubmissionStorageInterface;
  *       "duplicate" = "Drupal\webform\WebformEntityAddForm",
  *       "delete" = "Drupal\webform\WebformEntityDeleteForm",
  *       "edit" = "Drupal\webform\WebformEntityElementsForm",
+ *       "export" = "Drupal\webform\WebformEntityExportForm",
  *       "settings" = "Drupal\webform\EntitySettings\WebformEntitySettingsGeneralForm",
  *       "settings_form" = "Drupal\webform\EntitySettings\WebformEntitySettingsFormForm",
  *       "settings_submissions" = "Drupal\webform\EntitySettings\WebformEntitySettingsSubmissionsForm",
@@ -62,6 +65,7 @@ use Drupal\webform\WebformSubmissionStorageInterface;
  *   },
  *   links = {
  *     "canonical" = "/webform/{webform}",
+ *     "access-denied" = "/webform/{webform}/access-denied",
  *     "submissions" = "/webform/{webform}/submissions",
  *     "add-form" = "/webform/{webform}",
  *     "edit-form" = "/admin/structure/webform/manage/{webform}/elements",
@@ -86,6 +90,7 @@ use Drupal\webform\WebformSubmissionStorageInterface;
  *     "status",
  *     "open",
  *     "close",
+ *     "weight",
  *     "uid",
  *     "template",
  *     "archive",
@@ -155,6 +160,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * @var bool
    */
   protected $close;
+
+  /**
+   * The webform weight.
+   *
+   * @var int
+   */
+  protected $weight = 0;
 
   /**
    * The webform template indicator.
@@ -385,6 +397,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   public function getLangcode() {
     return $this->langcode;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getWeight() {
+    return $this->weight;
   }
 
   /**
@@ -875,14 +894,20 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'form_submit_back' => FALSE,
       'form_autofocus' => FALSE,
       'form_details_toggle' => FALSE,
-      'form_login' => FALSE,
-      'form_login_message' => '',
+      'form_access_denied' => WebformInterface::ACCESS_DENIED_DEFAULT,
+      'form_access_denied_title' => '',
+      'form_access_denied_message' => '',
+      'form_access_denied_attributes' => [],
       'submission_label' => '',
       'submission_log' => FALSE,
+      'submission_views' => [],
+      'submission_views_replace' => [],
       'submission_user_columns' => [],
       'submission_user_duplicate' => FALSE,
-      'submission_login' => FALSE,
-      'submission_login_message' => '',
+      'submission_access_denied' => WebformInterface::ACCESS_DENIED_DEFAULT,
+      'submission_access_denied_title' => '',
+      'submission_access_denied_message' => '',
+      'submission_access_denied_attributes' => [],
       'submission_exception_message' => '',
       'submission_locked_message' => '',
       'previous_submission_message' => '',
@@ -893,7 +918,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'wizard_progress_bar' => TRUE,
       'wizard_progress_pages' => FALSE,
       'wizard_progress_percentage' => FALSE,
+      'wizard_progress_link' => FALSE,
       'wizard_start_label' => '',
+      'wizard_preview_link' => FALSE,
       'wizard_confirmation' => TRUE,
       'wizard_confirmation_label' => '',
       'wizard_track' => '',
@@ -1256,7 +1283,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public function setElements(array $elements) {
-    $this->elements = Yaml::encode($elements);
+    $this->elements = WebformYaml::encode($elements);
     $this->resetElements();
     return $this;
   }
@@ -1292,9 +1319,14 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
       // If current webform is translated, load the base (default) webform and apply
       // the translation to the elements.
-      if ($config_translation && $this->langcode != $language_manager->getCurrentLanguage()->getId()) {
+      if ($config_translation
+        && ($this->langcode != $language_manager->getCurrentLanguage()->getId())) {
+        // Always get the elements in the original language.
         $elements = $translation_manager->getElements($this);
-        $this->elementsTranslations = $translation_manager->getElements($this, $language_manager->getCurrentLanguage()->getId());
+        // For none admin routes get the element (label) translations.
+        if (!$translation_manager->isAdminRoute()) {
+          $this->elementsTranslations = $translation_manager->getElements($this, $language_manager->getCurrentLanguage()->getId());
+        }
       }
       else {
         $elements = Yaml::decode($this->elements);
@@ -1984,7 +2016,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     // Update confirm path.
     $confirm_source = '/webform/' . $this->id() . '/confirmation';
-    $confirm_alias = $this->settings['page_confirm_path'] ?:  $submit_base_path . '/confirmation';
+    $confirm_alias = $this->settings['page_confirm_path'] ?: $submit_base_path . '/confirmation';
     $confirm_alias = '/' . trim($confirm_alias, '/');
     $this->updatePath($confirm_source, $confirm_alias, $this->langcode);
     $this->updatePath($confirm_source, $confirm_alias, LanguageInterface::LANGCODE_NOT_SPECIFIED);
@@ -2204,6 +2236,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       $settings = $this->getSettings();
       $handlers = $this->getHandlers();
       foreach ($handlers as $handler) {
+        $handler->setWebformSubmission($webform_submission);
+        $this->invokeHandlerAlter($handler, $method, $args);
+
         if ($handler->isEnabled() && $handler->checkConditions($webform_submission)) {
           $handler->overrideSettings($settings, $webform_submission);
         }
@@ -2215,6 +2250,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     else {
       $handlers = $this->getHandlers();
       foreach ($handlers as $handler) {
+        $handler->setWebformSubmission($webform_submission);
+        $this->invokeHandlerAlter($handler, $method, $args);
+
         // If the handler is disabled never invoke it.
         if ($handler->isDisabled()) {
           continue;
@@ -2228,6 +2266,25 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         $handler->$method($data, $context1, $context2);
       }
     }
+  }
+
+  /**
+   * Alter a webform handler when it is invoked.
+   *
+   * @param \Drupal\webform\Plugin\WebformHandlerInterface $handler
+   *   A webform handler.
+   * @param string $method_name
+   *   The handler method to be invoked.
+   * @param array $args
+   *   Array of arguments being passed to the handler's method.
+   *
+   * @see hook_webform_handler_invoke_alter()
+   * @see hook_webform_handler_invoke_METHOD_NAME_alter()
+   */
+  protected function invokeHandlerAlter(WebformHandlerInterface $handler, $method_name, array $args) {
+    $method_name = WebformTextHelper::camelToSnake($method_name);
+    \Drupal::moduleHandler()->alter('webform_handler_invoke', $handler, $method_name, $args);
+    \Drupal::moduleHandler()->alter('webform_handler_invoke_' . $method_name, $handler, $args);
   }
 
   /**

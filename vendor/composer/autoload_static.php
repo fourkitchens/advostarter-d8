@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5d73f8a1db771565f495a00acb914496
+class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -95,9 +95,9 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
             'Symfony\\Cmf\\Component\\Routing\\' => 30,
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
             'Stecman\\Component\\Symfony\\Console\\BashCompletion\\' => 49,
+            'SelfUpdate\\' => 11,
             'Seld\\PharUtils\\' => 15,
             'Seld\\JsonLint\\' => 14,
-            'Seld\\CliPrompt\\' => 15,
         ),
         'R' => 
         array (
@@ -144,7 +144,6 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         ),
         'D' => 
         array (
-            'Drush\\SiteAlias\\' => 16,
             'Drush\\Internal\\' => 15,
             'Drush\\' => 6,
             'Drupal\\redis\\' => 13,
@@ -169,6 +168,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
             'Consolidation\\Log\\' => 18,
             'Consolidation\\Config\\' => 21,
             'Consolidation\\AnnotatedCommand\\' => 31,
+            'Composer\\XdebugHandler\\' => 23,
             'Composer\\Spdx\\' => 14,
             'Composer\\Semver\\' => 16,
             'Composer\\Installers\\' => 20,
@@ -339,6 +339,10 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         array (
             0 => __DIR__ . '/..' . '/stecman/symfony-console-completion/src',
         ),
+        'SelfUpdate\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/self-update/src',
+        ),
         'Seld\\PharUtils\\' => 
         array (
             0 => __DIR__ . '/..' . '/seld/phar-utils/src',
@@ -346,10 +350,6 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Seld\\JsonLint\\' => 
         array (
             0 => __DIR__ . '/..' . '/seld/jsonlint/src/Seld/JsonLint',
-        ),
-        'Seld\\CliPrompt\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/seld/cli-prompt/src',
         ),
         'Robo\\' => 
         array (
@@ -426,10 +426,6 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Grasmash\\Expander\\' => 
         array (
             0 => __DIR__ . '/..' . '/grasmash/expander/src',
-        ),
-        'Drush\\SiteAlias\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/consolidation/site-alias/src/legacy',
         ),
         'Drush\\Internal\\' => 
         array (
@@ -517,6 +513,10 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Consolidation\\AnnotatedCommand\\' => 
         array (
             0 => __DIR__ . '/..' . '/consolidation/annotated-command/src',
+        ),
+        'Composer\\XdebugHandler\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/xdebug-handler/src',
         ),
         'Composer\\Spdx\\' => 
         array (
@@ -891,6 +891,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Composer\\Installers\\BonefishInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/BonefishInstaller.php',
         'Composer\\Installers\\CakePHPInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CakePHPInstaller.php',
         'Composer\\Installers\\ChefInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ChefInstaller.php',
+        'Composer\\Installers\\CiviCrmInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CiviCrmInstaller.php',
         'Composer\\Installers\\ClanCatsFrameworkInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ClanCatsFrameworkInstaller.php',
         'Composer\\Installers\\CockpitInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CockpitInstaller.php',
         'Composer\\Installers\\CodeIgniterInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CodeIgniterInstaller.php',
@@ -986,6 +987,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Composer\\Package\\Archiver\\PharArchiver' => __DIR__ . '/..' . '/composer/composer/src/Composer/Package/Archiver/PharArchiver.php',
         'Composer\\Package\\Archiver\\ZipArchiver' => __DIR__ . '/..' . '/composer/composer/src/Composer/Package/Archiver/ZipArchiver.php',
         'Composer\\Package\\BasePackage' => __DIR__ . '/..' . '/composer/composer/src/Composer/Package/BasePackage.php',
+        'Composer\\Package\\Comparer\\Comparer' => __DIR__ . '/..' . '/composer/composer/src/Composer/Package/Comparer/Comparer.php',
         'Composer\\Package\\CompletePackage' => __DIR__ . '/..' . '/composer/composer/src/Composer/Package/CompletePackage.php',
         'Composer\\Package\\CompletePackageInterface' => __DIR__ . '/..' . '/composer/composer/src/Composer/Package/CompletePackageInterface.php',
         'Composer\\Package\\Dumper\\ArrayDumper' => __DIR__ . '/..' . '/composer/composer/src/Composer/Package/Dumper/ArrayDumper.php',
@@ -1017,6 +1019,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Composer\\Plugin\\PluginEvents' => __DIR__ . '/..' . '/composer/composer/src/Composer/Plugin/PluginEvents.php',
         'Composer\\Plugin\\PluginInterface' => __DIR__ . '/..' . '/composer/composer/src/Composer/Plugin/PluginInterface.php',
         'Composer\\Plugin\\PluginManager' => __DIR__ . '/..' . '/composer/composer/src/Composer/Plugin/PluginManager.php',
+        'Composer\\Plugin\\PreCommandRunEvent' => __DIR__ . '/..' . '/composer/composer/src/Composer/Plugin/PreCommandRunEvent.php',
         'Composer\\Plugin\\PreFileDownloadEvent' => __DIR__ . '/..' . '/composer/composer/src/Composer/Plugin/PreFileDownloadEvent.php',
         'Composer\\Question\\StrictConfirmationQuestion' => __DIR__ . '/..' . '/composer/composer/src/Composer/Question/StrictConfirmationQuestion.php',
         'Composer\\Repository\\ArrayRepository' => __DIR__ . '/..' . '/composer/composer/src/Composer/Repository/ArrayRepository.php',
@@ -1087,6 +1090,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Composer\\Util\\Git' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/Git.php',
         'Composer\\Util\\GitHub' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/GitHub.php',
         'Composer\\Util\\GitLab' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/GitLab.php',
+        'Composer\\Util\\Hg' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/Hg.php',
         'Composer\\Util\\IniHelper' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/IniHelper.php',
         'Composer\\Util\\NoProxyPattern' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/NoProxyPattern.php',
         'Composer\\Util\\Perforce' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/Perforce.php',
@@ -1100,6 +1104,10 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Composer\\Util\\TlsHelper' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/TlsHelper.php',
         'Composer\\Util\\Url' => __DIR__ . '/..' . '/composer/composer/src/Composer/Util/Url.php',
         'Composer\\XdebugHandler' => __DIR__ . '/..' . '/composer/composer/src/Composer/XdebugHandler.php',
+        'Composer\\XdebugHandler\\PhpConfig' => __DIR__ . '/..' . '/composer/xdebug-handler/src/PhpConfig.php',
+        'Composer\\XdebugHandler\\Process' => __DIR__ . '/..' . '/composer/xdebug-handler/src/Process.php',
+        'Composer\\XdebugHandler\\Status' => __DIR__ . '/..' . '/composer/xdebug-handler/src/Status.php',
+        'Composer\\XdebugHandler\\XdebugHandler' => __DIR__ . '/..' . '/composer/xdebug-handler/src/XdebugHandler.php',
         'Consolidation\\AnnotatedCommand\\AnnotatedCommand' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommand.php',
         'Consolidation\\AnnotatedCommand\\AnnotatedCommandFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommandFactory.php',
         'Consolidation\\AnnotatedCommand\\AnnotationData' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotationData.php',
@@ -1316,6 +1324,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Doctrine\\Common\\Cache\\CacheProvider' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/CacheProvider.php',
         'Doctrine\\Common\\Cache\\ChainCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/ChainCache.php',
         'Doctrine\\Common\\Cache\\ClearableCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/ClearableCache.php',
+        'Doctrine\\Common\\Cache\\CouchbaseBucketCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/CouchbaseBucketCache.php',
         'Doctrine\\Common\\Cache\\CouchbaseCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/CouchbaseCache.php',
         'Doctrine\\Common\\Cache\\ExtMongoDBCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/ExtMongoDBCache.php',
         'Doctrine\\Common\\Cache\\FileCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/FileCache.php',
@@ -1436,6 +1445,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'DrupalCodeGenerator\\Command\\Drupal_7\\ViewsPlugin\\ArgumentDefault' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_7/ViewsPlugin/ArgumentDefault.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Composer' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Composer.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Controller' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Controller.php',
+        'DrupalCodeGenerator\\Command\\Drupal_8\\Field' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Field.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Form\\Base' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Form/Base.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Form\\Config' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Form/Config.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Form\\Confirm' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Form/Confirm.php',
@@ -1484,10 +1494,10 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'DrupalCodeGenerator\\Command\\Drupal_8\\SettingsLocal' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/SettingsLocal.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Template' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Template.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Browser' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Browser.php',
-        'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Javascript' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Javascript.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Kernel' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Kernel.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Unit' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Unit.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Web' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Web.php',
+        'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\WebDriver' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/WebDriver.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Theme' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Theme.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\ThemeFile' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/ThemeFile.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\ThemeSettings' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/ThemeSettings.php',
@@ -1595,6 +1605,8 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Component\\Plugin\\Context\\Context' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Context/Context.php',
         'Drupal\\Component\\Plugin\\Context\\ContextDefinitionInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Context/ContextDefinitionInterface.php',
         'Drupal\\Component\\Plugin\\Context\\ContextInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Context/ContextInterface.php',
+        'Drupal\\Component\\Plugin\\Definition\\ContextAwarePluginDefinitionInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Definition/ContextAwarePluginDefinitionInterface.php',
+        'Drupal\\Component\\Plugin\\Definition\\ContextAwarePluginDefinitionTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Definition/ContextAwarePluginDefinitionTrait.php',
         'Drupal\\Component\\Plugin\\Definition\\DerivablePluginDefinitionInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Definition/DerivablePluginDefinitionInterface.php',
         'Drupal\\Component\\Plugin\\Definition\\PluginDefinition' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Definition/PluginDefinition.php',
         'Drupal\\Component\\Plugin\\Definition\\PluginDefinitionInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Definition/PluginDefinitionInterface.php',
@@ -1615,6 +1627,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Component\\Plugin\\Exception\\InvalidDeriverException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Exception/InvalidDeriverException.php',
         'Drupal\\Component\\Plugin\\Exception\\InvalidPluginDefinitionException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Exception/InvalidPluginDefinitionException.php',
         'Drupal\\Component\\Plugin\\Exception\\MapperExceptionInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Exception/MapperExceptionInterface.php',
+        'Drupal\\Component\\Plugin\\Exception\\MissingValueContextException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Exception/MissingValueContextException.php',
         'Drupal\\Component\\Plugin\\Exception\\PluginException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Exception/PluginException.php',
         'Drupal\\Component\\Plugin\\Exception\\PluginNotFoundException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Exception/PluginNotFoundException.php',
         'Drupal\\Component\\Plugin\\Factory\\DefaultFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Plugin/Factory/DefaultFactory.php',
@@ -2038,6 +2051,8 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Action\\Plugin\\Action\\UnpublishAction' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Action/Plugin/Action/UnpublishAction.php',
         'Drupal\\Core\\Ajax\\AddCssCommand' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Ajax/AddCssCommand.php',
         'Drupal\\Core\\Ajax\\AfterCommand' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Ajax/AfterCommand.php',
+        'Drupal\\Core\\Ajax\\AjaxFormHelperTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Ajax/AjaxFormHelperTrait.php',
+        'Drupal\\Core\\Ajax\\AjaxHelperTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Ajax/AjaxHelperTrait.php',
         'Drupal\\Core\\Ajax\\AjaxResponse' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Ajax/AjaxResponse.php',
         'Drupal\\Core\\Ajax\\AjaxResponseAttachmentsProcessor' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Ajax/AjaxResponseAttachmentsProcessor.php',
         'Drupal\\Core\\Ajax\\AlertCommand' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Ajax/AlertCommand.php',
@@ -2116,6 +2131,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Authentication\\AuthenticationProviderChallengeInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Authentication/AuthenticationProviderChallengeInterface.php',
         'Drupal\\Core\\Authentication\\AuthenticationProviderFilterInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Authentication/AuthenticationProviderFilterInterface.php',
         'Drupal\\Core\\Authentication\\AuthenticationProviderInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Authentication/AuthenticationProviderInterface.php',
+        'Drupal\\Core\\Batch\\BatchBuilder' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Batch/BatchBuilder.php',
         'Drupal\\Core\\Batch\\BatchStorage' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Batch/BatchStorage.php',
         'Drupal\\Core\\Batch\\BatchStorageInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Batch/BatchStorageInterface.php',
         'Drupal\\Core\\Batch\\Percentage' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Batch/Percentage.php',
@@ -2193,6 +2209,8 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Cache\\ListCacheBinsPass' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/ListCacheBinsPass.php',
         'Drupal\\Core\\Cache\\MemoryBackend' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/MemoryBackend.php',
         'Drupal\\Core\\Cache\\MemoryBackendFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/MemoryBackendFactory.php',
+        'Drupal\\Core\\Cache\\MemoryCache\\MemoryCache' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/MemoryCache/MemoryCache.php',
+        'Drupal\\Core\\Cache\\MemoryCache\\MemoryCacheInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/MemoryCache/MemoryCacheInterface.php',
         'Drupal\\Core\\Cache\\MemoryCounterBackend' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/MemoryCounterBackend.php',
         'Drupal\\Core\\Cache\\NullBackend' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/NullBackend.php',
         'Drupal\\Core\\Cache\\NullBackendFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Cache/NullBackendFactory.php',
@@ -2210,6 +2228,9 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Command\\DbToolsApplication' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Command/DbToolsApplication.php',
         'Drupal\\Core\\Command\\GenerateProxyClassApplication' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Command/GenerateProxyClassApplication.php',
         'Drupal\\Core\\Command\\GenerateProxyClassCommand' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Command/GenerateProxyClassCommand.php',
+        'Drupal\\Core\\Command\\InstallCommand' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Command/InstallCommand.php',
+        'Drupal\\Core\\Command\\QuickStartCommand' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Command/QuickStartCommand.php',
+        'Drupal\\Core\\Command\\ServerCommand' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Command/ServerCommand.php',
         'Drupal\\Core\\Composer\\Composer' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Composer/Composer.php',
         'Drupal\\Core\\Condition\\Annotation\\Condition' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Condition/Annotation/Condition.php',
         'Drupal\\Core\\Condition\\ConditionAccessResolverTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Condition/ConditionAccessResolverTrait.php',
@@ -2256,6 +2277,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Config\\Entity\\ConfigEntityStorageInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Entity/ConfigEntityStorageInterface.php',
         'Drupal\\Core\\Config\\Entity\\ConfigEntityType' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Entity/ConfigEntityType.php',
         'Drupal\\Core\\Config\\Entity\\ConfigEntityTypeInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Entity/ConfigEntityTypeInterface.php',
+        'Drupal\\Core\\Config\\Entity\\ConfigEntityUpdater' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Entity/ConfigEntityUpdater.php',
         'Drupal\\Core\\Config\\Entity\\DraggableListBuilder' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Entity/DraggableListBuilder.php',
         'Drupal\\Core\\Config\\Entity\\Exception\\ConfigEntityIdLengthException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Entity/Exception/ConfigEntityIdLengthException.php',
         'Drupal\\Core\\Config\\Entity\\Exception\\ConfigEntityStorageClassException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Entity/Exception/ConfigEntityStorageClassException.php',
@@ -2270,6 +2292,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Config\\FileStorageFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/FileStorageFactory.php',
         'Drupal\\Core\\Config\\ImmutableConfig' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/ImmutableConfig.php',
         'Drupal\\Core\\Config\\ImmutableConfigException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/ImmutableConfigException.php',
+        'Drupal\\Core\\Config\\Importer\\ConfigImporterBatch' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Importer/ConfigImporterBatch.php',
         'Drupal\\Core\\Config\\Importer\\FinalMissingContentSubscriber' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Importer/FinalMissingContentSubscriber.php',
         'Drupal\\Core\\Config\\Importer\\MissingContentEvent' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/Importer/MissingContentEvent.php',
         'Drupal\\Core\\Config\\InstallStorage' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/InstallStorage.php',
@@ -2298,6 +2321,9 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Config\\TypedConfigManagerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/TypedConfigManagerInterface.php',
         'Drupal\\Core\\Config\\UnmetDependenciesException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/UnmetDependenciesException.php',
         'Drupal\\Core\\Config\\UnsupportedDataTypeConfigException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/UnsupportedDataTypeConfigException.php',
+        'Drupal\\Core\\Controller\\ArgumentResolver\\Psr7RequestValueResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ArgumentResolver/Psr7RequestValueResolver.php',
+        'Drupal\\Core\\Controller\\ArgumentResolver\\RawParameterValueResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ArgumentResolver/RawParameterValueResolver.php',
+        'Drupal\\Core\\Controller\\ArgumentResolver\\RouteMatchValueResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ArgumentResolver/RouteMatchValueResolver.php',
         'Drupal\\Core\\Controller\\ControllerBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ControllerBase.php',
         'Drupal\\Core\\Controller\\ControllerResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ControllerResolver.php',
         'Drupal\\Core\\Controller\\ControllerResolverInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ControllerResolverInterface.php',
@@ -2570,6 +2596,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Entity\\KeyValueStore\\Query\\Condition' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/KeyValueStore/Query/Condition.php',
         'Drupal\\Core\\Entity\\KeyValueStore\\Query\\Query' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/KeyValueStore/Query/Query.php',
         'Drupal\\Core\\Entity\\KeyValueStore\\Query\\QueryFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/KeyValueStore/Query/QueryFactory.php',
+        'Drupal\\Core\\Entity\\Plugin\\DataType\\ConfigEntityAdapter' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/DataType/ConfigEntityAdapter.php',
         'Drupal\\Core\\Entity\\Plugin\\DataType\\Deriver\\EntityDeriver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/DataType/Deriver/EntityDeriver.php',
         'Drupal\\Core\\Entity\\Plugin\\DataType\\EntityAdapter' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/DataType/EntityAdapter.php',
         'Drupal\\Core\\Entity\\Plugin\\DataType\\EntityReference' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/DataType/EntityReference.php',
@@ -2583,6 +2610,8 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\CompositeConstraintBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/CompositeConstraintBase.php',
         'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\EntityChangedConstraint' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/EntityChangedConstraint.php',
         'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\EntityChangedConstraintValidator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/EntityChangedConstraintValidator.php',
+        'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\EntityHasFieldConstraint' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/EntityHasFieldConstraint.php',
+        'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\EntityHasFieldConstraintValidator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/EntityHasFieldConstraintValidator.php',
         'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\EntityTypeConstraint' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/EntityTypeConstraint.php',
         'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\EntityTypeConstraintValidator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/EntityTypeConstraintValidator.php',
         'Drupal\\Core\\Entity\\Plugin\\Validation\\Constraint\\EntityUntranslatableFieldsConstraint' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Plugin/Validation/Constraint/EntityUntranslatableFieldsConstraint.php',
@@ -2688,23 +2717,25 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Executable\\ExecutableManagerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Executable/ExecutableManagerInterface.php',
         'Drupal\\Core\\Executable\\ExecutablePluginBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Executable/ExecutablePluginBase.php',
         'Drupal\\Core\\Extension\\Discovery\\RecursiveExtensionFilterIterator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/Discovery/RecursiveExtensionFilterIterator.php',
+        'Drupal\\Core\\Extension\\Exception\\UninstalledExtensionException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/Exception/UninstalledExtensionException.php',
+        'Drupal\\Core\\Extension\\Exception\\UnknownExtensionException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/Exception/UnknownExtensionException.php',
         'Drupal\\Core\\Extension\\Extension' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/Extension.php',
         'Drupal\\Core\\Extension\\ExtensionDiscovery' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ExtensionDiscovery.php',
+        'Drupal\\Core\\Extension\\ExtensionList' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ExtensionList.php',
         'Drupal\\Core\\Extension\\ExtensionNameLengthException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ExtensionNameLengthException.php',
-        'Drupal\\Core\\Extension\\FallbackProfileHandler' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/FallbackProfileHandler.php',
         'Drupal\\Core\\Extension\\InfoParser' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/InfoParser.php',
         'Drupal\\Core\\Extension\\InfoParserDynamic' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/InfoParserDynamic.php',
         'Drupal\\Core\\Extension\\InfoParserException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/InfoParserException.php',
         'Drupal\\Core\\Extension\\InfoParserInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/InfoParserInterface.php',
         'Drupal\\Core\\Extension\\MissingDependencyException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/MissingDependencyException.php',
+        'Drupal\\Core\\Extension\\ModuleExtensionList' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ModuleExtensionList.php',
         'Drupal\\Core\\Extension\\ModuleHandler' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ModuleHandler.php',
         'Drupal\\Core\\Extension\\ModuleHandlerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ModuleHandlerInterface.php',
         'Drupal\\Core\\Extension\\ModuleInstaller' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ModuleInstaller.php',
         'Drupal\\Core\\Extension\\ModuleInstallerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ModuleInstallerInterface.php',
         'Drupal\\Core\\Extension\\ModuleUninstallValidatorException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ModuleUninstallValidatorException.php',
         'Drupal\\Core\\Extension\\ModuleUninstallValidatorInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ModuleUninstallValidatorInterface.php',
-        'Drupal\\Core\\Extension\\ProfileHandler' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ProfileHandler.php',
-        'Drupal\\Core\\Extension\\ProfileHandlerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ProfileHandlerInterface.php',
+        'Drupal\\Core\\Extension\\ProfileExtensionList' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ProfileExtensionList.php',
         'Drupal\\Core\\Extension\\RequiredModuleUninstallValidator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/RequiredModuleUninstallValidator.php',
         'Drupal\\Core\\Extension\\ThemeHandler' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ThemeHandler.php',
         'Drupal\\Core\\Extension\\ThemeHandlerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Extension/ThemeHandlerInterface.php',
@@ -2731,6 +2762,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Field\\FieldDefinitionListenerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Field/FieldDefinitionListenerInterface.php',
         'Drupal\\Core\\Field\\FieldException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Field/FieldException.php',
         'Drupal\\Core\\Field\\FieldFilteredMarkup' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Field/FieldFilteredMarkup.php',
+        'Drupal\\Core\\Field\\FieldInputValueNormalizerTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Field/FieldInputValueNormalizerTrait.php',
         'Drupal\\Core\\Field\\FieldItemBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Field/FieldItemBase.php',
         'Drupal\\Core\\Field\\FieldItemInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Field/FieldItemInterface.php',
         'Drupal\\Core\\Field\\FieldItemList' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Field/FieldItemList.php',
@@ -2905,9 +2937,11 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Installer\\Form\\SiteConfigureForm' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/Form/SiteConfigureForm.php',
         'Drupal\\Core\\Installer\\Form\\SiteSettingsForm' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/Form/SiteSettingsForm.php',
         'Drupal\\Core\\Installer\\InstallerKernel' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/InstallerKernel.php',
+        'Drupal\\Core\\Installer\\InstallerModuleExtensionList' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/InstallerModuleExtensionList.php',
         'Drupal\\Core\\Installer\\InstallerRedirectTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/InstallerRedirectTrait.php',
         'Drupal\\Core\\Installer\\InstallerRouteBuilder' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/InstallerRouteBuilder.php',
         'Drupal\\Core\\Installer\\InstallerServiceProvider' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/InstallerServiceProvider.php',
+        'Drupal\\Core\\Installer\\NormalInstallerServiceProvider' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Installer/NormalInstallerServiceProvider.php',
         'Drupal\\Core\\KeyValueStore\\DatabaseStorage' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/KeyValueStore/DatabaseStorage.php',
         'Drupal\\Core\\KeyValueStore\\DatabaseStorageExpirable' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/KeyValueStore/DatabaseStorageExpirable.php',
         'Drupal\\Core\\KeyValueStore\\KeyValueDatabaseExpirableFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/KeyValueStore/KeyValueDatabaseExpirableFactory.php',
@@ -3058,6 +3092,8 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Plugin\\Context\\ContextInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Context/ContextInterface.php',
         'Drupal\\Core\\Plugin\\Context\\ContextProviderInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Context/ContextProviderInterface.php',
         'Drupal\\Core\\Plugin\\Context\\ContextRepositoryInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Context/ContextRepositoryInterface.php',
+        'Drupal\\Core\\Plugin\\Context\\EntityContext' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Context/EntityContext.php',
+        'Drupal\\Core\\Plugin\\Context\\EntityContextDefinition' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Context/EntityContextDefinition.php',
         'Drupal\\Core\\Plugin\\Context\\LazyContextRepository' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Context/LazyContextRepository.php',
         'Drupal\\Core\\Plugin\\DefaultLazyPluginCollection' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/DefaultLazyPluginCollection.php',
         'Drupal\\Core\\Plugin\\DefaultPluginManager' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/DefaultPluginManager.php',
@@ -3073,6 +3109,8 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Plugin\\Discovery\\YamlDiscovery' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Discovery/YamlDiscovery.php',
         'Drupal\\Core\\Plugin\\Discovery\\YamlDiscoveryDecorator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Discovery/YamlDiscoveryDecorator.php',
         'Drupal\\Core\\Plugin\\Factory\\ContainerFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/Factory/ContainerFactory.php',
+        'Drupal\\Core\\Plugin\\FilteredPluginManagerInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/FilteredPluginManagerInterface.php',
+        'Drupal\\Core\\Plugin\\FilteredPluginManagerTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/FilteredPluginManagerTrait.php',
         'Drupal\\Core\\Plugin\\ObjectWithPluginCollectionInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/ObjectWithPluginCollectionInterface.php',
         'Drupal\\Core\\Plugin\\PluginBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/PluginBase.php',
         'Drupal\\Core\\Plugin\\PluginDependencyTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Plugin/PluginDependencyTrait.php',
@@ -3342,6 +3380,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drupal\\Core\\Test\\FunctionalTestSetupTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/FunctionalTestSetupTrait.php',
         'Drupal\\Core\\Test\\HttpClientMiddleware\\TestHttpClientMiddleware' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/HttpClientMiddleware/TestHttpClientMiddleware.php',
         'Drupal\\Core\\Test\\ObjectSerialization' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/ObjectSerialization.php',
+        'Drupal\\Core\\Test\\RefreshVariablesTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/RefreshVariablesTrait.php',
         'Drupal\\Core\\Test\\TestDatabase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/TestDatabase.php',
         'Drupal\\Core\\Test\\TestKernel' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/TestKernel.php',
         'Drupal\\Core\\Test\\TestRunnerKernel' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/TestRunnerKernel.php',
@@ -3625,7 +3664,6 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Drush\\Runtime\\RedispatchHook' => __DIR__ . '/..' . '/drush/drush/src/Runtime/RedispatchHook.php',
         'Drush\\Runtime\\Runtime' => __DIR__ . '/..' . '/drush/drush/src/Runtime/Runtime.php',
         'Drush\\Runtime\\TildeExpansionHook' => __DIR__ . '/..' . '/drush/drush/src/Runtime/TildeExpansionHook.php',
-        'Drush\\SiteAlias\\AliasRecord' => __DIR__ . '/..' . '/consolidation/site-alias/src/legacy/AliasRecord.php',
         'Drush\\SiteAlias\\HostPath' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/HostPath.php',
         'Drush\\SiteAlias\\LegacyAliasConverter' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/LegacyAliasConverter.php',
         'Drush\\SiteAlias\\SiteAliasFileLoader' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/SiteAliasFileLoader.php',
@@ -4369,6 +4407,8 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'PhpParser\\Builder\\Namespace_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder/Namespace_.php',
         'PhpParser\\Builder\\Param' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder/Param.php',
         'PhpParser\\Builder\\Property' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder/Property.php',
+        'PhpParser\\Builder\\TraitUse' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder/TraitUse.php',
+        'PhpParser\\Builder\\TraitUseAdaptation' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder/TraitUseAdaptation.php',
         'PhpParser\\Builder\\Trait_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder/Trait_.php',
         'PhpParser\\Builder\\Use_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder/Use_.php',
         'PhpParser\\Comment' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Comment.php',
@@ -4796,7 +4836,6 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Robo\\ResultData' => __DIR__ . '/..' . '/consolidation/robo/src/ResultData.php',
         'Robo\\Robo' => __DIR__ . '/..' . '/consolidation/robo/src/Robo.php',
         'Robo\\Runner' => __DIR__ . '/..' . '/consolidation/robo/src/Runner.php',
-        'Robo\\SelfUpdateCommand' => __DIR__ . '/..' . '/consolidation/robo/src/SelfUpdateCommand.php',
         'Robo\\State\\Consumer' => __DIR__ . '/..' . '/consolidation/robo/src/State/Consumer.php',
         'Robo\\State\\Data' => __DIR__ . '/..' . '/consolidation/robo/src/State/Data.php',
         'Robo\\State\\StateAwareInterface' => __DIR__ . '/..' . '/consolidation/robo/src/State/StateAwareInterface.php',
@@ -4899,14 +4938,13 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Robo\\Task\\Vcs\\loadShortcuts' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Vcs/loadShortcuts.php',
         'Robo\\Task\\Vcs\\loadTasks' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Vcs/loadTasks.php',
         'Robo\\Tasks' => __DIR__ . '/..' . '/consolidation/robo/src/Tasks.php',
-        'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
-        'Seld\\CliPrompt\\CliPrompt' => __DIR__ . '/..' . '/seld/cli-prompt/src/CliPrompt.php',
         'Seld\\JsonLint\\DuplicateKeyException' => __DIR__ . '/..' . '/seld/jsonlint/src/Seld/JsonLint/DuplicateKeyException.php',
         'Seld\\JsonLint\\JsonParser' => __DIR__ . '/..' . '/seld/jsonlint/src/Seld/JsonLint/JsonParser.php',
         'Seld\\JsonLint\\Lexer' => __DIR__ . '/..' . '/seld/jsonlint/src/Seld/JsonLint/Lexer.php',
         'Seld\\JsonLint\\ParsingException' => __DIR__ . '/..' . '/seld/jsonlint/src/Seld/JsonLint/ParsingException.php',
         'Seld\\JsonLint\\Undefined' => __DIR__ . '/..' . '/seld/jsonlint/src/Seld/JsonLint/Undefined.php',
         'Seld\\PharUtils\\Timestamps' => __DIR__ . '/..' . '/seld/phar-utils/src/Timestamps.php',
+        'SelfUpdate\\SelfUpdateCommand' => __DIR__ . '/..' . '/consolidation/self-update/src/SelfUpdateCommand.php',
         'SessionUpdateTimestampHandlerInterface' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
         'Solarium\\Autoloader' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Autoloader.php',
         'Solarium\\Client' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Client.php',
@@ -5229,10 +5267,13 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Sunra\\PhpSimple\\HtmlDomParser' => __DIR__ . '/..' . '/sunra/php-simple-html-dom-parser/Src/Sunra/PhpSimple/HtmlDomParser.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\DiactorosFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/DiactorosFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\Factory\\PsrHttpFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/PsrHttpFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\HttpFoundationFactoryInterface' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/HttpFoundationFactoryInterface.php',
         'Symfony\\Bridge\\PsrHttpMessage\\HttpMessageFactoryInterface' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/HttpMessageFactoryInterface.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\Tests\\Factory\\AbstractHttpMessageFactoryTest' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Tests/Factory/AbstractHttpMessageFactoryTest.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Tests\\Factory\\DiactorosFactoryTest' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Tests/Factory/DiactorosFactoryTest.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Tests\\Factory\\HttpFoundationFactoryTest' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Tests/Factory/HttpFoundationFactoryTest.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\Tests\\Factory\\PsrHttpFactoryTest' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Tests/Factory/PsrHttpFactoryTest.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Tests\\Fixtures\\Message' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Tests/Fixtures/Message.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Tests\\Fixtures\\Response' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Tests/Fixtures/Response.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Tests\\Fixtures\\ServerRequest' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Tests/Fixtures/ServerRequest.php',
@@ -5916,6 +5957,7 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
         'Symfony\\Component\\HttpKernel\\HttpCache\\Ssi' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/Ssi.php',
         'Symfony\\Component\\HttpKernel\\HttpCache\\Store' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/Store.php',
         'Symfony\\Component\\HttpKernel\\HttpCache\\StoreInterface' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/StoreInterface.php',
+        'Symfony\\Component\\HttpKernel\\HttpCache\\SubRequestHandler' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/SubRequestHandler.php',
         'Symfony\\Component\\HttpKernel\\HttpCache\\SurrogateInterface' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/SurrogateInterface.php',
         'Symfony\\Component\\HttpKernel\\HttpKernel' => __DIR__ . '/..' . '/symfony/http-kernel/HttpKernel.php',
         'Symfony\\Component\\HttpKernel\\HttpKernelInterface' => __DIR__ . '/..' . '/symfony/http-kernel/HttpKernelInterface.php',
@@ -7066,10 +7108,10 @@ class ComposerStaticInit5d73f8a1db771565f495a00acb914496
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5d73f8a1db771565f495a00acb914496::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5d73f8a1db771565f495a00acb914496::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit5d73f8a1db771565f495a00acb914496::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit5d73f8a1db771565f495a00acb914496::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$classMap;
 
         }, null, ClassLoader::class);
     }

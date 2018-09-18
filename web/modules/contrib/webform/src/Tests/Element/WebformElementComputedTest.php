@@ -80,7 +80,8 @@ class WebformElementComputedTest extends WebformElementTestBase {
     $data = $webform_submission->getData();
 
     // Check value stored in the database.
-    $this->assertEqual($data['webform_computed_token_store'], 'This is a string');
+    $this->debug($data['webform_computed_token_store']);
+    $this->assertEqual($data['webform_computed_token_store'], "sid: $sid");
 
     // Check values not stored in the database.
     $this->assert(!isset($data['webform_computed_token_auto']));
@@ -88,6 +89,15 @@ class WebformElementComputedTest extends WebformElementTestBase {
     $this->assert(!isset($data['webform_computed_token_text']));
 
     /* Twig */
+
+    // Get computed Twig form.
+    $this->drupalGet('webform/test_element_computed_twig');
+
+    // Check Twig trim.
+    $this->assertFieldByName('webform_computed_twig_trim', '<em>This is trimmed</em>  <br/>');
+
+    // Check Twig spaceless.
+    $this->assertFieldByName('webform_computed_twig_spaceless', '<em>This is spaceless</em><br/>');
 
     // Get computed Twig preview.
     $this->drupalPostForm('webform/test_element_computed_twig', [], t('Preview'));

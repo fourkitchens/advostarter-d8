@@ -24,13 +24,13 @@ use Drupal\webform\WebformSubmissionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
+use Drupal\webform\Plugin\WebformElementEntityReferenceInterface;
 use Drupal\webform\WebformLibrariesManagerInterface;
 use Drupal\webform\WebformTokenManagerInterface;
-
 /**
  * Provides a base class webform 'managed_file' elements.
  */
-abstract class WebformManagedFileBase extends WebformElementBase {
+abstract class WebformManagedFileBase extends WebformElementBase implements WebformElementEntityReferenceInterface {
 
   /**
    * List of blacklisted mime types that must be downloaded.
@@ -212,7 +212,7 @@ abstract class WebformManagedFileBase extends WebformElementBase {
       $scheme_options = static::getVisibleStreamWrappers();
       $uri_scheme = $this->getUriScheme($element);
       if (!isset($scheme_options[$uri_scheme]) && $this->currentUser->hasPermission('administer webform')) {
-        drupal_set_message($this->t('The \'File\' element is unavailable because a <a href="https://www.ostraining.com/blog/drupal/creating-drupal-8-private-file-system/">private files directory</a> has not been configured and public file uploads have not been enabled. For more information see: <a href="https://www.drupal.org/psa-2016-003">DRUPAL-PSA-2016-003</a>'), 'warning');
+        $this->messenger()->addWarning($this->t('The \'File\' element is unavailable because a <a href="https://www.ostraining.com/blog/drupal/creating-drupal-8-private-file-system/">private files directory</a> has not been configured and public file uploads have not been enabled. For more information see: <a href="https://www.drupal.org/psa-2016-003">DRUPAL-PSA-2016-003</a>'));
         $context = [
           'link' => Link::fromTextAndUrl($this->t('Edit'), UrlGenerator::fromRoute('<current>'))->toString(),
         ];
@@ -981,6 +981,35 @@ abstract class WebformManagedFileBase extends WebformElementBase {
       unset($stream_wrappers['public']);
     }
     return $stream_wrappers;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTargetType(array $element) {
+    return 'file';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTargetEntity(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    $value = $this->getValue($element, $webform_submission, $options);
+    if (empty($value)) {
+      return NULL;
+    }
+    return $this->getFile($element, $value, $options);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTargetEntities(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    $value = $this->getValue($element, $webform_submission, $options);
+    if (empty($value)) {
+      return NULL;
+    }
+    return $this->getFiles($element, $value, $options);
   }
 
 }

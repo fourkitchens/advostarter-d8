@@ -6,6 +6,7 @@ dependencies:
       - webform_examples
 open: null
 close: null
+weight: 0
 uid: null
 template: false
 archive: false
@@ -66,11 +67,11 @@ elements: |
         1: One
         2: Two
         3: Three
-        other: Other...
+        other: Other…
     select_other:
       '#type': textfield
       '#attributes':
-        placeholder: 'Enter other...'
+        placeholder: 'Enter other…'
       '#states':
         visible:
           ':input[name="select"]':
@@ -93,7 +94,7 @@ elements: |
     select_multiple_other:
       '#type': textfield
       '#attributes':
-        placeholder: 'Enter other...'
+        placeholder: 'Enter other…'
       '#states':
         visible:
           - ':input[name="select_multiple"]':
@@ -118,11 +119,11 @@ elements: |
         1: One
         2: Two
         3: Three
-        other: Other...
+        other: Other…
     radios_other:
       '#type': textfield
       '#attributes':
-        placeholder: 'Enter other...'
+        placeholder: 'Enter other…'
       '#states':
         visible:
           ':input[name="radios"]':
@@ -190,6 +191,7 @@ elements: |
         readonly:
           ':input[name="readonly_checkbox"]':
             checked: true
+  
 css: ''
 javascript: ''
 settings:
@@ -220,14 +222,20 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
   submission_user_duplicate: false
-  submission_login: false
-  submission_login_message: ''
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
   previous_submission_message: ''
@@ -238,7 +246,9 @@ settings:
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''

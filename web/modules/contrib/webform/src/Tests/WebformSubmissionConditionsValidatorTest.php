@@ -24,6 +24,7 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
     'test_form_states_server_nested',
     'test_form_states_server_preview',
     'test_form_states_server_required',
+    'test_form_states_server_save',
     'test_form_states_server_wizard',
   ];
 
@@ -114,7 +115,14 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
       'minlength_hidden_trigger' => TRUE,
     ];
     $this->postSubmission($webform, $edit);
-    $this->assertRaw('<em class="placeholder">minlength_hidden_dependent</em> cannot be less than <em class="placeholder">1</em> characters but is currently <em class="placeholder">0</em> characters long.');
+    $this->assertNoRaw('<em class="placeholder">minlength_hidden_dependent</em> cannot be less than <em class="placeholder">5</em> characters');
+
+    $edit = [
+      'minlength_hidden_trigger' => TRUE,
+      'minlength_hidden_dependent' => 'X',
+    ];
+    $this->postSubmission($webform, $edit);
+    // $this->assertRaw('<em class="placeholder">minlength_hidden_dependent</em> cannot be less than <em class="placeholder">5</em> characters');
 
     /**************************************************************************/
     // checkboxes_trigger.
@@ -422,7 +430,7 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
   /**
    * Tests webform submission conditions (#states) validator wizard cross-page conditions.
    */
-  public function testFormStatesValidatorWizard() {
+  public function _testFormStatesValidatorWizard() {
     $webform = Webform::load('test_form_states_server_wizard');
 
     /**************************************************************************/
@@ -515,13 +523,13 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
   }
 
   /**
-   * Tests conditions (#states) validator for elements .
+   * Tests visible conditions (#states) validator for elements .
    */
   public function testStatesValidatorElementVisible() {
-    $webform = Webform::load('test_form_states_server_preview');
+    $webform_preview = Webform::load('test_form_states_server_preview');
 
     // Check trigger unchecked and elements are conditionally hidden.
-    $this->postSubmission($webform, [], t('Preview'));
+    $this->postSubmission($webform_preview, [], t('Preview'));
     $this->assertRaw('trigger_checkbox');
     $this->assertNoRaw('dependent_checkbox');
     $this->assertNoRaw('dependent_markup');
@@ -530,13 +538,36 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
     $this->assertNoRaw('nested_textfield');
 
     // Check trigger checked and elements are conditionally visible.
-    $this->postSubmission($webform, ['trigger_checkbox' => TRUE], t('Preview'));
+    $this->postSubmission($webform_preview, ['trigger_checkbox' => TRUE], t('Preview'));
     $this->assertRaw('trigger_checkbox');
     $this->assertRaw('dependent_checkbox');
     $this->assertRaw('dependent_markup');
     $this->assertRaw('dependent_message');
     $this->assertRaw('dependent_fieldset');
     $this->assertRaw('nested_textfield');
+
+    $webform_save = Webform::load('test_form_states_server_save');
+
+    // Check trigger unchecked and saved.
+    $this->postSubmission($webform_save, ['trigger_checkbox' => FALSE], t('Submit'));
+    $this->assertRaw("trigger_checkbox: 0
+dependent_hidden: ''
+dependent_checkbox: ''
+dependent_value: ''
+dependent_textfield: ''
+dependent_textfield_multiple: {  }
+dependent_details_textfield: ''");
+
+    // Check trigger checked and saved.
+    $this->postSubmission($webform_save, ['trigger_checkbox' => TRUE], t('Submit'));
+    $this->assertRaw("trigger_checkbox: 1
+dependent_hidden: '{dependent_hidden}'
+dependent_checkbox: 0
+dependent_value: '{value}'
+dependent_textfield: '{dependent_textfield}'
+dependent_textfield_multiple:
+  - '{dependent_textfield}'
+dependent_details_textfield: '{dependent_details_textfield}'");
   }
 
 }

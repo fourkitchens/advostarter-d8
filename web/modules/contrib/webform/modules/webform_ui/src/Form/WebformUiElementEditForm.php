@@ -18,6 +18,11 @@ class WebformUiElementEditForm extends WebformUiElementFormBase {
   /**
    * {@inheritdoc}
    */
+  protected $operation = 'update';
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state, WebformInterface $webform = NULL, $key = NULL, $parent_key = NULL, $type = NULL) {
     $this->element = $webform->getElementDecoded($key);
     if ($this->element === NULL) {
@@ -69,7 +74,8 @@ class WebformUiElementEditForm extends WebformUiElementFormBase {
 
     // WORKAROUND:
     // Create a hidden link that is clicked using jQuery.
-    if ($this->isDialog()) {
+    // @see \Drupal\webform_ui\Form\WebformUiElementFormBase::buildDefaultValueForm
+    if ($this->isDialog() && !$form_state->get('default_value_element')) {
       $form['delete'] = [
         '#type' => 'link',
         '#title' => $this->t('Delete'),

@@ -6,6 +6,7 @@ dependencies:
       - webform_templates
 open: null
 close: null
+weight: 0
 uid: null
 template: true
 archive: false
@@ -16,7 +17,7 @@ category: ''
 elements: |
   information:
     '#title': 'Your Information'
-    '#type': fieldset
+    '#type': webform_section
     first_name:
       '#title': 'First Name'
       '#type': textfield
@@ -32,7 +33,7 @@ elements: |
       '#required': true
   contact_information:
     '#title': 'Contact Information'
-    '#type': fieldset
+    '#type': webform_section
     contact:
       '#type': webform_contact
       '#title': Contact
@@ -41,7 +42,7 @@ elements: |
       '#company__access': false
   resume:
     '#title': 'Your Resume'
-    '#type': fieldset
+    '#type': webform_section
     resume_method:
       '#type': radios
       '#options':
@@ -82,6 +83,7 @@ elements: |
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': Apply
+  
 css: ''
 javascript: ''
 settings:
@@ -112,14 +114,20 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
   submission_user_duplicate: false
-  submission_login: false
-  submission_login_message: ''
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
   previous_submission_message: ''
@@ -130,7 +138,9 @@ settings:
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -244,6 +254,7 @@ handlers:
       html: true
       attachments: false
       twig: false
+      theme: ''
       debug: false
       reply_to: ''
       return_path: ''

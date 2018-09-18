@@ -90,12 +90,47 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
   const CONFIRMATION_DEFAULT = 'default';
 
   /**
+   * Webform confirmation none.
+   */
+  const CONFIRMATION_NONE = 'none';
+
+  /**
+   * Display standard 403 access denied page.
+   */
+  const ACCESS_DENIED_DEFAULT = 'default';
+
+  /**
+   * Display customized access denied message.
+   */
+  const ACCESS_DENIED_MESSAGE = 'message';
+
+  /**
+   * Display customized 403 access denied page.
+   */
+  const ACCESS_DENIED_PAGE = 'page';
+
+  /**
+   * Redirect to user login with custom message.
+   */
+  const ACCESS_DENIED_LOGIN = 'login';
+
+  /**
    * Returns the webform's (original) langcode.
    *
    * @return string
    *   The webform's (original) langcode.
    */
   public function getLangcode();
+
+  /**
+   * Returns the webform's weight.
+   *
+   * Only applies to when multiple webforms are attached to a single node.
+   *
+   * @return int
+   *   The webform's weight.
+   */
+  public function getWeight();
 
   /**
    * Determine if the webform has page or is attached to other entities.
@@ -466,18 +501,18 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
   public function setPropertyOverride($property_name, $value);
 
   /**
-   * Returns the webform access controls.
+   * Returns the webform access rules.
    *
    * @return array
-   *   A structured array containing all the webform access controls.
+   *   A structured array containing all the webform access rules.
    */
   public function getAccessRules();
 
   /**
-   * Sets the webform access.
+   * Sets the webform access rules.
    *
    * @param array $access
-   *   The structured array containing all the webform access controls.
+   *   The structured array containing all the webform access rules.
    *
    * @return $this
    */
@@ -492,10 +527,10 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
   public static function getDefaultSettings();
 
   /**
-   * Returns the webform default access controls.
+   * Returns the webform default access rules.
    *
    * @return array
-   *   A structured array containing all the webform default access controls.
+   *   A structured array containing all the webform default access rules.
    */
   public static function getDefaultAccessRules();
 
@@ -790,7 +825,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Invoke a handlers method.
    *
    * @param string $method
-   *   The handle method to be invoked.
+   *   The handler method to be invoked.
    * @param mixed $data
    *   The argument to passed by reference to the handler method.
    * @param mixed $context1
@@ -804,7 +839,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Invoke elements method.
    *
    * @param string $method
-   *   The handle method to be invoked.
+   *   The handler method to be invoked.
    * @param mixed $data
    *   The argument to passed by reference to the handler method.
    * @param mixed $context1

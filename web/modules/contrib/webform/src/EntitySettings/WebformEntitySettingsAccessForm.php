@@ -18,14 +18,14 @@ class WebformEntitySettingsAccessForm extends WebformEntitySettingsBaseForm {
 
     $access = $webform->getAccessRules();
     $permissions = [
-      'create' => $this->t('Create webform submissions'),
-      'view_any' => $this->t('View all webform submissions'),
-      'update_any' => $this->t('Update all webform submissions'),
-      'delete_any' => $this->t('Delete all webform submissions'),
-      'purge_any' => $this->t('Purge all webform submissions'),
-      'view_own' => $this->t('View own webform submissions'),
-      'update_own' => $this->t('Update own webform submissions'),
-      'delete_own' => $this->t('Delete own webform submissions'),
+      'create' => $this->t('Create submissions'),
+      'view_any' => $this->t('View any submissions'),
+      'update_any' => $this->t('Update any submissions'),
+      'delete_any' => $this->t('Delete any submissions'),
+      'purge_any' => $this->t('Purge any submissions'),
+      'view_own' => $this->t('View own submissions'),
+      'update_own' => $this->t('Update own submissions'),
+      'delete_own' => $this->t('Delete own submissions'),
       'administer' => $this->t('Administer webform &amp; submissions'),
       'test' => $this->t('Test webform'),
     ];
