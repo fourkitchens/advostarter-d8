@@ -62,6 +62,18 @@ if ($config['server_environment'] == 'live' && php_sapi_name() != "cli") {
   // ...
 }
 
+// Get rid of the thousands of attempted WP hacks from the logs.
+if (
+  php_sapi_name() != 'cli'
+  && !empty($_SERVER["REQUEST_URI"])
+  && ($request_9 = substr($_SERVER["REQUEST_URI"], 0, 9))
+  && in_array($request_9, ['/wp-conte', '/wp-admin', '/wp-login', '/wp-post.', '/wp-inclu'])
+) {
+  header($_SERVER["SERVER_PROTOCOL"]." 418 I'm a teapot");
+  echo 'I\'m a teapot.';
+  exit();
+}
+
 // Require HTTPS.
 if (
   $config['server_environment'] != 'local' &&
