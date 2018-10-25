@@ -4,7 +4,6 @@
  */
 
 (function ($, Drupal) {
-  console.log("teST");
 
   /**
    * Attach a behavior to initialize the redoc.
@@ -29,7 +28,6 @@
       var $redocElem = $('redoc');
       // If url is set, then redoc should initialize properly.
       var url = $redocElem.attr('spec-url');
-        console.log(url);
       if (url === undefined) {
         var spec = $redocElem.attr('spec');
         if (spec !== undefined) {

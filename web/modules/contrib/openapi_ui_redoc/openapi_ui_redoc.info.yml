@@ -6,8 +6,8 @@ package: OpenAPI
 dependencies:
   - openapi_ui:openapi_ui
 
-# Information added by Drupal.org packaging script on 2018-07-22
-version: '8.x-1.0-rc1'
+# Information added by Drupal.org packaging script on 2018-09-28
+version: '8.x-1.0-rc2'
 core: '8.x'
 project: 'openapi_ui_redoc'
-datestamp: 1532303888
+datestamp: 1538143683

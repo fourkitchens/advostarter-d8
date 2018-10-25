@@ -565,7 +565,6 @@ function install_ensure_config_directory($type) {
  *   The list of modules to install.
  */
 function drupal_verify_profile($install_state) {
-  $profile = $install_state['parameters']['profile'];
   $info = $install_state['profile_info'];
 
   // Get the list of available modules for the selected installation profile.

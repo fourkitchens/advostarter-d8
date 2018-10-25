@@ -27,6 +27,7 @@ class ReDoc extends OpenApiUi {
       '#tag' => 'redoc',
       '#attributes' => [
         'id' => 'redoc-ui',
+        'no-auto-auth' => TRUE,
       ],
       '#attached' => [
         'library' => [
