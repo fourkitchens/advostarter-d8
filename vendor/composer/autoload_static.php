@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
+class ComposerStaticInitc84df63bddcd0f788347fb1436ad26c2
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -149,6 +149,7 @@ class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
             'Drush\\Internal\\' => 15,
             'Drush\\' => 6,
             'Drupal\\redis\\' => 13,
+            'Drupal\\Tests\\lightning_core\\' => 28,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
             'Drupal\\Console\\Core\\' => 20,
@@ -448,6 +449,10 @@ class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
         'Drupal\\redis\\' => 
         array (
             0 => __DIR__ . '/../..' . '/web/modules/contrib/redis/src',
+        ),
+        'Drupal\\Tests\\lightning_core\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src',
         ),
         'Drupal\\Driver\\' => 
         array (
@@ -1071,6 +1076,7 @@ class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
         'Composer\\Repository\\Vcs\\SvnDriver' => __DIR__ . '/..' . '/composer/composer/src/Composer/Repository/Vcs/SvnDriver.php',
         'Composer\\Repository\\Vcs\\VcsDriver' => __DIR__ . '/..' . '/composer/composer/src/Composer/Repository/Vcs/VcsDriver.php',
         'Composer\\Repository\\Vcs\\VcsDriverInterface' => __DIR__ . '/..' . '/composer/composer/src/Composer/Repository/Vcs/VcsDriverInterface.php',
+        'Composer\\Repository\\VersionCacheInterface' => __DIR__ . '/..' . '/composer/composer/src/Composer/Repository/VersionCacheInterface.php',
         'Composer\\Repository\\WritableArrayRepository' => __DIR__ . '/..' . '/composer/composer/src/Composer/Repository/WritableArrayRepository.php',
         'Composer\\Repository\\WritableRepositoryInterface' => __DIR__ . '/..' . '/composer/composer/src/Composer/Repository/WritableRepositoryInterface.php',
         'Composer\\Script\\CommandEvent' => __DIR__ . '/..' . '/composer/composer/src/Composer/Script/CommandEvent.php',
@@ -1279,6 +1285,7 @@ class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
         'Consolidation\\SiteAlias\\SiteAliasManagerAwareTrait' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasManagerAwareTrait.php',
         'Consolidation\\SiteAlias\\SiteAliasName' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasName.php',
         'Consolidation\\SiteAlias\\SiteSpecParser' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteSpecParser.php',
+        'Consolidation\\SiteAlias\\Util\\FsUtils' => __DIR__ . '/..' . '/consolidation/site-alias/src/Util/FsUtils.php',
         'Consolidation\\SiteAlias\\Util\\YamlDataFileLoader' => __DIR__ . '/..' . '/consolidation/site-alias/src/Util/YamlDataFileLoader.php',
         'Defuse\\Crypto\\Core' => __DIR__ . '/..' . '/defuse/php-encryption/src/Core.php',
         'Defuse\\Crypto\\Crypto' => __DIR__ . '/..' . '/defuse/php-encryption/src/Crypto.php',
@@ -3642,6 +3649,23 @@ class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
         'Drupal\\Sniffs\\WhiteSpace\\ScopeIndentSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/WhiteSpace/ScopeIndentSniff.php',
         'Drupal\\Sniffs\\WhiteSpace\\ScopeIndentUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Test/WhiteSpace/ScopeIndentUnitTest.php',
         'Drupal\\Test\\CoderSniffUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Test/CoderSniffUnitTest.php',
+        'Drupal\\Tests\\lightning_core\\ExistingSite\\ContentOverviewTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/ExistingSite/ContentOverviewTest.php',
+        'Drupal\\Tests\\lightning_core\\ExistingSite\\ContentRoleFormTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/ExistingSite/ContentRoleFormTest.php',
+        'Drupal\\Tests\\lightning_core\\FixtureBase' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/FixtureBase.php',
+        'Drupal\\Tests\\lightning_core\\FixtureContext' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/FixtureContext.php',
+        'Drupal\\Tests\\lightning_core\\Functional\\Update\\Update8006Test' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Functional/Update/Update8006Test.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\Access\\AdministrativeRoleCheckTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Kernel/Access/AdministrativeRoleCheckTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\ElementTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Kernel/ElementTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\EntityDescriptionTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Kernel/EntityDescriptionTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\ModuleInstallTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Kernel/ModuleInstallTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\UpdateManagerTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Kernel/UpdateManagerTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\Update\\Update8006Test' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Kernel/Update/Update8006Test.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\Update\\Update8007Test' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Kernel/Update/Update8007Test.php',
+        'Drupal\\Tests\\lightning_core\\Unit\\DisplayHelperTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Unit/DisplayHelperTest.php',
+        'Drupal\\Tests\\lightning_core\\Unit\\ElementTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Unit/ElementTest.php',
+        'Drupal\\Tests\\lightning_core\\Unit\\TestUpdateHandler' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
+        'Drupal\\Tests\\lightning_core\\Unit\\TestUpdateManager' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
+        'Drupal\\Tests\\lightning_core\\Unit\\UpdateManagerTest' => __DIR__ . '/../..' . '/web/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
         'Drupal\\bad\\BadUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Test/bad/BadUnitTest.php',
         'Drupal\\good\\GoodUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Test/good/GoodUnitTest.php',
         'Drupal\\random\\bunny_hat\\long\\namingspace\\wtf\\still\\going\\strong\\LongNamespace' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Test/good/LongNamespace.php',
@@ -6996,10 +7020,10 @@ class ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit5aa6f88662c0886f1e675d4f5d0d64b7::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitc84df63bddcd0f788347fb1436ad26c2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitc84df63bddcd0f788347fb1436ad26c2::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitc84df63bddcd0f788347fb1436ad26c2::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitc84df63bddcd0f788347fb1436ad26c2::$classMap;
 
         }, null, ClassLoader::class);
     }

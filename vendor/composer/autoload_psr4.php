@@ -71,6 +71,7 @@ return array(
     'Drush\\Internal\\' => array($vendorDir . '/drush/drush/internal-copy'),
     'Drush\\' => array($vendorDir . '/drush/drush/src'),
     'Drupal\\redis\\' => array($baseDir . '/web/modules/contrib/redis/src'),
+    'Drupal\\Tests\\lightning_core\\' => array($baseDir . '/web/modules/contrib/lightning_core/tests/src'),
     'Drupal\\Driver\\' => array($baseDir . '/web/drivers/lib/Drupal/Driver'),
     'Drupal\\Core\\' => array($baseDir . '/web/core/lib/Drupal/Core'),
     'Drupal\\Console\\Core\\' => array($vendorDir . '/drupal/console-core/src'),
