@@ -2,10 +2,10 @@ name: advostarter-d-8
 recipe: drupal8
 config:
   webroot: web
-  php: 7.1
+  php: 7.2
 tooling:
   push: disabled
   drush:
-    cmd:
-      - "drush"
-      - "--root=/app/web"
+    service: appserver
+    cmd: drush --root=/app/web
+
