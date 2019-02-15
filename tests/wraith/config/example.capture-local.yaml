@@ -1,0 +1,32 @@
+#####
+#
+# Copy this file to capture-local.yaml before making any changes.
+#
+#####
+
+# Import the main config file.  Our overrides are below.
+imports: "capture-quick.yaml"
+# Alternatively, if you want to run the more thorough test:
+#imports: "capture.yaml"
+
+# (required) The domains to take screenshots of.
+domains:
+  # Test any two domains.
+  #
+  # * If the multi-dev is protected with HTTP authentication then use the format:
+  #    "https://{username}:{password}@test-aclu-d7.pantheonsite.io"
+  # * If one of the domains is a local Lando site, then
+  #    * As of v3.0.0-beta.35, you can't use HTTPS.
+  #    * The domain must be "edge"
+  #       "http://edge"
+  multidev:  "https://zd1374-advomatic.pantheonsite.io"
+  local:     "http://edge"
+
+# You may override the "fuzz" configured in the main config file.
+# A higher fuzz makes the comparison less strict.
+#fuzz: '10%'
+
+# To only test a single path, rather than the list of paths in the imported
+# config file, add it here:
+#paths:
+#  kyr-slider: /know-your-rights/what-do-if-questioned-about-your-immigration-status?splash=off

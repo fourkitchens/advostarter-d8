@@ -1,0 +1,54 @@
+##############################################################
+##############################################################
+#
+# `wraith capture capture.yaml`
+#
+##############################################################
+##############################################################
+
+# (required) The engine to run Wraith with. Examples: 'phantomjs', 'casperjs', 'slimerjs'
+browser: "phantomjs"
+
+# (required) The domains to take screenshots of.
+domains:
+  # to test against an environment that is password-protected, use the following as 'current' below:
+  #  "https://{username}:{password}@test-aclu-d7.pantheonsite.io
+  test-site:  "https://test-advomatic.pantheonsite.io"
+  multi-dev:  "https://dev-advomatic.pantheonsite.io"
+
+# (required) The paths to capture. All paths should exist for both of the domains specified above.
+paths:
+  home:                           /
+
+# (required) Screen widths (and optional height) to resize the browser to before taking the screenshot.
+# @todo Looks like we need to manually specify a height here due to https://github.com/BBC-News/wraith/issues/318
+screen_widths:
+  - 320x5000
+  - 768x5000
+  - 1280x5000
+
+# (optional) JavaScript file to execute before taking screenshot of every path. Default: nil
+before_capture: 'javascript/wait--phantom.js'
+
+# (required) The directory that your screenshots will be stored in
+directory: 'shots'
+
+# (required) Amount of fuzz ImageMagick will use when comparing images. A higher fuzz makes the comparison less strict.
+fuzz: '10%'
+
+# (optional) The maximum acceptable level of difference (in %) between two images before Wraith reports a failure. Default: 0
+# threshold: 5
+
+# (optional) Specify the template (and generated thumbnail sizes) for the gallery output.
+gallery:
+  template: 'basic_template'
+  thumb_width:  200
+  thumb_height: 200
+
+# (optional) Choose which results are displayed in the gallery, and in what order. Default: alphanumeric
+# Options:
+#   alphanumeric - all paths (with or without a difference) are shown, sorted by path
+#   diffs_first - all paths (with or without a difference) are shown
+#   diffs_only - only paths with a difference are shown
+# Note: different screen widths are always grouped together.
+mode: diffs_only

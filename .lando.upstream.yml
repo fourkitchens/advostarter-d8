@@ -3,9 +3,23 @@ recipe: drupal8
 config:
   webroot: web
   php: 7.2
+services:
+  wraithserver:
+    type: ruby:2.3
+    overrides:
+      image: bbcnews/wraith:latest
 tooling:
   push: disabled
   drush:
     service: appserver
     cmd: drush --root=/app/web
-
+  wraith:
+    service: wraithserver
+    description: |
+      Run wraith commands.  E.g.
+        cd tests/wraith
+        lando wraith capture config/capture-local.yaml
+      (create the file first). Or use one of the other config files.
+      See README.md for more info.
+    cmd:
+      - wraith
