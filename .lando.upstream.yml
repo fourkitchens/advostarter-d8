@@ -1,8 +1,8 @@
 name: advostarter-d-8
-recipe: drupal8
+recipe: pantheon
 config:
-  webroot: web
-  php: 7.2
+  framework: drupal
+  env: dev
 services:
   wraithserver:
     type: ruby:2.3
