@@ -4,16 +4,17 @@ namespace Drupal\Tests\jsonapi\Unit\LinkManager;
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\GeneratedUrl;
+use Drupal\Core\Http\Exception\CacheableBadRequestHttpException;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
+use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\LinkManager\LinkManager;
 use Drupal\jsonapi\Query\OffsetPage;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
-use Symfony\Cmf\Component\Routing\ChainRouterInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @coversDefaultClass \Drupal\jsonapi\LinkManager\LinkManager
@@ -35,10 +36,9 @@ class LinkManagerTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
-    $router = $this->prophesize(ChainRouterInterface::class);
     $url_generator = $this->prophesize(UrlGeneratorInterface::class);
     $url_generator->generateFromRoute(Argument::cetera())->willReturnArgument(2);
-    $this->linkManager = new LinkManager($router->reveal(), $url_generator->reveal());
+    $this->linkManager = new LinkManager($url_generator->reveal());
   }
 
   /**
@@ -47,33 +47,36 @@ class LinkManagerTest extends UnitTestCase {
    */
   public function testGetPagerLinks($offset, $size, $has_next_page, $total, $include_count, array $pages) {
     $assembler = $this->prophesize(UnroutedUrlAssemblerInterface::class);
-    $assembler->assemble(Argument::type('string'), Argument::type('array'), FALSE)
+    $assembler->assemble(Argument::type('string'), Argument::type('array'), TRUE)
       ->will(function ($args) {
-        return $args[0] . '?' . UrlHelper::buildQuery($args[1]['query']);
+        return (new GeneratedUrl())->setGeneratedUrl($args[0] . '?' . UrlHelper::buildQuery($args[1]['query']));
       });
 
+    $cache_contexts_manager = $this->getMockBuilder('Drupal\Core\Cache\Context\CacheContextsManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $cache_contexts_manager->method('assertValidTokens')->willReturn(TRUE);
+
     $container = new ContainerBuilder();
+    $container->set('cache_contexts_manager', $cache_contexts_manager);
     $container->set('unrouted_url_assembler', $assembler->reveal());
     \Drupal::setContainer($container);
 
     // Add the extra stuff to the expected query.
     $pages = array_filter($pages);
     $pages = array_map(function ($page) {
-      return 'https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?amet=pax&page%5Boffset%5D=' . $page['offset'] . '&page%5Blimit%5D=' . $page['limit'];
+      return [
+        'href' => 'https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?amet=pax&page%5Boffset%5D=' . $page['offset'] . '&page%5Blimit%5D=' . $page['limit'],
+      ];
     }, $pages);
 
     $request = $this->prophesize(Request::class);
-    // Have the request return the desired page parameter.
-    $page_param = $this->prophesize(OffsetPage::class);
-    $page_param->getOffset()->willReturn($offset);
-    $page_param->getSize()->willReturn($size);
     $request->getUri()->willReturn('https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?amet=pax');
     $request->getBaseUrl()->willReturn('/drupal');
     $request->getPathInfo()->willReturn('');
     $request->getSchemeAndHttpHost()->willReturn('https://example.com');
     $request->getBaseUrl()->willReturn('/drupal');
     $request->getPathInfo()->willReturn('/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72');
-    $request->get('_json_api_params')->willReturn(['page' => $page_param->reveal()]);
     $request->query = new ParameterBag(['amet' => 'pax']);
 
     $context = ['has_next_page' => $has_next_page];
@@ -81,8 +84,11 @@ class LinkManagerTest extends UnitTestCase {
       $context['total_count'] = $total;
     }
 
-    $links = $this->linkManager
-      ->getPagerLinks($request->reveal(), $context);
+    $pager_links = $this->linkManager->getPagerLinks($request->reveal(), new OffsetPage($offset, $size), $context);
+    $mock_context = $this->prophesize(JsonApiDocumentTopLevel::class)->reveal();
+    $links = array_map(function ($links) {
+      return ['href' => reset($links)->getHref()];
+    }, iterator_to_array($pager_links->withContext($mock_context)));
     ksort($pages);
     ksort($links);
     $this->assertSame($pages, $links);
@@ -156,7 +162,7 @@ class LinkManagerTest extends UnitTestCase {
    * @dataProvider getPagerLinksErrorProvider
    */
   public function testGetPagerLinksError($offset, $size, $has_next_page, $total, $include_count, array $pages) {
-    $this->setExpectedException(BadRequestHttpException::class);
+    $this->setExpectedException(CacheableBadRequestHttpException::class);
     $this->testGetPagerLinks($offset, $size, $has_next_page, $total, $include_count, $pages);
   }
 
@@ -183,11 +189,13 @@ class LinkManagerTest extends UnitTestCase {
    */
   public function testGetRequestLink() {
     $assembler = $this->prophesize(UnroutedUrlAssemblerInterface::class);
-    $assembler->assemble(Argument::type('string'), ['external' => TRUE, 'query' => ['dolor' => 'sid']], FALSE)
-      ->will(function ($args) {
-          return $args[0] . '?dolor=sid';
-      })
-      ->shouldBeCalled();
+    $return = function ($query) {
+      return function ($args) use ($query) {
+        return $args[0] . $query;
+      };
+    };
+    $assembler->assemble(Argument::type('string'), ['external' => TRUE, 'query' => ['dolor' => 'sid']], FALSE)->will($return('?dolor=sid'))->shouldBeCalled();
+    $assembler->assemble(Argument::type('string'), ['external' => TRUE], FALSE)->will($return(''))->shouldBeCalled();
 
     $container = new ContainerBuilder();
     $container->set('unrouted_url_assembler', $assembler->reveal());
@@ -201,10 +209,10 @@ class LinkManagerTest extends UnitTestCase {
     $request->getBaseUrl()->willReturn('/drupal');
     $request->getPathInfo()->willReturn('/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72');
 
-    $this->assertSame('https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?dolor=sid', $this->linkManager->getRequestLink($request->reveal(), ['dolor' => 'sid']));
+    $this->assertSame('https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?dolor=sid', $this->linkManager->getRequestLink($request->reveal(), ['dolor' => 'sid'])->toString());
 
     // Get the default query from the request object.
-    $this->assertSame('https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?amet=pax', $this->linkManager->getRequestLink($request->reveal()));
+    $this->assertSame('https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?amet=pax', $this->linkManager->getRequestLink($request->reveal())->toString());
   }
 
 }

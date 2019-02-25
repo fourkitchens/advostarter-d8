@@ -1,11 +1,24 @@
-## 2.7.0
-* Fixed a persistent warning about openapi_redoc not being present in the
-  file system after updating to beta2. (Issue #2996108)
+## 3.4.0
+* Updated Lightning Core to 2.13 or 3.7, which security update Drupal core to
+  8.5.11 and 8.6.10, respectively.
+* Security updated JSON API to 2.3 (SA-CONTRIB-2019-019).
 
-## 2.6.0
-* Updated OpenAPI module to 1.0-beta2, which split out openapi_redoc and
-  openapi_swagger into separate modules (which are now brought in by
-  Composer). (#33)
+## 3.3.0
+* Updated JSON:API to 2.1, which includes support for revisions and file uploads.
+  JSON:API 2.1 release notes are available at https://www.drupal.org/project/jsonapi/releases/8.x-2.1
+  (Issue #2957014)
+
+## 3.2.0
+* Updated Lightning Core to 2.12 or 3.5, which security update Drupal core to
+  8.5.9 and 8.6.6, respectively.
+* Changes were made to the internal testing infrastructure, but nothing that 
+  will affect users of Lightning API.
+
+## 3.1.0
+* Security updated JSON API to 2.0-rc4.
+
+## 3.0.0
+* Updated JSON API to 2.0.
 
 ## 2.5.0
 * Allow Lightning Core 3.x and Drupal core 8.6.x.

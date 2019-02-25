@@ -6,7 +6,7 @@ use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
- * JSON API integration test for the "vocabulary" config entity type.
+ * JSON:API integration test for the "vocabulary" config entity type.
  *
  * @group jsonapi
  */
@@ -59,37 +59,39 @@ class VocabularyTest extends ResourceTestBase {
    */
   protected function getExpectedDocument() {
     $self_url = Url::fromUri('base:/jsonapi/taxonomy_vocabulary/taxonomy_vocabulary/' . $this->entity->uuid())->setAbsolute()->toString(TRUE)->getGeneratedUrl();
-    return [
+    $expected_document = [
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'taxonomy_vocabulary--taxonomy_vocabulary',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'uuid' => $this->entity->uuid(),
-          'vid' => 'llama',
           'langcode' => 'en',
           'status' => TRUE,
           'dependencies' => [],
           'name' => 'Llama',
           'description' => NULL,
-          'hierarchy' => 0,
           'weight' => 0,
+          'drupal_internal__vid' => 'llama',
         ],
       ],
     ];
+    if (floatval(\Drupal::VERSION) < 8.7) {
+      $expected_document['data']['attributes']['hierarchy'] = 0;
+    }
+    return $expected_document;
   }
 
   /**
@@ -104,10 +106,6 @@ class VocabularyTest extends ResourceTestBase {
    */
   protected function getExpectedUnauthorizedAccessMessage($method) {
     if ($method === 'GET') {
-      // @todo Remove this when JSON API requires Drupal 8.5 or newer.
-      if (floatval(\Drupal::VERSION) < 8.5) {
-        return parent::getExpectedUnauthorizedAccessMessage($method);
-      }
       return "The following permissions are required: 'access taxonomy overview' OR 'administer taxonomy'.";
     }
     return parent::getExpectedUnauthorizedAccessMessage($method);

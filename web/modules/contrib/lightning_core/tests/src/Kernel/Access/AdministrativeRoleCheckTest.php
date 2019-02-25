@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Route;
 /**
  * @coversDefaultClass \Drupal\lightning_core\Access\AdministrativeRoleCheck
  *
- * @group lightning
  * @group lightning_core
  */
 class AdministrativeRoleCheckTest extends KernelTestBase {

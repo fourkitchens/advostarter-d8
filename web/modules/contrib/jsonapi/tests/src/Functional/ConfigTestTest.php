@@ -6,7 +6,7 @@ use Drupal\config_test\Entity\ConfigTest;
 use Drupal\Core\Url;
 
 /**
- * JSON API integration test for the "ConfigTest" config entity type.
+ * JSON:API integration test for the "ConfigTest" config entity type.
  *
  * @group jsonapi
  */
@@ -44,6 +44,19 @@ class ConfigTestTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
+  protected function getExpectedUnauthorizedAccessMessage($method) {
+    switch ($method) {
+      case 'GET':
+        return floatval(\Drupal::VERSION >= 8.7) ? "The 'view config_test' permission is required." : '';
+
+      default:
+        return parent::getExpectedUnauthorizedAccessMessage($method);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function createEntity() {
     $config_test = ConfigTest::create([
       'id' => 'llama',
@@ -63,23 +76,21 @@ class ConfigTestTest extends ResourceTestBase {
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'config_test--config_test',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'uuid' => $this->entity->uuid(),
-          'id' => 'llama',
           'weight' => 0,
           'langcode' => 'en',
           'status' => TRUE,
@@ -89,6 +100,7 @@ class ConfigTestTest extends ResourceTestBase {
           'size' => NULL,
           'size_value' => NULL,
           'protected_property' => NULL,
+          'drupal_internal__id' => 'llama',
         ],
       ],
     ];

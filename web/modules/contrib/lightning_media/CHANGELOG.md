@@ -1,3 +1,37 @@
+## 3.6.0
+* The media browser is now displayed in a modal dialog by default, which is
+  activated by pressing the "Add media" button. When embedding media in the
+  WYSIWYG editor, the media browser is unchanged (the entity browser used for
+  WYSIWYG has been split out into a completely separate entity browser
+  configuration in order to facilitate this). (GitHub #80)
+
+## 3.5.0
+* Updated Lightning Core to 3.5, which security updates Drupal core to 8.6.6.
+* Added a configuration option to control whether newly-created media fields 
+  (i.e., entity reference fields which reference media items) will be configured 
+  to use the media browser by default. (Issue #2945153)
+* The "Show in media library" field is no longer translatable by default in any
+  media type included with Lightning Media. (Issue #3014913)
+* Changes were made to the internal testing infrastructure, but nothing that
+  will affect users of Lightning Media.
+
+## 3.4.0
+* Many changes to internal testing infrastructure, but nothing that affects
+  users of Lightning Media.
+
+## 3.3.0
+* Behat test now check for existence of FixtureContext prior to invoking its
+  methods. (Issue #3020990)
+
+## 3.2.0
+* Updated Lightning Core to 3.4.
+* Changed the testing infrastructure, sealed all subcontexts, refactored most
+  of the Behat tests into PHPUnit.
+* Updated Media Entity Instagram to 2.0-alpha2.
+* Added namespaces to dependencies.
+* Warning messages are not double escaped anymore.
+* Updated Entity Browser to 2.0.
+
 ## 3.1.0
 * Added a new component, Media Slideshow, which allows you to create
   slideshows and carousels of assets from your media library using the

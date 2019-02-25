@@ -3,7 +3,7 @@
 namespace Drupal\jsonapi;
 
 /**
- * Defines constants used for compliance with the JSON API specification.
+ * Defines constants used for compliance with the JSON:API specification.
  *
  * @see http://jsonapi.org/format
  *
@@ -61,7 +61,7 @@ class JsonApiSpec {
    *   A member name to validate.
    *
    * @return bool
-   *   Whether the given member name is in compliance with the JSON API
+   *   Whether the given member name is in compliance with the JSON:API
    *   specification.
    *
    * @see http://jsonapi.org/format/#document-member-names
@@ -96,7 +96,14 @@ class JsonApiSpec {
   const RESERVED_QUERY_PARAMETERS = 'filter|sort|page|fields|include';
 
   /**
-   * Gets the reserved (official) JSON API query parameters.
+   * The query parameter for providing a version (revision) value.
+   *
+   * @var string
+   */
+  const VERSION_QUERY_PARAMETER = 'resourceVersion';
+
+  /**
+   * Gets the reserved (official) JSON:API query parameters.
    *
    * @return string[]
    *   Gets the query parameters reserved by the specification.
@@ -124,7 +131,7 @@ class JsonApiSpec {
    *   A custom query parameter name to validate.
    *
    * @return bool
-   *   Whether the given query parameter is in compliane with the JSON API
+   *   Whether the given query parameter is in compliane with the JSON:API
    *   specification.
    *
    * @see http://jsonapi.org/format/#query-parameters

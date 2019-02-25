@@ -2,16 +2,23 @@
 
 namespace Drupal\Tests\jsonapi\Functional;
 
+use Drupal\Component\Serialization\Json;
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\shortcut\Entity\Shortcut;
 use Drupal\shortcut\Entity\ShortcutSet;
+use Drupal\Tests\jsonapi\Traits\CommonCollectionFilterAccessTestPatternsTrait;
+use GuzzleHttp\RequestOptions;
 
 /**
- * JSON API integration test for the "Shortcut" content entity type.
+ * JSON:API integration test for the "Shortcut" content entity type.
  *
  * @group jsonapi
  */
 class ShortcutTest extends ResourceTestBase {
+
+  use CommonCollectionFilterAccessTestPatternsTrait;
 
   /**
    * {@inheritdoc}
@@ -73,23 +80,21 @@ class ShortcutTest extends ResourceTestBase {
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'shortcut--default',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'uuid' => $this->entity->uuid(),
-          'id' => (int) $this->entity->id(),
           'title' => 'Comments',
           'link' => [
             'uri' => 'internal:/user/logout',
@@ -99,6 +104,7 @@ class ShortcutTest extends ResourceTestBase {
           'langcode' => 'en',
           'default_langcode' => TRUE,
           'weight' => -20,
+          'drupal_internal__id' => (int) $this->entity->id(),
         ],
         'relationships' => [
           'shortcut_set' => [
@@ -107,8 +113,8 @@ class ShortcutTest extends ResourceTestBase {
               'id' => ShortcutSet::load('default')->uuid(),
             ],
             'links' => [
-              'related' => $self_url . '/shortcut_set',
-              'self' => $self_url . '/relationships/shortcut_set',
+              'related' => ['href' => $self_url . '/shortcut_set'],
+              'self' => ['href' => $self_url . '/relationships/shortcut_set'],
             ],
           ],
         ],
@@ -159,6 +165,56 @@ class ShortcutTest extends ResourceTestBase {
    */
   public function testPatchIndividual() {
     $this->markTestSkipped('Disabled until https://www.drupal.org/project/drupal/issues/2982060 is fixed.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function testCollectionFilterAccess() {
+    $label_field_name = 'title';
+    // Verify the expected behavior in the common case: default shortcut set.
+    $this->grantPermissionsToTestedRole(['customize shortcut links']);
+    $this->doTestCollectionFilterAccessBasedOnPermissions($label_field_name, 'access shortcuts');
+
+    $alternate_shortcut_set = ShortcutSet::create([
+      'id' => 'alternate',
+      'label' => 'Alternate',
+    ]);
+    $alternate_shortcut_set->save();
+    $this->entity->shortcut_set = $alternate_shortcut_set->id();
+    $this->entity->save();
+
+    $collection_url = Url::fromRoute('jsonapi.entity_test--bar.collection');
+    $collection_filter_url = $collection_url->setOption('query', ["filter[spotlight.$label_field_name]" => $this->entity->label()]);
+    $request_options = [];
+    $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+
+    // No results because the current user does not have access to shortcuts
+    // not in the user's assigned set or the default set.
+    $response = $this->request('GET', $collection_filter_url, $request_options);
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertCount(0, $doc['data']);
+
+    // Assign the alternate shortcut set to the current user.
+    $this->container->get('entity_type.manager')->getStorage('shortcut_set')->assignUser($alternate_shortcut_set, $this->account);
+
+    // 1 result because the alternate shortcut set is now assigned to the
+    // current user.
+    $response = $this->request('GET', $collection_filter_url, $request_options);
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertCount(1, $doc['data']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function getExpectedCollectionCacheability(AccountInterface $account, array $collection, array $sparse_fieldset = NULL, $filtered = FALSE) {
+    $cacheability = parent::getExpectedCollectionCacheability($account, $collection, $sparse_fieldset, $filtered);
+    if ($filtered) {
+      $cacheability->addCacheContexts(['user']);
+    }
+    return $cacheability;
   }
 
 }

@@ -8,13 +8,8 @@ use Drupal\DrupalExtension\Context\MinkContext;
 
 /**
  * Contains step definitions for interacting with Lightning's media browser.
- *
- * @internal
- * This class is part of Lightning's internal testing code. It is not an API and
- * should not be extended. This class will be marked final, and all protected
- * members will be made private, in Lightning Media 3.x.
  */
-class MediaBrowserContext extends DrupalSubContextBase {
+final class MediaBrowserContext extends DrupalSubContextBase {
 
   use AwaitTrait;
 
@@ -64,13 +59,17 @@ class MediaBrowserContext extends DrupalSubContextBase {
    *
    * @param string $button
    *   (optional) The embed button ID.
+   * @param string $browser
+   *   (optional) The entity browser ID.
    */
-  private function openJS($button = 'media_browser') {
+  private function openJS($button = 'media_browser', $browser = 'ckeditor_media_browser') {
     $this
       ->getContext(CkEditorContext::class)
-      ->execute('editdrupalentity', NULL, ['id' => $button]);
+      ->execute('editdrupalentity', NULL, [
+        'id' => $button,
+      ]);
 
-    $frame = $this->awaitElement("iframe[name='entity_browser_iframe_$button']", 30)
+    $frame = $this->awaitElement("iframe[name='entity_browser_iframe_$browser']", 30)
       ->getAttribute('name');
 
     $this->getSession()->switchToIFrame($frame);
@@ -84,10 +83,10 @@ class MediaBrowserContext extends DrupalSubContextBase {
    */
   private function openNoJS($browser_id = 'media_browser') {
     $uuid = $this->assertSession()
-      ->elementExists('named', ['link', 'Select entities'])
+      ->elementExists('named', ['button', 'Add media'])
       ->getAttribute('data-uuid');
 
-    $this->visitPath("/entity-browser/iframe/$browser_id?uuid=$uuid");
+    $this->visitPath("/entity-browser/modal/$browser_id?uuid=$uuid");
   }
 
   /**
@@ -205,7 +204,7 @@ END;
   public function createFromUpload($title, $file) {
     /** @var MinkContext $mink_context */
     $mink_context = $this->getContext(MinkContext::class);
-    $mink_context->assertAtPath('/entity-browser/iframe/media_browser');
+    $mink_context->assertAtPath('/entity-browser/modal/media_browser');
 
     $this->upload($file);
 
@@ -237,7 +236,7 @@ END;
   public function createFromEmbedCode($title, $embed_code) {
     /** @var MinkContext $mink_context */
     $mink_context = $this->getContext(MinkContext::class);
-    $mink_context->assertAtPath('/entity-browser/iframe/media_browser');
+    $mink_context->assertAtPath('/entity-browser/modal/media_browser');
 
     $assert = $this->assertSession();
     $assert->elementExists('named', ['button', 'Create embed'])->press();

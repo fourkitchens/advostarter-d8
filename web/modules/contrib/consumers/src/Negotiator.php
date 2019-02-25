@@ -3,6 +3,8 @@
 namespace Drupal\consumers;
 
 use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityStorageException;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -10,6 +12,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Extracts the consumer information from the given context.
  */
 class Negotiator {
+
+  use LoggerAwareTrait;
 
   /**
    * Protected requestStack.
@@ -50,13 +54,23 @@ class Negotiator {
     $consumer_uuid = $request->headers->get('X-Consumer-ID');
     if (!$consumer_uuid) {
       // 2. Via a query string parameter.
-      $consumer_uuid = $request->query->get('_consumer_id');
+      $consumer_uuid = $request->query->get('consumerId');
+      if (!$consumer_uuid && $request->query->has('_consumer_id')) {
+        $this->logger->warning('The "_consumer_id" query string parameter is deprecated and it will be removed in the next major version of the module, please use "consumer_id" instead.');
+        $consumer_uuid = $request->query->get('_consumer_id');
+      }
     }
     if (!$consumer_uuid) {
       return NULL;
     }
-    /** @var \Drupal\consumers\Entity\Consumer $consumer */
-    $consumer = $this->entityRepository->loadEntityByUuid('consumer', $consumer_uuid);
+    try {
+      /** @var \Drupal\consumers\Entity\Consumer $consumer */
+      $consumer = $this->entityRepository->loadEntityByUuid('consumer', $consumer_uuid);
+    }
+    catch (EntityStorageException $exception) {
+      watchdog_exception('consumers', $exception);
+      return NULL;
+    }
     return $consumer;
   }
 

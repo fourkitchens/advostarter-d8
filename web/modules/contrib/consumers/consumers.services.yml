@@ -2,3 +2,9 @@ services:
   consumer.negotiator:
     class: Drupal\consumers\Negotiator
     arguments: ['@request_stack', '@entity.repository']
+    calls:
+      - [setLogger, ['@logger.channel.consumers']]
+
+  logger.channel.consumers:
+    parent: logger.channel_base
+    arguments: ['consumers']

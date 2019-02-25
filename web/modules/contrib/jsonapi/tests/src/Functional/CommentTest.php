@@ -12,19 +12,19 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\entity_test\Entity\EntityTest;
-use Drupal\Tests\rest\Functional\BcTimestampNormalizerUnixTestTrait;
+use Drupal\Tests\jsonapi\Traits\CommonCollectionFilterAccessTestPatternsTrait;
 use Drupal\user\Entity\User;
 use GuzzleHttp\RequestOptions;
 
 /**
- * JSON API integration test for the "Comment" content entity type.
+ * JSON:API integration test for the "Comment" content entity type.
  *
  * @group jsonapi
  */
 class CommentTest extends ResourceTestBase {
 
-  use BcTimestampNormalizerUnixTestTrait;
   use CommentTestTrait;
+  use CommonCollectionFilterAccessTestPatternsTrait;
 
   /**
    * {@inheritdoc}
@@ -46,10 +46,6 @@ class CommentTest extends ResourceTestBase {
    */
   protected static $patchProtectedFieldNames = [
     'status' => "The 'administer comments' permission is required.",
-    // @todo These are relationships, and cannot be tested in the same way. Fix in https://www.drupal.org/project/jsonapi/issues/2939810.
-    // 'pid' => NULL,
-    // 'entity_id' => NULL,
-    // 'uid' => NULL,
     'name' => "The 'administer comments' permission is required.",
     'homepage' => "The 'administer comments' permission is required.",
     'created' => "The 'administer comments' permission is required.",
@@ -57,6 +53,10 @@ class CommentTest extends ResourceTestBase {
     'thread' => NULL,
     'entity_type' => NULL,
     'field_name' => NULL,
+    // @todo Uncomment this after https://www.drupal.org/project/drupal/issues/1847608 lands. Until then, it's impossible to test this.
+    // 'pid' => NULL,
+    'uid' => "The 'administer comments' permission is required.",
+    'entity_id' => NULL,
   ];
 
   /**
@@ -65,6 +65,20 @@ class CommentTest extends ResourceTestBase {
    * @var \Drupal\comment\CommentInterface
    */
   protected $entity;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+
+    // @todo Remove this when only Drupal >= 8.7 is supported; validation order changed in 8.7.
+    if (floatval(\Drupal::VERSION) < 8.7) {
+      $tmp = static::$patchProtectedFieldNames['uid'];
+      unset(static::$patchProtectedFieldNames['uid']);
+      static::$patchProtectedFieldNames['uid'] = $tmp;
+    }
+  }
 
   /**
    * {@inheritdoc}
@@ -119,7 +133,7 @@ class CommentTest extends ResourceTestBase {
     ]);
     $comment->setSubject('Llama')
       ->setOwnerId($this->account->id())
-      ->setPublished(TRUE)
+      ->setPublished()
       ->setCreatedTime(123456789)
       ->setChangedTime(123456789);
     $comment->save();
@@ -133,32 +147,27 @@ class CommentTest extends ResourceTestBase {
   protected function getExpectedDocument() {
     $self_url = Url::fromUri('base:/jsonapi/comment/comment/' . $this->entity->uuid())->setAbsolute()->toString(TRUE)->getGeneratedUrl();
     $author = User::load($this->entity->getOwnerId());
-    $document = [
+    return [
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'comment--comment',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'cid' => 1,
-          'created' => 123456789,
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          /* 'created' => $this->formatExpectedTimestampItemValues(123456789), */
-          'changed' => $this->entity->getChangedTime(),
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          /* 'changed' => $this->formatExpectedTimestampItemValues($this->entity->getChangedTime()), */
+          'created' => '1973-11-29T21:33:09+00:00',
+          'changed' => (new \DateTime())->setTimestamp($this->entity->getChangedTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339),
           'comment_body' => [
             'value' => 'The name "llama" was adopted by European settlers from native Peruvians.',
             'format' => 'plain_text',
@@ -173,7 +182,7 @@ class CommentTest extends ResourceTestBase {
           'status' => TRUE,
           'subject' => 'Llama',
           'thread' => '01/',
-          'uuid' => $this->entity->uuid(),
+          'drupal_internal__cid' => 1,
         ],
         'relationships' => [
           'uid' => [
@@ -182,8 +191,8 @@ class CommentTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => $self_url . '/uid',
-              'self' => $self_url . '/relationships/uid',
+              'related' => ['href' => $self_url . '/uid'],
+              'self' => ['href' => $self_url . '/relationships/uid'],
             ],
           ],
           'comment_type' => [
@@ -192,8 +201,8 @@ class CommentTest extends ResourceTestBase {
               'type' => 'comment_type--comment_type',
             ],
             'links' => [
-              'related' => $self_url . '/comment_type',
-              'self' => $self_url . '/relationships/comment_type',
+              'related' => ['href' => $self_url . '/comment_type'],
+              'self' => ['href' => $self_url . '/relationships/comment_type'],
             ],
           ],
           'entity_id' => [
@@ -202,25 +211,20 @@ class CommentTest extends ResourceTestBase {
               'type' => 'entity_test--bar',
             ],
             'links' => [
-              'related' => $self_url . '/entity_id',
-              'self' => $self_url . '/relationships/entity_id',
+              'related' => ['href' => $self_url . '/entity_id'],
+              'self' => ['href' => $self_url . '/relationships/entity_id'],
             ],
           ],
           'pid' => [
             'data' => NULL,
             'links' => [
-              'related' => $self_url . '/pid',
-              'self' => $self_url . '/relationships/pid',
+              'related' => ['href' => $self_url . '/pid'],
+              'self' => ['href' => $self_url . '/relationships/pid'],
             ],
           ],
         ],
       ],
     ];
-    // @todo Remove this when JSON API requires Drupal 8.5 or newer.
-    if (floatval(\Drupal::VERSION) < 8.5) {
-      unset($document['data']['attributes']['comment_body']['processed']);
-    }
-    return $document;
   }
 
   /**
@@ -255,11 +259,6 @@ class CommentTest extends ResourceTestBase {
    * {@inheritdoc}
    */
   protected function getExpectedCacheTags(array $sparse_fieldset = NULL) {
-    // @todo Remove this when JSON API requires Drupal 8.5 or newer.
-    if (floatval(\Drupal::VERSION) < 8.5) {
-      return parent::getExpectedCacheTags($sparse_fieldset);
-    }
-
     $tags = parent::getExpectedCacheTags($sparse_fieldset);
     if ($sparse_fieldset === NULL || in_array('comment_body', $sparse_fieldset)) {
       $tags = Cache::mergeTags($tags, ['config:filter.format.plain_text']);
@@ -271,10 +270,6 @@ class CommentTest extends ResourceTestBase {
    * {@inheritdoc}
    */
   protected function getExpectedCacheContexts(array $sparse_fieldset = NULL) {
-    // @todo Remove this when JSON API requires Drupal 8.5 or newer.
-    if (floatval(\Drupal::VERSION) < 8.5) {
-      return parent::getExpectedCacheContexts($sparse_fieldset);
-    }
     $contexts = parent::getExpectedCacheContexts($sparse_fieldset);
     if ($sparse_fieldset === NULL || in_array('comment_body', $sparse_fieldset)) {
       $contexts = Cache::mergeContexts($contexts, ['languages:language_interface', 'theme']);
@@ -294,7 +289,7 @@ class CommentTest extends ResourceTestBase {
         return "The 'post comments' permission is required.";
 
       case 'PATCH':
-        // @todo Make this unconditional when JSON API requires Drupal 8.6 or newer.
+        // @todo Make this unconditional when JSON:API requires Drupal 8.6 or newer.
         if (floatval(\Drupal::VERSION) >= 8.6) {
           return "The 'edit own comments' permission is required, the user must be the comment author, and the comment must be published.";
         }
@@ -318,49 +313,56 @@ class CommentTest extends ResourceTestBase {
    *   validation errors other than "missing required field".
    */
   public function testPostIndividualDxWithoutCriticalBaseFields() {
-    // @codingStandardsIgnoreStart
     $this->setUpAuthorization('POST');
 
-    $url = Url::fromRoute(sprintf('jsonapi.%s.collection', static::$resourceTypeName));
+    $url = Url::fromRoute(sprintf('jsonapi.%s.collection.post', static::$resourceTypeName));
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
 
-    $remove_field = function(array $normalization, $type, $attribute_name) {
+    $remove_field = function (array $normalization, $type, $attribute_name) {
       unset($normalization['data'][$type][$attribute_name]);
       return $normalization;
     };
 
     // DX: 422 when missing 'entity_type' field.
-    $request_options[RequestOptions::BODY] = Json::encode($remove_field($this->getPostDocument(), 'attributes',  'entity_type'));
+    $request_options[RequestOptions::BODY] = Json::encode($remove_field($this->getPostDocument(), 'attributes', 'entity_type'));
     $response = $this->request('POST', $url, $request_options);
-    // @todo Uncomment, remove next line in https://www.drupal.org/node/2820364.
-    $this->assertResourceErrorResponse(500, 'The "" entity type does not exist.', $response);
-    // $this->assertResourceErrorResponse(422, 'Unprocessable Entity', 'entity_type: This value should not be null.', $response);
+    if (floatval(\Drupal::VERSION) >= 8.7) {
+      $this->assertResourceErrorResponse(422, 'entity_type: This value should not be null.', NULL, $response, '/data/attributes/entity_type');
+    }
+    else {
+      $this->assertResourceErrorResponse(500, 'The "" entity type does not exist.', $url, $response, FALSE);
+    }
 
     // DX: 422 when missing 'entity_id' field.
     $request_options[RequestOptions::BODY] = Json::encode($remove_field($this->getPostDocument(), 'relationships', 'entity_id'));
-    // @todo Remove the try/catch in favor of the two commented lines in
-    // https://www.drupal.org/node/2820364.
+    // @todo Remove the try/catch in https://www.drupal.org/node/2820364.
     try {
       $response = $this->request('POST', $url, $request_options);
-      // This happens on DrupalCI.
-      $this->assertSame(500, $response->getStatusCode());
+      if (floatval(\Drupal::VERSION) >= 8.7) {
+        $this->assertResourceErrorResponse(422, 'entity_id: This value should not be null.', NULL, $response, '/data/attributes/entity_id');
+      }
     }
     catch (\Exception $e) {
-      // This happens on local development environments
-      $this->assertSame("Error: Call to a member function get() on null\nDrupal\\comment\\Plugin\\Validation\\Constraint\\CommentNameConstraintValidator->getAnonymousContactDetailsSetting()() (Line: 96)\n", $e->getMessage());
+      if (version_compare(phpversion(), '7.0') >= 0) {
+        $this->assertSame("Error: Call to a member function get() on null\nDrupal\\comment\\Plugin\\Validation\\Constraint\\CommentNameConstraintValidator->getAnonymousContactDetailsSetting()() (Line: 96)\n", $e->getMessage());
+      }
+      else {
+        $this->assertSame(500, $response->getStatusCode());
+      }
     }
-    // $response = $this->request('POST', $url, $request_options);
-    // $this->assertResourceErrorResponse(422, 'Unprocessable Entity', 'entity_id: This value should not be null.', $response);
 
     // DX: 422 when missing 'field_name' field.
     $request_options[RequestOptions::BODY] = Json::encode($remove_field($this->getPostDocument(), 'attributes', 'field_name'));
     $response = $this->request('POST', $url, $request_options);
-    // @todo Uncomment, remove next line in https://www.drupal.org/node/2820364.
-    $this->assertResourceErrorResponse(500, 'Field  is unknown.', $response);
-    // $this->assertResourceErrorResponse(422, 'Unprocessable Entity', 'field_name: This value should not be null.', $response);
-    // @codingStandardsIgnoreEnd
+    if (floatval(\Drupal::VERSION) >= 8.7) {
+      $this->assertResourceErrorResponse(422, 'field_name: This value should not be null.', NULL, $response, '/data/attributes/field_name');
+    }
+    else {
+      $this->assertSame(500, $response->getStatusCode());
+    }
   }
 
   /**
@@ -372,10 +374,11 @@ class CommentTest extends ResourceTestBase {
     // Create request.
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
     $request_options[RequestOptions::BODY] = Json::encode($this->getPostDocument());
 
-    $url = Url::fromRoute('jsonapi.comment--comment.collection');
+    $url = Url::fromRoute('jsonapi.comment--comment.collection.post');
 
     // Status should be FALSE when posting as anonymous.
     $response = $this->request('POST', $url, $request_options);
@@ -427,6 +430,63 @@ class CommentTest extends ResourceTestBase {
       'type' => ['administer comment types'],
       'uid' => ['access user profiles'],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function testCollectionFilterAccess() {
+    // Verify the expected behavior in the common case.
+    $this->doTestCollectionFilterAccessForPublishableEntities('subject', 'access comments', 'administer comments');
+
+    $collection_url = Url::fromRoute('jsonapi.entity_test--bar.collection');
+    $request_options = [];
+    $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+
+    // Go back to a simpler scenario: revoke the admin permission, publish the
+    // comment and uninstall the query access test module.
+    $this->revokePermissionsFromTestedRole(['administer comments']);
+    $this->entity->setPublished()->save();
+    $this->assertTrue($this->container->get('module_installer')->uninstall(['jsonapi_test_field_filter_access'], TRUE), 'Uninstalled modules.');
+    // ?filter[spotlight.LABEL]: 1 result. Just as already tested above in
+    // ::doTestCollectionFilterAccessForPublishableEntities().
+    $collection_filter_url = $collection_url->setOption('query', ["filter[spotlight.subject]" => $this->entity->label()]);
+    $response = $this->request('GET', $collection_filter_url, $request_options);
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertCount(1, $doc['data']);
+    // Mark the commented entity as inaccessible.
+    \Drupal::state()->set('jsonapi__entity_test_filter_access_blacklist', [$this->entity->getCommentedEntityId()]);
+    Cache::invalidateTags(['state:jsonapi__entity_test_filter_access_blacklist']);
+    // ?filter[spotlight.LABEL]: 0 results.
+    $response = $this->request('GET', $collection_filter_url, $request_options);
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertCount(0, $doc['data']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function getExpectedCollectionCacheability(AccountInterface $account, array $collection, array $sparse_fieldset = NULL, $filtered = FALSE) {
+    $cacheability = parent::getExpectedCollectionCacheability($account, $collection, $sparse_fieldset, $filtered);
+    if ($filtered) {
+      $cacheability->addCacheTags(['state:jsonapi__entity_test_filter_access_blacklist']);
+    }
+    return $cacheability;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function testPatchIndividual() {
+    // Ensure ::getModifiedEntityForPatchTesting() can pick an alternative value
+    // for the 'entity_id' field.
+    EntityTest::create([
+      'name' => $this->randomString(),
+      'type' => 'bar',
+    ])->save();
+
+    return parent::testPatchIndividual();
   }
 
 }
