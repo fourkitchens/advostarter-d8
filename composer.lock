@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "42849ebe0168092ffe60a8243feace41",
+    "content-hash": "4cc254dbdc40f4d111edd3cb629d5946",
     "packages": [
         {
             "name": "acquia/lightning",
@@ -6577,6 +6577,57 @@
             }
         },
         {
+            "name": "drupal/quicklink",
+            "version": "1.0.0-beta1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/quicklink",
+                "reference": "8.x-1.0-beta1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/quicklink-8.x-1.0-beta1.zip",
+                "reference": "8.x-1.0-beta1",
+                "shasum": "3513f14b8c46e4e61d85954ed2ca197e8c9a97ce"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-beta1",
+                    "datestamp": "1550501284",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "mherchel",
+                    "homepage": "https://www.drupal.org/user/118428"
+                }
+            ],
+            "description": "Installs Quicklink JS library to prefetch linked pages.",
+            "homepage": "https://www.drupal.org/project/quicklink",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/quicklink",
+                "issues": "https://www.drupal.org/project/issues/quicklink"
+            }
+        },
+        {
             "name": "drupal/redirect",
             "version": "1.3.0",
             "source": {
@@ -8951,6 +9002,20 @@
                 "php"
             ],
             "time": "2019-02-16T20:54:15+00:00"
+        },
+        {
+            "name": "npm-asset/quicklink",
+            "version": "1.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/quicklink/-/quicklink-1.0.0.tgz",
+                "reference": null,
+                "shasum": null
+            },
+            "type": "npm-asset",
+            "license": [
+                "Apache-2.0"
+            ]
         },
         {
             "name": "oomphinc/composer-installers-extender",
@@ -12273,6 +12338,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "drupal/focal_point": 10,
+        "drupal/quicklink": 10,
         "drupal/security_review": 20,
         "drupal/webform": 5
     },

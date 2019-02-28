@@ -1,0 +1,8 @@
+no_load_when_authenticated: 1
+no_load_when_session: 1
+no_load_content_types: []
+ignore_admin_paths: 1
+ignore_hashes: 1
+ignore_ajax_links: 1
+ignore_file_ext: 1
+load_polyfill: 1
