@@ -24,7 +24,7 @@
     "drupal/config_split": "^1.0",
     "drupal/console": "^1.8",
     "drupal/contribute": "~1.0-beta7",
-    "drupal/devel": "^1.2",
+    "drupal/devel": "^2.0",
     "drupal/field_group": "^1.0",
     "drupal/focal_point": "^1.0@beta",
     "drupal/metatag": "^1.5",
