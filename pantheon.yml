@@ -1,0 +1,31 @@
+# Put overrides to your pantheon.upstream.yml file here.
+# For more information, see: https://pantheon.io/docs/pantheon-yml/
+api_version: 1
+workflows:
+  deploy:   #push code to TEST/LIVE
+    after:
+      - type: webphp
+        description: Post to Slack on deploy
+        script: private/slack_notifications.php
+      - type: webphp
+        description: Import configuration from .yml files
+        script: private/drush_config_import.php
+      - type: webphp
+        description: Log to New Relic
+        script: private/new_relic_deploy.php
+  sync_code:  #push code to DEV/MULTI-DEV
+    after:
+      - type: webphp
+        description: Import configuration from .yml files
+        script: private/drush_config_import.php
+      - type: webphp
+        description: Log to New Relic
+        script: private/new_relic_deploy.php
+  clone_database:
+    after:
+      - type: webphp
+        description: Import configuration from .yml files
+        script: private/drush_config_import.php
+      - type: webphp
+        description: Index all content.
+        script: private/drush_search_api_reindex.php
