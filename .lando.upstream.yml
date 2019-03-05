@@ -4,6 +4,11 @@ config:
   framework: drupal
   env: dev
 services:
+services:
+  pma:
+    type: phpmyadmin
+    hosts:
+      - database
   wraithserver:
     type: ruby:2.3
     overrides:
