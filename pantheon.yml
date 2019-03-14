@@ -29,3 +29,11 @@ workflows:
       - type: webphp
         description: Index all content.
         script: private/drush_search_api_reindex.php
+  create_cloud_development_environment:
+    after:
+      - type: webphp
+        description: Import configuration from .yml files
+        script: private/drush_config_import.php
+      - type: webphp
+        description: Index all content.
+        script: private/drush_search_api_reindex.php
