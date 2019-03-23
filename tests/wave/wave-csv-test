@@ -1,0 +1,133 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Run the given CSV file through the WAVE API test
+ */
+
+ini_set('display_startup_errors',1);
+ini_set('display_errors',1);
+error_reporting(-1);
+
+ini_set("auto_detect_line_endings", true);
+
+/**
+ * Print a message to stdErr
+ *
+ * @param string $message
+ * @param int $close_with_return_code
+ *  close file handles and exit the application with the given return code.
+ *  Leave blank to continue operation.
+ */
+function print_error($message, $close_with_return_code = 0) {
+  global $handle;
+  fwrite(STDERR, $message . "\n");
+  if ($close_with_return_code) {
+    if ($handle) {
+      fclose($handle);
+    }
+    exit($close_with_return_code);
+  }
+}
+
+/**
+ * Print a message to stdOut
+ *
+ * @param string $message
+ */
+function print_message($message, $colour = '') {
+  $bold = "\033[1m";
+  $green = "\033[0;32m";
+  $red = "\033[1;31m";
+  $yellow = "\033[0;33m";
+  $colour_reset = "\033[0m";
+  switch ($colour) {
+    case 'red': $colour_code = $bold . $red; break;
+    case 'yellow': $colour_code = $yellow; break;
+    case 'green': $colour_code = $green; break;
+    default: $colour_code = '';
+  }
+  fwrite(STDOUT, $colour_code . $message . $colour_reset . "\n");
+}
+
+if ($argc !== 3) {
+  print_error("To use this script:");
+  print_error("  wave-csv-test <csv file> <wave API key>");
+  print_error("E.g.");
+  print_error("  wave-csv-test top-pages.csv 1234asdf7890hjkl");
+  print_error("", 1);
+}
+
+$csv_filename = $argv[1];
+$wave_api_key = $argv[2];
+
+global $handle;
+$handle = FALSE;
+
+
+if (!file_exists($csv_filename)) {
+  print_error("The file $csv_filename does not exist.", 2);
+}
+if (!is_readable($csv_filename)) {
+  print_error("The file $csv_filename can not be read.", 3);
+}
+$handle = fopen($csv_filename, 'r');
+if ($handle === FALSE) {
+  print_error("The file $csv_filename can not be opened.", 4);
+}
+
+// @todo To improve performance:
+// 1. First parse the entire CSV file into a big array.
+// 2. Take chunks of 6 rows and send to the API in parallel via curl_multi_init().
+$curl = curl_init();
+while (($row = fgetcsv($handle, 1000, ',')) !== FALSE) {
+  print_message("\n-----------");
+  print_message("Checking: " . implode(',', $row));
+  foreach ($row as $item) {
+    if (filter_var($item, FILTER_VALIDATE_URL)) {
+      $url = "https://wave.webaim.org/api/request?key=$wave_api_key&url=$item&evaldelay=500";
+      curl_setopt ($curl, CURLOPT_URL, $url);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+      $exec = curl_exec ($curl);
+
+      if (curl_errno($curl)) {
+        print_error('Curl error: ' . curl_error($curl));
+      }
+
+      $result = json_decode($exec, TRUE);
+      if (empty($result['status']['success'])) {
+        var_export($result);
+        print_error("WAVE error.");
+        print_error("IF THERE ARE NOT ENOUGH CREDITS, CONTACT AMANDA.");
+      }
+      else {
+        foreach (['error', 'contrast', 'alert'] as $category) {
+          $colour = 'green';
+          if ($category !== 'alert' && $result['categories'][$category]['count']) {
+            $colour = 'red';
+          }
+          elseif ($result['categories'][$category]['count']) {
+            $colour = 'yellow';
+          }
+          print_message($result['categories'][$category]['description'] . ': ' . $result['categories'][$category]['count'], $colour);
+        }
+      }
+      if (isset($result['statistics']['waveurl'])) {
+        print_message('For more info: ' . $result['statistics']['waveurl']);
+      }
+      continue(2);
+    }
+  }
+  print_message("No valid URL found");
+}
+
+print_message("\n-----------");
+if (isset($result['statistics']['creditsremaining'])) {
+  // @todo give info about what to do if this gets low.
+  print_message("Credits remaining on WAVE account: " . $result['statistics']['creditsremaining']);
+}
+print_message("\n-----------");
+
+curl_close ($curl);
+fclose($handle);

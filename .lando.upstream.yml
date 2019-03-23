@@ -4,7 +4,6 @@ config:
   framework: drupal
   env: dev
 services:
-services:
   pma:
     type: phpmyadmin
     hosts:
@@ -28,3 +27,18 @@ tooling:
       See README.md for more info.
     cmd:
       - wraith
+  wave:
+    service: appserver
+    description: |
+      Process a CSV file of URLs through WAVE.  E.g.
+        lando wave my.csv Rk3fKE231077
+      1. You might generate the CSV file with Screaming Frog.
+      2. If you want to keep things _real_ simple, just create a blank file and
+         put one URL per line.
+      3. The CSV file must exist within the project codebase.
+      4. You don't _really_ need Lando to run this.  You can call the script
+         directly:
+          ./tests/wave/wave-csv-test ~/path/to/some.csv Rk3fKE231077
+
+    cmd:
+      - /app/tests/wave/wave-csv-test
