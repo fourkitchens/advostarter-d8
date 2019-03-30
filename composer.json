@@ -75,6 +75,9 @@
     ],
     "install-codestandards": [
       "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+    ],
+    "phpcs": [
+      "bin/phpcs --standard=phpcs.xml.dist"
     ]
   },
   "config": {
