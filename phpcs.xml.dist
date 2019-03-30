@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="Project Standard" namespace="Advomatic\project\CS\Standard">
+  <rule ref="vendor/drupal/coder/coder_sniffer/Drupal">
+    <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment"/>
+    <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
+    <exclude name="Drupal.Commenting.FunctionComment.MissingParamComment"/>
+  </rule>
+  <!--<rule ref="vendor/drupal/coder/coder_sniffer/DrupalPractice" />-->
+
+  <file>web/modules/custom</file>
+<!--<file>web/themes/custom</file>-->
+
+  <exclude-pattern>*/tests/*</exclude-pattern>
+  <exclude-pattern>*.txt</exclude-pattern>
+  <exclude-pattern>*.md</exclude-pattern>
+</ruleset>

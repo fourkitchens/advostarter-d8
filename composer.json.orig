@@ -1,0 +1,111 @@
+{
+  "name": "advomatic/advostarter-d8",
+  "description": "Project template for Drupal 8 sites built with the Lightning distribution on Pantheon.",
+  "type": "project",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require-dev": {
+    "composer/composer": "^1.3",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+    "drupal/coder": "8.*",
+    "phpmd/phpmd": "^2.6",
+    "symfony/css-selector": "~2.8"
+  },
+  "require": {
+    "php": "~7.2.0",
+    "acquia/lightning": "^3.2",
+    "composer/installers": "^1.0",
+    "cweagans/composer-patches": "^1.6",
+    "drupal/admin_login_path": "^1.0",
+    "drupal/admin_toolbar": "^1.19",
+    "drupal/adminimal_admin_toolbar": "^1.7",
+    "drupal/adminimal_theme": "^1.3",
+    "drupal/components": "^1.0",
+    "drupal/config_perms": "^1.0",
+    "drupal/config_split": "^1.0",
+    "drupal/console": "^1.8",
+    "drupal/contribute": "~1.0-beta7",
+    "drupal/devel": "^2.0",
+    "drupal/field_group": "^1.0",
+    "drupal/focal_point": "^1.0@beta",
+    "drupal/metatag": "^1.5",
+    "drupal/pantheon_advanced_page_cache": "^1.0",
+    "drupal/paragraphs": "^1.1",
+    "drupal/prlp": "^1.3",
+    "drupal/quicklink": "^1.0@beta",
+    "drupal/redirect": "^1.0",
+    "drupal/redis": "^1.0",
+    "drupal/search_api_pantheon": "~1.0",
+    "drupal/security_review": "1.x-dev",
+    "drupal/stage_file_proxy": "^1.0",
+    "drupal/styleguide": "^1.0",
+    "drupal/webform": "^5.0@RC",
+    "drush/drush": "^9.2",
+    "fourkitchens/emulsify": "^2.6",
+    "npm-asset/quicklink": "^1.0"
+  },
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    },
+    "assets": {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    },
+    "dev": {
+      "type": "vcs",
+      "url": "https://github.com/acquia/lightning-dev"
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+    ],
+    "post-update-cmd": [
+      "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+    ],
+    "post-autoload-dump": [
+      "find web/modules web/libraries web/themes web/profiles vendor -name .git -type d | xargs rm -rf # Don't allow submodules because it breaks Pantheon."
+    ],
+    "post-drupal-scaffold-cmd": [
+      "patch -p1 < hacks/core/twig_development_debug.patch"
+    ]
+  },
+  "config": {
+    "bin-dir": "bin/",
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "extra": {
+    "installer-types": [
+      "bower-asset",
+      "npm-asset"
+    ],
+    "installer-paths": {
+      "web/core": [
+        "type:drupal-core"
+      ],
+      "web/modules/contrib/{$name}": [
+        "type:drupal-module"
+      ],
+      "web/profiles/contrib/{$name}": [
+        "type:drupal-profile"
+      ],
+      "web/themes/contrib/{$name}": [
+        "type:drupal-theme"
+      ],
+      "drush/contrib/{$name}": [
+        "type:drupal-drush"
+      ],
+      "web/libraries/{$name}/": [
+        "type:drupal-library",
+        "type:bower-asset",
+        "type:npm-asset"
+      ]
+    },
+    "enable-patching": true
+  }
+}
