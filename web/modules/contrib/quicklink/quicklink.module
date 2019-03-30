@@ -16,15 +16,22 @@ function quicklink_library_info_build() {
   if (file_exists(DRUPAL_ROOT . '/libraries/quicklink/dist/quicklink.umd.js')) {
     $libraries['quicklink'] = [
       'js' => [
-        '/libraries/quicklink/dist/quicklink.umd.js' => ['minified' => TRUE, 'weight'=> -20],
-      ]
+        '/libraries/quicklink/dist/quicklink.umd.js' => [
+          'minified' => TRUE,
+          'weight' => -20,
+        ],
+      ],
     ];
   }
   else {
     $libraries['quicklink'] = [
       'js' => [
-        'https://unpkg.com/quicklink@1.0.0/dist/quicklink.umd.js' => ['minified' => TRUE, 'type' => 'external', 'weight'=> -20],
-      ]
+        'https://unpkg.com/quicklink@1.0.0/dist/quicklink.umd.js' => [
+          'minified' => TRUE,
+          'type' => 'external',
+          'weight' => -20,
+        ],
+      ],
     ];
   }
   return $libraries;

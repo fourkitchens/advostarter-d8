@@ -1,3 +1,11 @@
+## 3.8.0
+* Lightning Media is now compatible with Lightning Core 4.x (Drupal core 8.7.x).
+
+## 3.7.0
+* Updated Entity Browser to 2.1.
+* Added a link to the settings form on the module list page. (Issue #3033650)
+* Added descriptions to administrative links. (Issue #3034042)
+
 ## 3.6.0
 * The media browser is now displayed in a modal dialog by default, which is
   activated by pressing the "Add media" button. When embedding media in the

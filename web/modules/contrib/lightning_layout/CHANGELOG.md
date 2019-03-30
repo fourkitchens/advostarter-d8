@@ -1,3 +1,7 @@
+## 1.7.0
+* Lightning Layout now supports Lightning Core 4.x (Drupal core 8.7.x).
+* Added a description to an administrative link. (Issue #3034041)
+
 ## 1.6.0
 * Updated Lightning Core to 2.12 or 3.5, which security update to Drupal core to
   8.5.9 and 8.6.6, respectively.

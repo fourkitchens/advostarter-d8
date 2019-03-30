@@ -4,11 +4,44 @@ namespace Drupal\quicklink\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class QuicklinkConfig.
  */
 class QuicklinkConfigForm extends ConfigFormBase {
+
+  /**
+   * Entity Type Manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Constructs a QuicklinkConfigForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($config_factory);
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -67,7 +100,7 @@ class QuicklinkConfigForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Ignore paths with file extensions'),
       '#description' => $this->t('Recommended. This will ignore links that end with a file extension.
-        It will match strings ending with a period followed by 1-4 characters.'),
+        It will match paths ending with a period followed by 1-5 characters. Querystrings are supported.'),
       '#default_value' => $config->get('ignore_file_ext'),
     ];
     $form['ignore']['url_patterns_to_ignore'] = [
@@ -141,7 +174,7 @@ class QuicklinkConfigForm extends ConfigFormBase {
     ];
 
     $options = [];
-    $types = \Drupal::entityTypeManager()->getStorage('node_type')->loadMultiple();
+    $types = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
     foreach ($types as $type) {
       $options[$type->id()] = $type->label();
     }
@@ -177,13 +210,12 @@ class QuicklinkConfigForm extends ConfigFormBase {
     $form['debug']['enable_debug_mode'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable debug mode'),
-      '#description' => $this->t("Log Quicklink development information to the HTML and JavaScript console. You may need to Drupal's cache after changing this value."),
+      '#description' => $this->t("Log Quicklink development information to the HTML and JavaScript console. You may need to clear Drupal's cache after changing this value."),
       '#default_value' => $config->get('enable_debug_mode'),
     ];
 
     if ($this->config('quicklink.settings')->get('enable_debug_mode')) {
-      $messenger = \Drupal::messenger();
-      $messenger->addMessage('Quicklink debug mode enabled. Be sure to disable this on production.', $messenger::TYPE_WARNING);
+      $this->messenger()->addWarning($this->t('Quicklink debug mode enabled. Be sure to disable this on production.'));
     }
 
     return parent::buildForm($form, $form_state);
