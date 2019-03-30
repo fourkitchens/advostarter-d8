@@ -8,9 +8,12 @@
   <!--<rule ref="vendor/drupal/coder/coder_sniffer/DrupalPractice" />-->
 
   <file>web/modules/custom</file>
-<!--<file>web/themes/custom</file>-->
+  <file>web/themes/custom</file>
 
   <exclude-pattern>*/tests/*</exclude-pattern>
   <exclude-pattern>*.txt</exclude-pattern>
   <exclude-pattern>*.md</exclude-pattern>
+  <exclude-pattern>*.css</exclude-pattern>
+  <exclude-pattern>*/pattern-lab/*</exclude-pattern>
+  <exclude-pattern>*components/_twig-components*</exclude-pattern>
 </ruleset>
