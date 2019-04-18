@@ -59,6 +59,15 @@ $settings['file_scan_ignore_directories'] = [
 
 // Live site redirects.
 if ($config['server_environment'] == 'live' && php_sapi_name() != "cli") {
+  $host_parts = array_reverse(explode('.', $_SERVER['HTTP_HOST']));
+
+  // Require www.
+  if (!isset($host_parts[2])) {
+    header('HTTP/1.0 301 Moved Permanently');
+    header('Location: https://www.' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    exit();
+  }
+
   // ...
 }
 
