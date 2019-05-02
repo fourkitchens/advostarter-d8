@@ -16,7 +16,16 @@ class DefaultUserImageTest extends KernelTestBase {
    */
   protected static $modules = [
     'system',
+    'user',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+    $this->installEntitySchema('user');
+  }
 
   /**
    * Tests that the default avatar is set.

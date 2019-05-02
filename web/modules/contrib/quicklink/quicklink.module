@@ -5,6 +5,7 @@
  * Contains quicklink.module.
  */
 
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -35,6 +36,28 @@ function quicklink_library_info_build() {
     ];
   }
   return $libraries;
+}
+
+/**
+ * Implements hook_help().
+ */
+function quicklink_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.quicklink':
+      $text = file_get_contents(dirname(__FILE__) . '/README.md');
+      if (!\Drupal::moduleHandler()->moduleExists('markdown')) {
+        return '<pre>' . $text . '</pre>';
+      }
+      else {
+        // Use the Markdown filter to render the README.
+        $filter_manager = \Drupal::service('plugin.manager.filter');
+        $settings = \Drupal::configFactory()->get('markdown.settings')->getRawData();
+        $config = ['settings' => $settings];
+        $filter = $filter_manager->createInstance('markdown', $config);
+        return $filter->process($text, 'en');
+      }
+  }
+  return NULL;
 }
 
 /**
@@ -96,6 +119,11 @@ function quicklink_preprocess_html(&$variables, $hook) {
   if ($config->get('ignore_admin_paths') == 1) {
     $url_patterns_to_ignore[] = '/admin';
     $url_patterns_to_ignore[] = '/edit';
+
+    // If elements match these selector pattern, they will not be prefetched.
+    $admin_link_container_patterns = ['#block-local-tasks-block a', '.block-local-tasks-block a', '#drupal-off-canvas a', '#toolbar-administration a'];
+
+    $variables['#attached']['drupalSettings']['quicklink']['admin_link_container_patterns'] = $admin_link_container_patterns;
     $debug_log[] = 'Quicklink will ignore admin URL patterns.';
   }
 
@@ -128,9 +156,8 @@ function quicklink_preprocess_html(&$variables, $hook) {
 
   // Disable the library when a session is started.
   if ($config->get('no_load_when_session')) {
-    /** @var \Drupal\Core\Session\SessionManager $session */
-    $session = \Drupal::getContainer()->get('session_manager');
-    if (!empty($session) && $session->isStarted()) {
+    $session_configuration = \Drupal::getContainer()->get('session_configuration');
+    if ($session_configuration->hasSession(\Drupal::request())) {
       $load_library = FALSE;
       $debug_log[] = 'Library not loaded because PHP session is started.';
     }

@@ -235,7 +235,7 @@ class QuicklinkConfigForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
 
     $this->config('quicklink.settings')
-      ->set('no_load_content_types', $form_state->getValue('no_load_content_types'))
+      ->set('no_load_content_types', array_filter($form_state->getValue('no_load_content_types')))
       ->set('selector', trim($form_state->getValue('selector')))
       ->set('url_patterns_to_ignore', trim($form_state->getValue('url_patterns_to_ignore')))
       ->set('prefetch_only_paths', trim($form_state->getValue('prefetch_only_paths')))

@@ -33,9 +33,11 @@
         }
 
         if (settings.quicklink.ignore_admin_paths) {
+          var adminLinkContainerPatterns = settings.quicklink.admin_link_container_patterns.join();
+
           quicklinkConfig.ignores.push(function (uri, elem) {
             var ruleName = 'Exists in admin element container.';
-            var ruleFunc = elem.matches('#block-local-tasks-block a, .block-local-tasks-block a, #drupal-off-canvas a, #toolbar-administration a');
+            var ruleFunc = elem.matches(adminLinkContainerPatterns);
 
             outputDebugInfo(ruleFunc, ruleName, uri, elem);
 
