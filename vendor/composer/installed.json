@@ -3942,6 +3942,9 @@
                     "status": "not-covered",
                     "message": "Beta releases are not covered by Drupal security advisories."
                 }
+            },
+            "patches_applied": {
+                "3038668 - Fix tests following a change in Drupal 8.7.0: #2976035": "https://www.drupal.org/files/issues/2019-03-10/3038668-25.patch"
             }
         },
         "installation-source": "dist",
@@ -8982,17 +8985,17 @@
     },
     {
         "name": "fourkitchens/emulsify",
-        "version": "v2.7",
-        "version_normalized": "2.7.0.0",
+        "version": "v3.1",
+        "version_normalized": "3.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/fourkitchens/emulsify.git",
-            "reference": "67d6deedd63598a61b95ef9b7e94b778fa5e49b7"
+            "reference": "82c50bfbfc0338b703a79df2364a22e549e066f6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fourkitchens/emulsify/zipball/67d6deedd63598a61b95ef9b7e94b778fa5e49b7",
-            "reference": "67d6deedd63598a61b95ef9b7e94b778fa5e49b7",
+            "url": "https://api.github.com/repos/fourkitchens/emulsify/zipball/82c50bfbfc0338b703a79df2364a22e549e066f6",
+            "reference": "82c50bfbfc0338b703a79df2364a22e549e066f6",
             "shasum": ""
         },
         "require": {
@@ -9002,7 +9005,7 @@
             "drupal-pattern-lab/unified-twig-extensions": "^0.1",
             "drupal/components": "^1.0"
         },
-        "time": "2018-08-20T19:12:54+00:00",
+        "time": "2018-12-15T04:46:36+00:00",
         "type": "drupal-theme",
         "installation-source": "dist",
         "notification-url": "https://packagist.org/downloads/",
