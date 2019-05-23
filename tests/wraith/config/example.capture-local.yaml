@@ -10,17 +10,21 @@ imports: "capture-quick.yaml"
 #imports: "capture.yaml"
 
 # (required) The domains to take screenshots of.
+# Can be any dev/test/multi-dev or local site.
+#
+# TYPICALLY: You'll be testing a completed feature branch compared to master.  In this case you'll compare a multi-dev
+# vs. dev or test.
 domains:
-  # Test any two domains.
+  # If a Pantheon domain is protected with HTTP authentication then use the format:
+  #  "https://username:password@test-stanford-hs.pantheonsite.io
   #
-  # * If the multi-dev is protected with HTTP authentication then use the format:
-  #    "https://{username}:{password}@test-aclu-d7.pantheonsite.io"
-  # * If one of the domains is a local Lando site, then
-  #    * As of v3.0.0-beta.35, you can't use HTTPS.
-  #    * The domain must be "edge"
-  #       "http://edge"
-  multidev:  "https://zd1374-advomatic.pantheonsite.io"
-  local:     "http://edge"
+  # For Lando
+  # * until v3.0.0-beta.35 at least, you can't use HTTPS
+  # * the domain must match what was reported when Lando started.
+  #
+  # Change the key to something more meaningful (e.g. multidev, or lando)
+  domain1: "https://dev-stanford-hs.pantheonsite.io"
+  domain2: "https://multidev-stanford-hs.pantheonsite.io"
 
 # You may override the "fuzz" configured in the main config file.
 # A higher fuzz makes the comparison less strict.
