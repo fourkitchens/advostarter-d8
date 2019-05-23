@@ -1,0 +1,226 @@
+{
+  "###NOTE###": "Don't edit backstop.json directly (unless making changes that everyone should use).  Instead copy as backstop-local.json.  See README.md for more info.",
+  "id": "stanford_hs",
+  "viewports": [
+    {
+      "label": "phone",
+      "width": 320,
+      "height": 480
+    },
+    {
+      "label": "tablet",
+      "width": 768,
+      "height": 960
+    },
+    {
+      "label": "desktop",
+      "width": 1280,
+      "height": 768
+    }
+  ],
+  "onBeforeScript": "puppet/onBefore.js",
+  "onReadyScript": "puppet/onReady.js",
+  "scenarios": [
+    {
+      "label": "Homepage (initial viewport)",
+      "url": "/",
+      "referenceUrl": "/",
+      "selectors": ["viewport"]
+    },
+    {
+      "label": "Homepage (mobile)",
+      "url": "/",
+      "referenceUrl": "/",
+      "hideSelectors": [".randomizer__images"],
+      "delay": 1500,
+      "viewports": [
+        {
+          "label": "phone",
+          "width": 320,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "label": "Homepage (scrolled 50/50)",
+      "url": "/",
+      "referenceUrl": "/",
+      "postInteractionWait": 2000,
+      "clickSelector": ".down-button",
+      "scrollToSelector": ".fifty-fifty",
+      "__delay": 2000,
+      "hideSelectors": [".randomizer__images"],
+      "selectors": ["viewport"],
+      "viewports": [
+        {
+          "label": "desktop",
+          "width": 1280,
+          "height": 768
+        }
+      ]
+    },
+    {
+      "__NOTE__": "The following tests take a screenshot of the viewport after scrolling to a certain spot on the homepage.  We really tried to take a single screenshot, but it just doesn't work with the curtain.",
+      "label": "Homepage (scrolled randomizer)",
+      "url": "/",
+      "referenceUrl": "/",
+      "postInteractionWait": 2000,
+      "clickSelector": ".down-button",
+      "scrollToSelector": ".randomizer",
+      "hideSelectors": [".randomizer__images"],
+      "selectors": ["viewport"],
+      "viewports": [
+        {
+          "label": "tablet",
+          "width": 768,
+          "height": 960
+        },
+        {
+          "label": "desktop",
+          "width": 1280,
+          "height": 768
+        }
+      ]
+    },
+    {
+      "label": "Homepage (scrolled news)",
+      "url": "/",
+      "referenceUrl": "/",
+      "postInteractionWait": 2000,
+      "clickSelector": ".down-button",
+      "scrollToSelector": ".block-latest_news-block_1",
+      "__delay": 2000,
+      "hideSelectors": [".randomizer__images"],
+      "selectors": ["viewport"],
+      "viewports": [
+        {
+          "label": "desktop",
+          "width": 1280,
+          "height": 768
+        }
+      ]
+    },
+    {
+      "label": "Prospective Students",
+      "url": "/prospective-students",
+      "referenceUrl": "/prospective-students"
+    },
+    {
+      "label": "Current Students",
+      "url": "/current-students",
+      "referenceUrl": "/current-students"
+    },
+    {
+      "label": "News",
+      "url": "/news",
+      "referenceUrl": "/news"
+    },
+    {
+      "label": "Feature",
+      "url": "/feature/richard-saller-dean-and-diplomat",
+      "referenceUrl": "/feature/richard-saller-dean-and-diplomat"
+    },
+    {
+      "label": "About",
+      "url": "/about",
+      "referenceUrl": "/about"
+    },
+    {
+      "label": "Giving",
+      "url": "/giving",
+      "referenceUrl": "/giving"
+    },
+    {
+      "label": "Staff",
+      "url": "/staff",
+      "referenceUrl": "/staff"
+    },
+    {
+      "label": "Fellowships",
+      "url": "/current-students/fellowships-and-funding",
+      "referenceUrl": "/current-students/fellowships-and-funding"
+    },
+    {
+      "label": "Search",
+      "url": "/search/content/richard%20saller",
+      "referenceUrl": "/search/content/richard%20saller"
+    },
+    {
+      "label": "Academics & Research",
+      "url": "/academics-and-research",
+      "referenceUrl": "/academics-and-research"
+    },
+    {
+      "label": "Academics & Research (search)",
+      "url": "/academics-and-research?keys=english%20lit",
+      "referenceUrl": "/academics-and-research?keys=english%20lit"
+    },
+    {
+      "label": "Academics & Research (filter)",
+      "url": "/academics-and-research?field_degrees_offered_value[BA]=BA&field_grad_degrees_offered_value[MA]=MA",
+      "referenceUrl": "/academics-and-research?field_degrees_offered_value[BA]=BA&field_grad_degrees_offered_value[MA]=MA"
+    },
+    {
+      "label": "Academics & Research (anchor)",
+      "url": "/academics-and-research#node-328",
+      "referenceUrl": "/academics-and-research#node-328",
+      "delay": 3000,
+      "selectors": ["viewport"]
+    },
+    {
+      "label": "Staff (Dean)",
+      "url": "/staff#debra-satz",
+      "referenceUrl": "/staff#debra-satz",
+      "delay": 3000,
+      "selectors": ["viewport"]
+    },
+    {
+      "label": "Staff (simple)",
+      "url": "/staff#leanna-habana",
+      "referenceUrl": "/staff#leanna-habana",
+      "delay": 3000,
+      "selectors": ["viewport"]
+    }
+  ],
+  "styleguide_scenarios": [
+    {
+      "@todo": "Look at adding these to the standard test run as long as they don't cause too much of an increase in run time."
+    },
+    {
+      "label": "Styleguide (base)",
+      "url": "/themes/custom/stanford_hs/pattern-lab/public/patterns/00-base/index.html",
+      "referenceUrl": "/themes/custom/stanford_hs/pattern-lab/public/patterns/00-base/index.html"
+    },
+    {
+      "label": "Styleguide (atoms)",
+      "url": "/themes/custom/stanford_hs/pattern-lab/public/patterns/01-atoms/index.html",
+      "referenceUrl": "/themes/custom/stanford_hs/pattern-lab/public/patterns/01-atoms/index.html"
+    },
+    {
+      "label": "Styleguide (molecules)",
+      "url": "/themes/custom/stanford_hs/pattern-lab/public/patterns/02-molecules/index.html",
+      "referenceUrl": "/themes/custom/stanford_hs/pattern-lab/public/patterns/02-molecules/index.html"
+    },
+    {
+      "label": "Styleguide (organisms)",
+      "url": "/themes/custom/stanford_hs/pattern-lab/public/patterns/03-organisms/index.html",
+      "referenceUrl": "/themes/custom/stanford_hs/pattern-lab/public/patterns/03-organisms/index.html"
+    }
+  ],
+  "paths": {
+    "bitmaps_reference": "../../web/backstop/bitmaps_reference",
+    "bitmaps_test": "../../web/backstop/bitmaps_test",
+    "engine_scripts": "../../web/backstop/engine_scripts",
+    "html_report": "../../web/backstop/html_report",
+    "ci_report": "../../web/backstop/ci_report"
+  },
+  "report": ["CI"],
+  "engine": "puppeteer",
+  "engineOptions": {
+    "args": ["--no-sandbox"]
+  },
+  "asyncCaptureLimit": 3,
+  "asyncCompareLimit": 30,
+  "debug": false,
+  "debugWindow": false
+}

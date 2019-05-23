@@ -8,25 +8,21 @@ services:
     type: phpmyadmin
     hosts:
       - database
-  wraithserver:
-    type: ruby:2.3
+  backstopserver:
+    type: 'node:10'
     overrides:
-      image: bbcnews/wraith:latest
+      image: 'backstopjs/backstopjs:4.0.6'
 tooling:
   push: disabled
+  backstop:
+    service: backstopserver
+    description: |
+      Run BackstopJS commands.  E.g.
+        lando backstop test
+      See tests/backstop/README.md for more info.
   drush:
     service: appserver
     cmd: drush --root=/app/web
-  wraith:
-    service: wraithserver
-    description: |
-      Run wraith commands.  E.g.
-        cd tests/wraith
-        lando wraith capture config/capture-local.yaml
-      (create the file first). Or use one of the other config files.
-      See README.md for more info.
-    cmd:
-      - wraith
   wave:
     service: appserver
     description: |
