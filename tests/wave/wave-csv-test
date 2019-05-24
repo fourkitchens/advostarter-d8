@@ -53,9 +53,9 @@ function print_message($message, $colour = '') {
 
 if ($argc !== 3) {
   print_error("To use this script:");
-  print_error("  wave-csv-test <csv file> <wave API key>");
+  print_error("  <script name> <csv file> <wave API key>");
   print_error("E.g.");
-  print_error("  wave-csv-test top-pages.csv 1234asdf7890hjkl");
+  print_error("  <script name> top-pages.csv 1234asdf7890hjkl");
   print_error("", 1);
 }
 
