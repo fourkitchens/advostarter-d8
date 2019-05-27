@@ -67,6 +67,11 @@ function quicklink_preprocess_html(&$variables, $hook) {
 
   // Load current configuration.
   $config = \Drupal::config('quicklink.settings');
+
+  // Ensure that configuration changes are reflected immediately, without
+  // manual clearing of caches.
+  $variables['#cache']['tags'] = $config->getCacheTags();
+
   $selector = $config->get('selector');
 
   // Get debug variable.
@@ -156,6 +161,7 @@ function quicklink_preprocess_html(&$variables, $hook) {
 
   // Disable the library when a session is started.
   if ($config->get('no_load_when_session')) {
+    $variables['#cache']['contexts'][] = 'session.exists';
     $session_configuration = \Drupal::getContainer()->get('session_configuration');
     if ($session_configuration->hasSession(\Drupal::request())) {
       $load_library = FALSE;

@@ -32,6 +32,7 @@ function quicklink_update_8501() {
     ->set('ignore_file_ext', $old_config->get('ignore_file_ext'))
     ->set('allowed_domains', $old_config->get('allowed_domains'))
     ->set('load_polyfill', $old_config->get('load_polyfill'))
+    ->set('no_load_when_session', $old_config->get('ignore_prefetch_session'))
     ->save();
 
   $old_config->delete();

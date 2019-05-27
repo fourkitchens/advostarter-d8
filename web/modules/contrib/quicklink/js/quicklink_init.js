@@ -125,11 +125,11 @@
 
       function loadQuicklink() {
         var urlParams = new URLSearchParams(window.location.search);
-        var noprefetch = urlParams.get('noprefetch') !== null;
+        var noprefetch = urlParams.get('noprefetch') !== null || window.location.hash === '#noprefetch' ;
 
         if (noprefetch && debug) {
           // eslint-disable-next-line no-console
-          console.info('The "noprefetch" parameter exists in the URL querystring. Quicklink library not loaded.');
+          console.info('The "noprefetch" parameter or hash exists in the URL. Quicklink library not loaded.');
         }
 
         return window.quicklink && !noprefetch;

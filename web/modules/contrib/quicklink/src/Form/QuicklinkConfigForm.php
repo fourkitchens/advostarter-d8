@@ -195,8 +195,7 @@ class QuicklinkConfigForm extends ConfigFormBase {
     $form['polyfill']['load_polyfill'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Load <em>Intersection Observer</em> polyfill'),
-      '#description' => $this->t('This checkbox will enable loading of the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" target="_blank">
-        Intersection Observer</a> polyfill from <a href="https://polyfill.io" target="_blank">polyfill.io</a>. This will enable usage of Quicklink in Safari and Microsoft Edge browsers.'),
+      '#description' => $this->t('This checkbox will enable loading of necessary polyfills from <a href="https://polyfill.io" target="_blank">polyfill.io</a>. This will enable usage of Quicklink in IE11 and older versions modern browsers.'),
       '#default_value' => $config->get('load_polyfill'),
     ];
 
@@ -210,7 +209,7 @@ class QuicklinkConfigForm extends ConfigFormBase {
     $form['debug']['enable_debug_mode'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable debug mode'),
-      '#description' => $this->t("Log Quicklink development information to the HTML and JavaScript console. You may need to clear Drupal's cache after changing this value."),
+      '#description' => $this->t("Log Quicklink development information to the HTML and JavaScript console."),
       '#default_value' => $config->get('enable_debug_mode'),
     ];
 
