@@ -55,7 +55,12 @@ if ($argc !== 3) {
   print_error("To use this script:");
   print_error("  <script name> <csv file> <wave API key>");
   print_error("E.g.");
-  print_error("  <script name> top-pages.csv 1234asdf7890hjkl");
+  print_error("  lando wave top-pages.csv 1234asdf7890hjkl");
+  print_error("Where the CSV file contains URLs of the site in question.");
+  print_error("You might generate the CSV file with Screaming Frog.");
+  print_error("Or, if you want to keep things _real_ simple, just create a blank file ");
+  print_error("and put one URL per line.");
+  print_error("If you don't have the API key, ask Amanda.");
   print_error("", 1);
 }
 
