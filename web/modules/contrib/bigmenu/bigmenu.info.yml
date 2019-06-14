@@ -1,0 +1,12 @@
+name: Big Menu
+type: module
+description: Scalable replacement for core menu management screen. Uses AJAX to replace the global menu management page, suitable for thousands of items
+# core: 8.x
+dependencies:
+  - menu_ui
+
+# Information added by Drupal.org packaging script on 2018-10-10
+version: '8.x-1.0-alpha1'
+core: '8.x'
+project: 'bigmenu'
+datestamp: 1539211683
