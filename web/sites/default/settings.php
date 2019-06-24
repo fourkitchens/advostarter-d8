@@ -204,7 +204,7 @@ if (function_exists('newrelic_ignore_transaction')) {
 }
 
 // Use development config in dev environments.
-if (in_array($config['server_environment'], ['live', 'test'])) {
+if (in_array($config['server_environment'], ['live'])) {
   $config['config_split.config_split.config_dev']['status'] = FALSE;
 }
 else {
