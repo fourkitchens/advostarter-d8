@@ -16,4 +16,5 @@
   <exclude-pattern>*.css</exclude-pattern>
   <exclude-pattern>*/pattern-lab/*</exclude-pattern>
   <exclude-pattern>*components/_twig-components*</exclude-pattern>
+  <exclude-pattern>*/themes/custom/*/vendor/*</exclude-pattern>
 </ruleset>
