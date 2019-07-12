@@ -21,7 +21,7 @@ tooling:
         lando backstop test
       See tests/backstop/README.md for more info.
     cmd:
-      - backstop --config=/app/tests/backstop/backstop-local.json
+      - cd /app/tests/backstop && backstop --config=/app/tests/backstop/backstop-local.json
   drush:
     service: appserver
     cmd: drush --root=/app/web
