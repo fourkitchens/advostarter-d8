@@ -17,7 +17,7 @@ tooling:
   backstop:
     service: backstopserver
     description: |
-      Run BackstopJS commands.  E.g.
+      Run BackstopJS for visual regression testing.  E.g.
         lando backstop test
       See tests/backstop/README.md for more info.
     cmd:
