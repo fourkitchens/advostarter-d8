@@ -1,0 +1,76 @@
+.entity-browser-form {
+  padding-bottom: 4em;
+}
+
+.entity-browser-form .form-actions {
+  background: white;
+  border-top: 1px solid #e6e4df;
+  bottom: 0;
+  margin: 0;
+  padding-top: 1em;
+  position: fixed;
+  width: 100%;
+}
+
+.entity-browser-form  .views-exposed-form .form-actions {
+  position: relative;
+  bottom: auto;
+  border: 0;
+  padding-top: 0;
+  background: transparent;
+  width: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.entities-list .item-container {
+  margin: 0 0 1.5em;
+}
+
+.entities-list .item-container > img,
+.entities-list .item-container > input {
+  margin: 5px 0 0;
+}
+
+.entities-list .ui-sortable-handle {
+  display: block;
+  background: url(../../../../core/themes/stable/images/core/icons/787878/move.svg) no-repeat left center;
+  border-bottom: 1px solid #e6e4df;
+  padding: 15px 25px 15px 35px;
+  margin: 0;
+}
+
+.entities-list .ui-sortable-handle:last-child {
+  border-bottom: 0;
+}
+
+.entities-list .ui-sortable-handle:hover {
+  background-color: #f7fcff;
+}
+
+/* Vertical tabs can take up less space, leaving more room for content. */
+.adminimal .vertical-tabs__panes {
+  margin: 0 0 0 180px;
+}
+.adminimal .vertical-tabs__menu {
+  width: 180px;
+}
+
+/* CKEditor "Dropdown" menus should be wide enough to fit common text. */
+.cke_combopanel {
+  width: 200px !important;
+}
+
+.field-multiple-table .form-required::after {
+  background-image: none;
+}
+.field-multiple-table .form-required::before {
+  background-image: url(../../../../../core/misc/icons/ee0000/required.svg);
+  background-size: 7px 7px;
+  content: "";
+  display: inline-block;
+  height: 7px;
+  margin: 0 0.3em 0 0;
+  width: 7px;
+  vertical-align: super;
+}

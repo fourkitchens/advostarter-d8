@@ -1,0 +1,10 @@
+global-styling:
+  version: 1.x
+  css:
+    theme:
+      css/advominimal.css: {}
+  js:
+    js/advominimal.js: {}
+  dependencies:
+  - core/jquery
+  - menu_parent_form_ui/menu_parent_form_ui.base
