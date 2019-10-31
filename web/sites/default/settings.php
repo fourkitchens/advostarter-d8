@@ -6,9 +6,8 @@
 // environments.
 if (defined('PANTHEON_ENVIRONMENT')) {
   if (isset($_SERVER['PRESSFLOW_SETTINGS'])) {
-    // This is only set for web, not CLI PHP.
     // This can only happen at the top of settings.php because it
-    // recreates $conf.
+    // recreates $conf (among other things).
     extract(json_decode($_SERVER['PRESSFLOW_SETTINGS'], TRUE));
   }
   switch (PANTHEON_ENVIRONMENT) {
