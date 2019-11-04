@@ -7,4 +7,3 @@ global-styling:
     js/advominimal.js: {}
   dependencies:
   - core/jquery
-  - menu_parent_form_ui/menu_parent_form_ui.base
