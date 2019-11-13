@@ -6,6 +6,8 @@ base theme: adminimal_theme
 # available to every page presented by the theme
 libraries:
   - advominimal_theme/global-styling
+  - core/jquery
+  - core/jquery.once
 regions:
   header: 'Header'
   pre_content: 'Pre-content'
