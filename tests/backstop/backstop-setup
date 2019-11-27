@@ -1,0 +1,187 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Initiate backstop-local.json with the appropriate domain.
+ */
+
+$source_filename = __DIR__ . '/backstop.json';
+$local_filename = __DIR__ . '/backstop-local.json';
+
+if (PHP_SAPI !== 'cli') {
+  echo "Can only be run from the commandline.";
+  die(1);
+}
+
+// Ask to recreate an existing config file.
+if (file_exists($local_filename)) {
+  if (!ask_boolean_question("The local config file $local_filename already exists.  Do you want to recreate it? (Y/n) ", 'y')) {
+    echo "Aborting";
+    die(1);
+  }
+}
+
+// Open some file pointers.
+$local_pointer = fopen($local_filename, 'w+');
+if (!$local_pointer) {
+  echo "$local_filename could not be opened for writing.";
+  die(1);
+}
+$source_pointer = fopen($source_filename, 'r');
+if (!$source_pointer) {
+  echo "$source_filename could not be opened for reading.";
+  fclose($local_pointer);
+  die(1);
+}
+
+// Get the source config.
+$source_config = fread($source_pointer, filesize($source_filename));
+if (!$source_config) {
+  echo "$source_filename could not be read.";
+  fclose($local_pointer);
+  fclose($source_pointer);
+  die(1);
+}
+
+// Get some URLs.
+$site = ask_string_question('Enter the machine name of the Pantheon site that you are testing. ');
+$environment_test = ask_string_question('What environment are you testing (typically a multidev or dev)? ');
+$environment_reference = ask_string_question('What is the reference environment (typically dev or test)? ');
+//$site = 'stanford-hs';
+//$environment_test = 'dev';
+//$environment_reference = 'test';
+$domain_test = "https://$environment_test-$site.pantheonsite.io";
+$domain_reference = "https://$environment_reference-$site.pantheonsite.io";
+
+// Write the new config.
+$local_config = '';
+$local_config = add_domain_to_config($source_config, $domain_test, 'url', $local_pointer, $local_filename);
+$local_config = add_domain_to_config($local_config, $domain_reference, 'referenceUrl', $local_pointer, $local_filename);
+fclose($local_pointer);
+fclose($source_pointer);
+
+// Copy DB from live.
+copy_live_db_to_environment($site, $environment_test);
+copy_live_db_to_environment($site, $environment_reference);
+
+echo "\n";
+echo "Visit both of these sites and confirm that they have identical content:\n";
+echo "$domain_test\n";
+echo "$domain_reference\n";
+
+echo "\n";
+echo "All done.  Typically the next step is to run `lando backstop reference` to get reference screenshots.  Then `lando backstop test` to test the test environment.  See README.md for more info.\n";
+echo "\n";
+die;
+
+/**
+ * Ask a Y/N question of the user.
+ *
+ * @param string $question
+ *  Could end in either
+ *    * (Y/n) for default Yes.
+ *    * (y/N) for default No.
+ *    * Nothing if no default.
+ * @param string $default_letter = 'y'
+ *  Lowercase default letter (either 'y', 'n', or NULL if no default)
+ *
+ * @return bool
+ *  Did the user choose the default?
+ */
+function ask_boolean_question($question, $default_letter = 'y') {
+  echo $question;
+  $response = trim(fgets(STDIN));
+  // If no response, assume the default.
+  if ($default_letter && !$response) {
+    return TRUE;
+  }
+  if ($response && strtolower($response[0]) === $default_letter) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Ask a question where the answer is a string.
+ *
+ * @param string $question
+ *
+ * @return string
+ */
+function ask_string_question($question) {
+  echo $question;
+  return trim(fgets(STDIN, 999));
+}
+
+/**
+ * Add a domain to the config file.
+ *
+ * @param string $source_config
+ * @param string $domain
+ * @param string $machine_name
+ *  Either 'url' or 'referenceUrl'
+ * @param resource $file_pointer
+ * @param string $file_name
+ *
+ * @return string
+ *  The updated config.
+ */
+function add_domain_to_config($source_config, $domain, $machine_name, $file_pointer, $file_name) {
+  $domain = rtrim($domain, '/');
+  if (strpos($domain, 'http') !== 0) {
+    echo "Typically this should start with 'http'. But okay, if you insist.\n";
+  }
+  $source_string = "\"$machine_name\": \"";
+  $destin_string = "\"$machine_name\": \"$domain";
+  $destin_config = str_replace($source_string, $destin_string, $source_config);
+  rewind($file_pointer);
+  if (!fwrite($file_pointer, $destin_config)) {
+    echo "Could not write config to $file_name.";
+    die(1);
+  }
+  return $destin_config;
+}
+
+/**
+ * Ask to copy the DB and files from live to the given environment.
+ *
+ * @param string $site
+ * @param string $environment
+ */
+function copy_live_db_to_environment($site, $environment) {
+  if ($environment === 'live') {
+    return;
+  }
+
+  $site =  escapeshellarg($site);
+  $environment =  escapeshellarg($environment);
+  echo "\n";
+  if (
+    !ask_boolean_question("Do you want to copy the DB and files from the live environment to the $environment environment (You should do this once so that you have identical content on both the test and reference environments.)? (Y/n)", 'y')
+    || !ask_boolean_question("Are you sure that you want to blow away the existing DB on $environment? (Y/n)", 'y')
+  ) {
+    return;
+  }
+
+  echo "\n";
+  echo "Copying DB and Files from live to $environment.\n";
+  passthru("terminus env:clone-content $site.live $environment --cc --updatedb -y", $return);
+  if ($return) {
+    echo "The DB and files could not be copied.\n";
+    return;
+  }
+
+  $framework = trim(`terminus site:info --field=framework $site`);
+  if ($framework !== 'drupal8') {
+    echo "You should probably also import config.  This script can't yet do that for $framework.\n";
+    return;
+  }
+
+  echo "\n";
+  echo "Now importing config on $environment.\n";
+  passthru("terminus drush $site.$environment -- cim -y", $return);
+  if ($return) {
+    echo "Config could not be imported.\n";
+  }
+}

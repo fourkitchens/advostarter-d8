@@ -22,6 +22,13 @@ tooling:
       See tests/backstop/README.md for more info.
     cmd:
       - cd /app/tests/backstop && backstop --config=/app/tests/backstop/backstop-local.json
+  backstop-setup:
+    service: appserver
+    description: |
+      Setup BackstopJS for visual regression testing.  E.g.
+        lando backstop-setup
+    cmd:
+      - cd /app/tests/backstop && ./backstop-setup
   drush:
     service: appserver
     cmd: drush --root=/app/web
