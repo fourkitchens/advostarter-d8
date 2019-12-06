@@ -6,3 +6,6 @@ api_version: 1
 php_version: 7.3
 web_docroot: true
 enforce_https: transitional
+protected_web_paths:
+  - /sites/default/config
+  - /sites/default/config_dev
