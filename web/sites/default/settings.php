@@ -85,22 +85,6 @@ if (
   exit();
 }
 
-// Require HTTPS.
-if (
-  $config['server_environment'] != 'local' &&
-  php_sapi_name() != "cli"
-) {
-  if (
-    empty($_SERVER['HTTPS']) && empty($_SERVER['HTTP_X_SSL']) ||
-    isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) != 'ON' ||
-    isset($_SERVER['HTTP_X_SSL']) && strtoupper($_SERVER['HTTP_X_SSL']) != 'ON'
-  ) {
-    header('HTTP/1.0 301 Moved Permanently');
-    header('Location: https://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    exit();
-  }
-}
-
 // Error settings.
 switch($config['server_environment']) {
   case 'live':
