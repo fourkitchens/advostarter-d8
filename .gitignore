@@ -54,6 +54,7 @@ Thumbs.db
 ######################
 *.un~
 .idea
+**/workspace.xml
 
 # SASS #
 ##########
@@ -62,7 +63,11 @@ Thumbs.db
 # Things in the core directory that Drupal 8 commits in the repository.
 !core/**/*.gz
 
-# Wraith
+# Visual Regression Tests
 tests/wraith/config/capture-local.yaml
 tests/wraith/shots/*
+tests/backstop/backstop-local.json
+web/backstop/bitmaps_reference
+node_modules
+.bashrc
 
