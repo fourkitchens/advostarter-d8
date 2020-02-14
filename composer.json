@@ -51,7 +51,8 @@
     "drupal/webform": "^5.0@RC",
     "drush/drush": "^9.2",
     "fourkitchens/emulsify": "^3.1",
-    "npm-asset/quicklink": "^1.0"
+    "npm-asset/quicklink": "^1.0",
+    "zaporylie/composer-drupal-optimizations": "^1.1"
   },
   "replace": {
     "drupal/acquia_connector": "*"

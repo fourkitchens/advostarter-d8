@@ -2502,8 +2502,6 @@ return array(
     'Drupal\\Core\\Language\\LanguageManager' => $baseDir . '/web/core/lib/Drupal/Core/Language/LanguageManager.php',
     'Drupal\\Core\\Language\\LanguageManagerInterface' => $baseDir . '/web/core/lib/Drupal/Core/Language/LanguageManagerInterface.php',
     'Drupal\\Core\\Layout\\Annotation\\Layout' => $baseDir . '/web/core/lib/Drupal/Core/Layout/Annotation/Layout.php',
-    'Drupal\\Core\\Layout\\Icon\\IconBuilderInterface' => $baseDir . '/web/core/lib/Drupal/Core/Layout/Icon/IconBuilderInterface.php',
-    'Drupal\\Core\\Layout\\Icon\\SvgIconBuilder' => $baseDir . '/web/core/lib/Drupal/Core/Layout/Icon/SvgIconBuilder.php',
     'Drupal\\Core\\Layout\\LayoutDefault' => $baseDir . '/web/core/lib/Drupal/Core/Layout/LayoutDefault.php',
     'Drupal\\Core\\Layout\\LayoutDefinition' => $baseDir . '/web/core/lib/Drupal/Core/Layout/LayoutDefinition.php',
     'Drupal\\Core\\Layout\\LayoutInterface' => $baseDir . '/web/core/lib/Drupal/Core/Layout/LayoutInterface.php',
@@ -6955,4 +6953,7 @@ return array(
     'phpDocumentor\\Reflection\\Types\\String_' => $vendorDir . '/phpdocumentor/type-resolver/src/Types/String_.php',
     'phpDocumentor\\Reflection\\Types\\This' => $vendorDir . '/phpdocumentor/type-resolver/src/Types/This.php',
     'phpDocumentor\\Reflection\\Types\\Void_' => $vendorDir . '/phpdocumentor/type-resolver/src/Types/Void_.php',
+    'zaporylie\\ComposerDrupalOptimizations\\Cache' => $vendorDir . '/zaporylie/composer-drupal-optimizations/src/Cache.php',
+    'zaporylie\\ComposerDrupalOptimizations\\Plugin' => $vendorDir . '/zaporylie/composer-drupal-optimizations/src/Plugin.php',
+    'zaporylie\\ComposerDrupalOptimizations\\TruncatedComposerRepository' => $vendorDir . '/zaporylie/composer-drupal-optimizations/src/TruncatedComposerRepository.php',
 );
