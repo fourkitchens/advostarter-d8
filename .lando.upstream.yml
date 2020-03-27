@@ -12,6 +12,8 @@ services:
     type: 'node:10'
     overrides:
       image: 'backstopjs/backstopjs:4.0.6'
+    run:
+      - rm -f /app/web/backstop/bitmaps_test/*
 tooling:
   push: disabled
   backstop:
