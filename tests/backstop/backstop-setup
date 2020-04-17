@@ -47,7 +47,7 @@ if (!$source_config) {
 // Get some URLs.
 $site = ask_string_question('Enter the machine name of the Pantheon site that you are testing. ');
 $environment_test = ask_string_question('What environment are you testing (typically a multidev or dev)? ');
-$environment_reference = ask_string_question('What is the reference environment (typically dev or test)? ');
+$environment_reference = ask_string_question('What is the reference environment (typically dev or test (of even live if content doesn\'t change much))? ');
 //$site = 'stanford-hs';
 //$environment_test = 'dev';
 //$environment_reference = 'test';
@@ -55,15 +55,26 @@ $domain_test = "https://$environment_test-$site.pantheonsite.io";
 $domain_reference = "https://$environment_reference-$site.pantheonsite.io";
 
 // Write the new config.
-$local_config = '';
 $local_config = add_domain_to_config($source_config, $domain_test, 'url', $local_pointer, $local_filename);
 $local_config = add_domain_to_config($local_config, $domain_reference, 'referenceUrl', $local_pointer, $local_filename);
 fclose($local_pointer);
 fclose($source_pointer);
 
 // Copy DB from live.
-copy_live_db_to_environment($site, $environment_test);
-copy_live_db_to_environment($site, $environment_reference);
+echo "\n";
+$copy_db_test = $environment_test !== 'live'
+  && ask_boolean_question("Do you want to copy the DB and files from the live environment to the $environment_test environment (You should do this once so that you have identical content on both the test and reference environments.)? (Y/n)", 'y')
+  && ask_boolean_question("Are you sure that you want to blow away the existing DB on $environment_test? (Y/n)", 'y');
+echo "\n";
+$copy_db_reference = $environment_reference !== 'live'
+  && ask_boolean_question("Do you want to copy the DB and files from the live environment to the $environment_reference environment (You should do this once so that you have identical content on both the test and reference environments.)? (Y/n)", 'y')
+  && ask_boolean_question("Are you sure that you want to blow away the existing DB on $environment_reference? (Y/n)", 'y');
+if ($copy_db_test) {
+  copy_live_db_to_environment($site, $environment_test);
+}
+if ($copy_db_reference) {
+  copy_live_db_to_environment($site, $environment_reference);
+}
 
 echo "\n";
 echo "Visit both of these sites and confirm that they have identical content:\n";
@@ -156,13 +167,6 @@ function copy_live_db_to_environment($site, $environment) {
 
   $site =  escapeshellarg($site);
   $environment =  escapeshellarg($environment);
-  echo "\n";
-  if (
-    !ask_boolean_question("Do you want to copy the DB and files from the live environment to the $environment environment (You should do this once so that you have identical content on both the test and reference environments.)? (Y/n)", 'y')
-    || !ask_boolean_question("Are you sure that you want to blow away the existing DB on $environment? (Y/n)", 'y')
-  ) {
-    return;
-  }
 
   echo "\n";
   echo "Copying DB and Files from live to $environment.\n";
@@ -173,15 +177,27 @@ function copy_live_db_to_environment($site, $environment) {
   }
 
   $framework = trim(`terminus site:info --field=framework $site`);
-  if ($framework !== 'drupal8') {
-    echo "You should probably also import config.  This script can't yet do that for $framework.\n";
-    return;
+  echo "\n";
+  switch ($framework) {
+    case 'drupal':
+      echo "Now importing config on $environment.\n";
+      passthru("terminus drush $site.$environment -- features-revert-all -y", $return);
+      if ($return) {
+        echo "Config could not be imported.\n";
+      }
+      break;
+
+    case 'drupal8':
+      echo "Now importing config on $environment.\n";
+      passthru("terminus drush $site.$environment -- cim -y", $return);
+      if ($return) {
+        echo "Config could not be imported.\n";
+      }
+      break;
+
+    default:
+      echo "You should probably also import config.  This script can't yet do that for $framework.\n";
+      break;
   }
 
-  echo "\n";
-  echo "Now importing config on $environment.\n";
-  passthru("terminus drush $site.$environment -- cim -y", $return);
-  if ($return) {
-    echo "Config could not be imported.\n";
-  }
 }
