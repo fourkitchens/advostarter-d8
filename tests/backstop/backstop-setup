@@ -10,16 +10,14 @@ $source_filename = __DIR__ . '/backstop.json';
 $local_filename = __DIR__ . '/backstop-local.json';
 
 if (PHP_SAPI !== 'cli') {
-  echo "Can only be run from the commandline.";
+  echo 'Can only be run from the commandline.';
   die(1);
 }
 
 // Ask to recreate an existing config file.
-if (file_exists($local_filename)) {
-  if (!ask_boolean_question("The local config file $local_filename already exists.  Do you want to recreate it? (Y/n) ", 'y')) {
-    echo "Aborting";
-    die(1);
-  }
+if (file_exists($local_filename) && !ask_boolean_question("The local config file $local_filename already exists.  Do you want to recreate it? (Y/n) ", 'y')) {
+  echo 'Aborting';
+  die(1);
 }
 
 // Open some file pointers.
