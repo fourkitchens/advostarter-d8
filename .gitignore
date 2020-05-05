@@ -66,8 +66,6 @@ Thumbs.db
 # Visual Regression Tests
 tests/wraith/config/capture-local.yaml
 tests/wraith/shots/*
-tests/backstop/backstop-local.json
-web/backstop/bitmaps_reference
 node_modules
 .bashrc
 
