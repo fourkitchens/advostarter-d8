@@ -12,10 +12,7 @@ use Drupal\config_perms\CustomPermsEntityInterface;
  *   id = "custom_perms_entity",
  *   label = @Translation("Custom perms entity"),
  *   handlers = {
- *     "list_builder" = "Drupal\config_perms\CustomPermsEntityListBuilder",
  *     "form" = {
- *       "add" = "Drupal\config_perms\Form\CustomPermsEntityForm",
- *       "edit" = "Drupal\config_perms\Form\CustomPermsEntityForm",
  *       "delete" = "Drupal\config_perms\Form\CustomPermsEntityDeleteForm"
  *     }
  *   },
@@ -26,11 +23,14 @@ use Drupal\config_perms\CustomPermsEntityInterface;
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "route",
+ *     "status"
+ *   },
  *   links = {
- *     "canonical" = "/admin/structure/custom_perms_entity/{custom_perms_entity}",
- *     "edit-form" = "/admin/structure/custom_perms_entity/{custom_perms_entity}/edit",
  *     "delete-form" = "/admin/structure/custom_perms_entity/{custom_perms_entity}/delete",
- *     "collection" = "/admin/structure/visibility_group"
  *   }
  * )
  */
@@ -61,7 +61,7 @@ class CustomPermsEntity extends ConfigEntityBase implements CustomPermsEntityInt
    *
    * @var string
    */
-  protected $path;
+  protected $route;
 
   /**
    * Get the permission status.
@@ -71,10 +71,10 @@ class CustomPermsEntity extends ConfigEntityBase implements CustomPermsEntityInt
   }
 
   /**
-   * Get the permission paths.
+   * Get the permission routes.
    */
-  public function getPath() {
-    return $this->path;
+  public function getRoute() {
+    return $this->route;
   }
 
 }

@@ -3075,27 +3075,27 @@
     },
     {
         "name": "drupal/admin_toolbar",
-        "version": "1.27.0",
-        "version_normalized": "1.27.0.0",
+        "version": "2.3.0",
+        "version_normalized": "2.3.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/admin_toolbar.git",
-            "reference": "8.x-1.27"
+            "reference": "8.x-2.3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/admin_toolbar-8.x-1.27.zip",
-            "reference": "8.x-1.27",
-            "shasum": "fed1fbbdf8f805b1da63d73e7e2c54750f354d61"
+            "url": "https://ftp.drupal.org/files/projects/admin_toolbar-8.x-2.3.zip",
+            "reference": "8.x-2.3",
+            "shasum": "cf8ee1aa8adfc604db4394655e3ba4c423d5f24a"
         },
         "require": {
-            "drupal/core": "^8"
+            "drupal/core": "^8.8.0 || ^9.0"
         },
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.27",
-                "datestamp": "1558553350",
+                "version": "8.x-2.3",
+                "datestamp": "1592535597",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3105,7 +3105,7 @@
         "installation-source": "dist",
         "notification-url": "https://packages.drupal.org/8/downloads",
         "license": [
-            "GPL-2.0+"
+            "GPL-2.0-or-later"
         ],
         "authors": [
             {
@@ -3149,7 +3149,7 @@
             "Toolbar"
         ],
         "support": {
-            "source": "http://cgit.drupalcode.org/admin_toolbar",
+            "source": "https://git.drupalcode.org/project/admin_toolbar",
             "issues": "https://www.drupal.org/project/issues/admin_toolbar"
         }
     },
@@ -3373,30 +3373,30 @@
     },
     {
         "name": "drupal/bigmenu",
-        "version": "1.0.0-alpha3",
-        "version_normalized": "1.0.0.0-alpha3",
+        "version": "2.0.0-rc1",
+        "version_normalized": "2.0.0.0-RC1",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/bigmenu.git",
-            "reference": "8.x-1.0-alpha3"
+            "reference": "2.0.0-rc1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/bigmenu-8.x-1.0-alpha3.zip",
-            "reference": "8.x-1.0-alpha3",
-            "shasum": "5761f224bf86fe9927420e21d706b9d73fd7b8dd"
+            "url": "https://ftp.drupal.org/files/projects/bigmenu-2.0.0-rc1.zip",
+            "reference": "2.0.0-rc1",
+            "shasum": "56981f40cb31448061c7c53ca3172435875b4c5d"
         },
         "require": {
-            "drupal/core": "^8"
+            "drupal/core": "^8 || ^9"
         },
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.0-alpha3",
-                "datestamp": "1581892352",
+                "version": "2.0.0-rc1",
+                "datestamp": "1591655675",
                 "security-coverage": {
                     "status": "not-covered",
-                    "message": "Alpha releases are not covered by Drupal security advisories."
+                    "message": "RC releases are not covered by Drupal security advisories."
                 }
             }
         },
@@ -3707,27 +3707,27 @@
     },
     {
         "name": "drupal/config_perms",
-        "version": "1.2.0",
-        "version_normalized": "1.2.0.0",
+        "version": "2.0.0",
+        "version_normalized": "2.0.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/config_perms.git",
-            "reference": "8.x-1.2"
+            "reference": "8.x-2.0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/config_perms-8.x-1.2.zip",
-            "reference": "8.x-1.2",
-            "shasum": "6cb509fcb5ca186a829f83cc33de4a37e0bebb4b"
+            "url": "https://ftp.drupal.org/files/projects/config_perms-8.x-2.0.zip",
+            "reference": "8.x-2.0",
+            "shasum": "3e30cd71f00cb6da04ed2c8b032a9bd5357d9d70"
         },
         "require": {
-            "drupal/core": "~8.0"
+            "drupal/core": "^8 || ^9"
         },
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.2",
-                "datestamp": "1562777256",
+                "version": "8.x-2.0",
+                "datestamp": "1591397577",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -5475,27 +5475,30 @@
     },
     {
         "name": "drupal/field_group",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
+        "version": "3.1.0",
+        "version_normalized": "3.1.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/field_group.git",
-            "reference": "8.x-1.0"
+            "reference": "8.x-3.1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/field_group-8.x-1.0.zip",
-            "reference": "8.x-1.0",
-            "shasum": "e8aa3fae5c3c5dec84644bb577996938d638a611"
+            "url": "https://ftp.drupal.org/files/projects/field_group-8.x-3.1.zip",
+            "reference": "8.x-3.1",
+            "shasum": "8a719eaea594f0ba874172831cb28da93c66b77a"
         },
         "require": {
-            "drupal/core": "^8"
+            "drupal/core": "^8.8 || ^9"
+        },
+        "require-dev": {
+            "drupal/jquery_ui_accordion": "^1.0"
         },
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.0",
-                "datestamp": "1510352885",
+                "version": "8.x-3.1",
+                "datestamp": "1591772567",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -5505,7 +5508,7 @@
         "installation-source": "dist",
         "notification-url": "https://packages.drupal.org/8/downloads",
         "license": [
-            "GPL-2.0+"
+            "GPL-2.0-or-later"
         ],
         "authors": [
             {
@@ -5532,7 +5535,8 @@
         "description": "Provides the field_group module.",
         "homepage": "https://www.drupal.org/project/field_group",
         "support": {
-            "source": "https://git.drupalcode.org/project/field_group"
+            "source": "https://git.drupalcode.org/project/field_group",
+            "issues": "https://www.drupal.org/project/issues/field_group"
         }
     },
     {
@@ -9642,59 +9646,52 @@
     },
     {
         "name": "drush/drush",
-        "version": "9.7.2",
-        "version_normalized": "9.7.2.0",
+        "version": "10.2.2",
+        "version_normalized": "10.2.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drush-ops/drush.git",
-            "reference": "ab5e345a72c9187a7d770486a09691f6526826aa"
+            "reference": "8307a4e7dae9c63a279d8b59b9dca6c1973576c2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drush-ops/drush/zipball/ab5e345a72c9187a7d770486a09691f6526826aa",
-            "reference": "ab5e345a72c9187a7d770486a09691f6526826aa",
+            "url": "https://api.github.com/repos/drush-ops/drush/zipball/8307a4e7dae9c63a279d8b59b9dca6c1973576c2",
+            "reference": "8307a4e7dae9c63a279d8b59b9dca6c1973576c2",
             "shasum": ""
         },
         "require": {
-            "chi-teck/drupal-code-generator": "^1.28.1",
+            "chi-teck/drupal-code-generator": "^1.30.5",
             "composer/semver": "^1.4",
-            "consolidation/annotated-command": "^2.12",
             "consolidation/config": "^1.2",
             "consolidation/filter-via-dot-access-data": "^1",
-            "consolidation/output-formatters": "^3.3.1",
-            "consolidation/robo": "^1.4.6",
+            "consolidation/robo": "^1 || ^2",
             "consolidation/site-alias": "^3.0.0@stable",
-            "consolidation/site-process": "^2.0.3",
+            "consolidation/site-process": "^2.1 || ^4",
             "ext-dom": "*",
             "grasmash/yaml-expander": "^1.1.1",
             "league/container": "~2",
-            "php": ">=5.6.0",
+            "php": ">=7.1.3",
             "psr/log": "~1.0",
             "psy/psysh": "~0.6",
-            "symfony/console": "^3.4",
             "symfony/event-dispatcher": "^3.4 || ^4.0",
             "symfony/finder": "^3.4 || ^4.0",
-            "symfony/process": "^3.4",
-            "symfony/var-dumper": "^3.4 || ^4.0",
-            "symfony/yaml": "^3.4",
-            "webflo/drupal-finder": "^1.1",
+            "symfony/var-dumper": "^3.4 || ^4.0 || ^5.0",
+            "symfony/yaml": "^3.4 || ^4.0",
+            "webflo/drupal-finder": "^1.2",
             "webmozart/path-util": "^2.1.0"
         },
         "require-dev": {
-            "composer/installers": "^1.2",
+            "composer/installers": "^1.7",
             "cweagans/composer-patches": "~1.0",
             "drupal/alinks": "1.0.0",
-            "drupal/devel": "^2",
-            "drupal/empty_theme": "1.0",
+            "drupal/core-recommended": "^8.8",
             "g1a/composer-test-scenarios": "^3",
             "lox/xhprof": "dev-master",
             "phpunit/phpunit": "^4.8.36 || ^6.1",
             "squizlabs/php_codesniffer": "^2.7 || ^3",
-            "vlucas/phpdotenv": "^2.4",
-            "webflo/drupal-core-require-dev": "8.7.x-dev",
-            "webflo/drupal-core-strict": "8.7.x-dev"
+            "vlucas/phpdotenv": "^2.4"
         },
-        "time": "2020-02-09T17:29:51+00:00",
+        "time": "2020-02-26T21:07:53+00:00",
         "bin": [
             "drush"
         ],
@@ -9726,21 +9723,8 @@
                     "type:drupal-drush"
                 ]
             },
-            "scenarios": {
-                "php5": {
-                    "config": {
-                        "platform": {
-                            "php": "5.6.38"
-                        }
-                    },
-                    "require-dev": {
-                        "webflo/drupal-core-strict": "8.6.x-dev",
-                        "webflo/drupal-core-require-dev": "8.6.x-dev"
-                    }
-                }
-            },
             "branch-alias": {
-                "dev-master": "9.x-dev"
+                "dev-master": "10.x-dev"
             }
         },
         "installation-source": "dist",

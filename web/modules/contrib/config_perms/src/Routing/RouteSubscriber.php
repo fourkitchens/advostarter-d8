@@ -19,41 +19,18 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected function alterRoutes(RouteCollection $collection) {
     $custom_perms = CustomPermsEntity::loadMultiple();
+    /** @var \Drupal\config_perms\Entity\CustomPermsEntity $custom_perm */
     foreach ($custom_perms as $custom_perm) {
       if ($custom_perm->getStatus()) {
-        $paths = $this->configPermsParsePath($custom_perm->getPath());
-        foreach ($paths as $path) {
-          $path = ($path[0] == '/') ? $path : '/' . $path;
-          $url_object = \Drupal::service('path.validator')->getUrlIfValidWithoutAccessCheck($path);
-          if ($url_object) {
-            $route_name = $url_object->getRouteName();
-            if ($route = $collection->get($route_name)) {
-              $route->setRequirement('_permission', $custom_perm->label());
-            }
+        $routes = config_perms_parse_path($custom_perm->getRoute());
+        foreach ($routes as $route) {
+          if ($route = $collection->get($route)) {
+            // This overrides the route requirements removing all the other
+            // access checkers and leaving only our access checker.
+            $route->setRequirements(['_config_perms_access_check' => 'TRUE']);
           }
         }
       }
-    }
-  }
-
-  /**
-   * Custom permission paths to array of paths.
-   *
-   * @param string $path
-   *   Path(s) given by the user.
-   *
-   * @return array|string
-   *   Implode paths in array of strings.
-   */
-  public function configPermsParsePath($path) {
-    if (is_array($path)) {
-      $string = implode("\n", $path);
-      return $string;
-    }
-    else {
-      $path = str_replace(["\r\n", "\n\r", "\n", "\r"], "\n", $path);
-      $parts = explode("\n", $path);
-      return $parts;
     }
   }
 
