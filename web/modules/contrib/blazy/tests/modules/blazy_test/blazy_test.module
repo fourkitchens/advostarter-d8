@@ -5,6 +5,10 @@
  * Testing various Blazy hooks, etc.
  */
 
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\BlazyAlter;
+use Drupal\blazy_test\BlazyTestAlter;
+
 /**
  * Implements hook_theme().
  */
@@ -39,60 +43,53 @@ function blazy_test_blazy_attach_alter(array &$load, array $settings = []) {
 }
 
 /**
- * Implements hook_blazy_attach_alter().
+ * Implements hook_blazy_lightboxes_alter().
  */
 function blazy_test_blazy_lightboxes_alter(array &$lightboxes) {
   $lightboxes[] = 'blazy_test';
 }
 
 /**
- * Implements hook_blazy_attach_alter().
+ * Implements hook_blazy_alter().
  */
 function blazy_test_blazy_alter(array &$image, array $settings = []) {
   if (!empty($settings['media_switch']) && $settings['media_switch'] == 'blazy_test') {
-    $image['#pre_render'][] = 'blazy_test_pre_render';
+    $image['#pre_render'][] = [BlazyTestAlter::class, 'preRender'];
   }
 }
 
 /**
- * #pre_render callback: Sets blazy_test related URL attributes.
+ * Implements hook_library_info_alter().
  */
-function blazy_test_pre_render($image) {
-  $settings = isset($image['#settings']) ? $image['#settings'] : [];
-
-  // Video's HREF points to external site, adds URL to local image.
-  if (!empty($settings['box_url']) && !empty($settings['embed_url'])) {
-    $image['#url_attributes']['data-box-url'] = $settings['box_url'];
+function blazy_test_library_info_alter(array &$libraries, $extension) {
+  if ($extension !== 'blazy') {
+    return;
   }
 
-  return $image;
+  $path = \Drupal::root() . '/libraries/blazy/blazy.js';
+  if (!is_file($path)) {
+    $libraries['blazy']['js'] = ['https://cdn.jsdelivr.net/npm/blazy/blazy.js' => ['type' => 'external', 'weight' => -4]];
+    unset($libraries['blazy']['js']['/libraries/blazy/blazy.js']);
+  }
 }
 
 /**
- * Implements hook_hook_info().
+ * Implements hook_config_schema_info_alter().
  */
-function blazy_test_hook_info() {
-  $hooks['blazy_test_skins_info'] = ['group' => 'blazy_test'];
-  return $hooks;
+function blazy_test_config_schema_info_alter(array &$definitions) {
+  $extra = ['thumbnail' => ''] + BlazyDefault::gridSettings();
+  BlazyAlter::configSchemaInfoAlter($definitions, 'blazy_base', BlazyDefault::extendedSettings() + $extra);
 }
 
-if (!function_exists('token_theme')) {
+/**
+ * Attempts to satisfy the tests for <= D8.7.
+ */
+if (!function_exists('file_valid_uri')) {
 
   /**
    * Dummy function.
    */
-  function token_theme() {
-    // Empty block to satisfy coder.
-  }
-
-}
-
-if (!function_exists('video_embed_media_media_bundle_insert')) {
-
-  /**
-   * Dummy function.
-   */
-  function video_embed_media_media_bundle_insert() {
+  function file_valid_uri() {
     // Empty block to satisfy coder.
   }
 

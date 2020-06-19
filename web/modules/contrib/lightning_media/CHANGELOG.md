@@ -1,3 +1,38 @@
+## 3.16.0
+* Pinned Slick Carousel to 2.0 to ensure compatibility with Drupal 8.7.
+* Updated DropzoneJS to 2.0-alpha5.
+* Updated Entity Browser to 2.3.
+
+## 3.15.0
+* Updated Slick Entity Reference to 2.0.
+* Updated Media Entity Instagram to 2.0.
+* Updated Media Entity Twitter to 2.1.
+
+## 3.14.0
+There are no user-facing changes in this version.
+
+## 3.13.0
+* Added support for Drupal core 8.8.x.
+* Updated Entity Embed to 1.0.
+* Updated Views Infinite Scroll to 1.6.
+* Updated Entity Browser to 2.2.
+
+## 3.12.0
+* Fixed an improperly namespaced dependency in Lightning Media
+  Video's info file.
+
+## 3.11.0
+* Updated DropzoneJS to 2.0-alpha4.
+* Updated Entity Embed to 1.0-rc2.
+* Updated Media Entity Twitter to 2.0-alpha3.
+
+## 3.10.0
+There are no user-facing changes in this release.
+
+## 3.9.0
+* Removed deprecated function calls. (Issue #3034965)
+* Fixed text capitalization in user interface. (Issue #2984684)
+
 ## 3.8.0
 * Lightning Media is now compatible with Lightning Core 4.x (Drupal core 8.7.x).
 

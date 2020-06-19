@@ -2,7 +2,7 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\security_review\Check;
@@ -68,9 +68,17 @@ class Field extends Check {
             $id = 'entity_id';
           }
           else {
-            $table = $entity_type_id . '_field_data';
+            $entity = $entity_type_manager->getStorage($entity_type_id)->getEntityType();
+            $translatable = $entity->isTranslatable();
+            $table = '';
+            if ($translatable) {
+              $table = $entity->getDataTable() ?: $entity_type_id . '_field_data';
+            }
+            else {
+              $table = $entity->getBaseTable() ?: $entity_type_id;
+            }
             $separator = '__';
-            $id = $entity_type_manager->getDefinition($entity_type_id)->getKey('id');
+            $id = $entity->getKey('id');
           }
           $rows = \Drupal::database()->select($table, 't')
             ->fields('t')
@@ -127,7 +135,7 @@ class Field extends Check {
     $items = [];
     foreach ($findings as $entity_type_id => $entities) {
       foreach ($entities as $entity_id => $fields) {
-        $entity = $this->entityManager()
+        $entity = $this->entityTypeManager()
           ->getStorage($entity_type_id)
           ->load($entity_id);
 
@@ -158,12 +166,12 @@ class Field extends Check {
    * Falls back on a string with entity type id and id if no good link can
    * be found.
    *
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityBase $entity
    *   The entity.
    *
    * @return string
    */
-  protected function getEntityLink(Entity $entity) {
+  protected function getEntityLink(EntityInterface $entity) {
     try {
       $url = $entity->toUrl('edit-form');
     }
@@ -194,7 +202,7 @@ class Field extends Check {
     $output = '';
     foreach ($findings as $entity_type_id => $entities) {
       foreach ($entities as $entity_id => $fields) {
-        $entity = $this->entityManager()
+        $entity = $this->entityTypeManager()
           ->getStorage($entity_type_id)
           ->load($entity_id);
 

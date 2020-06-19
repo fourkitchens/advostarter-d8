@@ -2,12 +2,14 @@
 
 namespace Drupal\bigmenu;
 
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\menu_ui\MenuForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines class for BigMenuForm.
@@ -20,6 +22,22 @@ class BigMenuForm extends MenuForm {
    * @var array
    */
   protected $tree = [];
+
+  /**
+   * The bigmenu configuration.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $config;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    $instance = parent::create($container);
+    $instance->config = $container->get('config.factory')->get('bigmenu.settings');
+    return $instance;
+  }
 
   /**
    * Overrides Drupal\menu_ui\MenuForm::buildOverviewForm() to limit the depth.
@@ -35,7 +53,9 @@ class BigMenuForm extends MenuForm {
   protected function buildOverviewForm(array &$form, FormStateInterface $form_state) {
     $menu_link = $this->getRequest()->query->get('menu_link');
     $form['#cache']['contexts'][] = 'url.query_args:menu_link';
-    return $this->buildOverviewFormWithDepth($form, $form_state, 1, $menu_link);
+
+    $max_depth = $this->config->get('max_depth') ?: 1;
+    return $this->buildOverviewFormWithDepth($form, $form_state, $max_depth, $menu_link);
   }
 
   /**
@@ -65,10 +85,25 @@ class BigMenuForm extends MenuForm {
 
     // Add a link to go back to the full menu.
     if ($menu_link) {
-      $form['back_link'] = $this->entity->toLink($this->t('Back to @label top level', [
+      /** @var \Drupal\Core\Menu\MenuLinkInterface $parent */
+      $breadcrumbs = [];
+      $parent = $this->menuLinkManager->createInstance($menu_link);
+      while ($parent_id = $parent->getParent()) {
+        $parent = $this->menuLinkManager->createInstance($parent_id);
+        $breadcrumbs[] = new Link($parent->getTitle(), $this->entity->toUrl('edit-form')->setOption('query', [
+          'menu_link' => $parent_id,
+        ]));
+      }
+      $breadcrumbs[] = $this->entity->toLink($this->t('Back to @label top level', [
         '@label' => $this->entity->label(),
-      ]), 'edit-form')->toRenderable();
+      ]), 'edit-form');
+
+      $form['breadcrumb'] = [
+        '#theme' => 'breadcrumb',
+        '#links' => array_reverse($breadcrumbs),
+      ];
     }
+
 
     $form['links'] = [
       '#type' => 'table',
@@ -177,7 +212,11 @@ class BigMenuForm extends MenuForm {
 
         $form['links'][$id]['root'][] = [];
 
-        if ($form['links'][$id]['#item']->hasChildren) {
+        // The hasChildren property only checks enabled children. The link
+        // to edit children should be available when all children are not
+        // enabled, so perform an additional check when necessary.
+        // @see https://www.drupal.org/node/2302149
+        if ($form['links'][$id]['#item']->hasChildren || $this->hasAnyChildren($links[$id]['#item'])) {
           if (is_null($menu_link) || (isset($menu_link) && $menu_link != $element['#item']->link->getPluginId())) {
             $uri = $this->entity->toUrl('edit-form', [
               'query' => ['menu_link' => $element['#item']->link->getPluginId()],
@@ -244,6 +283,25 @@ class BigMenuForm extends MenuForm {
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
     $form_state->setRedirectUrl(Url::fromUserInput($this->getRedirectDestination()->get()));
+  }
+
+  /**
+   * Checks if a MenuLinkTreeElement has any children, enabled or disabled.
+   *
+   * @param \Drupal\Core\Menu\MenuLinkTreeElement $element
+   *   The parent element.
+   *
+   * @return bool
+   *   TRUE if a MenuLinkTreeElement has any children, otherwise FALSE.
+   */
+  protected function hasAnyChildren(MenuLinkTreeElement $element) {
+    $depth = $element->depth + 1;
+    $tree_params = new MenuTreeParameters();
+    $tree_params->setMinDepth($depth);
+    $tree_params->setMaxDepth($depth);
+    $tree_params->addExpandedParents([$element->link->getPluginId()]);
+    $tree = $this->menuTree->load($this->entity->id(), $tree_params);
+    return !empty($tree);
   }
 
 }

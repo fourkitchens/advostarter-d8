@@ -6,12 +6,16 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\node\NodeInterface;
 
 /**
+ * Tests purging of old Lightning Scheduler data, without migrating it.
+ *
  * @group lightning_workflow
  * @group lightning_scheduler
- * @group orca_ignore
  */
 class PurgeTest extends MigrationTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public function test() {
     parent::test();
 
@@ -33,7 +37,7 @@ class PurgeTest extends MigrationTestBase {
 
     $storage = $this->postMigration('node');
 
-    /** @var NodeInterface $node */
+    /** @var \Drupal\node\NodeInterface $node */
     $node = $storage->load(1);
     $this->assertInstanceOf(NodeInterface::class, $node);
     $this->assertNode($node);
@@ -66,10 +70,15 @@ class PurgeTest extends MigrationTestBase {
 
     $node = $storage->loadRevision(1);
     $this->assertInstanceOf(NodeInterface::class, $node);
-    $this->assertTrue($node);
     $this->assertFalse($node->hasTranslation('fr'));
   }
 
+  /**
+   * Asserts that a node has had its scheduling data purged correctly.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node to check.
+   */
   protected function assertNode(NodeInterface $node) {
     $this->assertFalse($node->hasField('scheduled_publication'));
     $this->assertFalse($node->hasField('scheduled_moderation_state'));

@@ -1,11 +1,12 @@
 <?php
 
-namespace Drupal\Sniffs\Arrays;
+namespace Drupal\Test\Arrays;
 
 use Drupal\Test\CoderSniffUnitTest;
 
 class DisallowLongArraySyntaxUnitTest extends CoderSniffUnitTest
 {
+
 
     /**
      * Returns the lines where errors should occur.
@@ -13,16 +14,18 @@ class DisallowLongArraySyntaxUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of errors that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getErrorList($testFile = NULL)
+    protected function getErrorList(string $testFile): array
     {
         switch ($testFile) {
-            case 'DisallowLongArraySyntaxUnitTest.2.inc':
-                return array(12 => 1);
+        case 'DisallowLongArraySyntaxUnitTest.2.inc':
+            return [12 => 1];
 
-            default:
-                return array();
+        default:
+            return [];
         }
 
     }//end getErrorList()
@@ -34,11 +37,13 @@ class DisallowLongArraySyntaxUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of warnings that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getWarningList($testFile = NULL)
+    protected function getWarningList(string $testFile): array
     {
-        return array();
+        return [];
 
     }//end getWarningList()
 
@@ -46,14 +51,18 @@ class DisallowLongArraySyntaxUnitTest extends CoderSniffUnitTest
     /**
      * Returns a list of test files that should be checked.
      *
-     * @return array The list of test files.
+     * @param string $testFileBase The base path that the unit tests files will have.
+     *
+     * @return array<string>
      */
-    protected function getTestFiles($testFileBase) {
-        return array(
-                __DIR__ . '/disallow_long_array_d7/DisallowLongArraySyntaxUnitTest.1.inc',
-                __DIR__ . '/disallow_long_array_d8/DisallowLongArraySyntaxUnitTest.2.inc',
-               );
-    }
+    protected function getTestFiles($testFileBase): array
+    {
+        return [
+            __DIR__.'/disallow_long_array_d7/DisallowLongArraySyntaxUnitTest.1.inc',
+            __DIR__.'/disallow_long_array_d8/DisallowLongArraySyntaxUnitTest.2.inc',
+        ];
+
+    }//end getTestFiles()
 
 
 }//end class

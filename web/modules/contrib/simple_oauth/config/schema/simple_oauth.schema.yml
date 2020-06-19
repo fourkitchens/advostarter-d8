@@ -23,10 +23,18 @@ simple_oauth.settings:
       type: integer
       label: 'Access Token Expiration Time'
       description: 'The default period in seconds while a access token is valid'
+    authorization_code_expiration:
+      type: integer
+      label: 'Authorization Code Expiration Time'
+      description: 'The default period in seconds while an authorization code is valid'
     refresh_token_expiration:
       type: integer
       label: 'Refresh Token Expiration Time'
       description: 'The default period in seconds while a refresh token is valid'
+    token_cron_batch_size:
+      type: integer
+      label: 'Token batch size'
+      description: 'The number of expired token to delete per batch during cron cron'
     public_key:
       type: path
       label: 'Public Key'
@@ -38,3 +46,7 @@ simple_oauth.settings:
     remember_clients:
       type: boolean
       label: 'Remember clients'
+    use_implicit:
+      type: boolean
+      label: 'Enable the implicit grant?'
+      description: 'Only use the implicit grant if you understand the security implications of using it.'

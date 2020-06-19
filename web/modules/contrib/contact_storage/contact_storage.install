@@ -15,9 +15,6 @@ use Drupal\Core\Field\BaseFieldDefinition;
  * Implements hook_install().
  */
 function contact_storage_install() {
-  // Set the weight of the contact_storage.module to 1 so it is loaded after the
-  // contact_storage_test.module.
-  module_set_weight('contact_storage', 1);
   $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
   $original_contact_message = $entity_definition_update_manager->getEntityType('contact_message');
   $original_contact_form = \Drupal::entityTypeManager()->getDefinition('contact_form');
@@ -127,4 +124,17 @@ function contact_storage_update_8200() {
  */
 function contact_storage_update_8201() {
   \Drupal::service('module_installer')->install(['options']);
+}
+
+/**
+ * Fix the last installed definition for the 'contact_message' entity type.
+ */
+function contact_storage_update_8202() {
+  $entity_type = \Drupal::entityDefinitionUpdateManager()->getEntityType('contact_message');
+  $keys = $entity_type->getKeys();
+  if (empty($keys['langcode'])) {
+    $keys['langcode'] = 'langcode';
+    $entity_type->set('entity_keys', $keys);
+    \Drupal::entityDefinitionUpdateManager()->updateEntityType($entity_type);
+  }
 }

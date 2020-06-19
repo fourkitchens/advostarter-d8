@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\schemata\SchemaFactory;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -58,13 +57,6 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $fieldManager;
-
-  /**
-   * The Schemata SchemaFactory.
-   *
-   * @var \Drupal\schemata\SchemaFactory
-   */
-  protected $schemaFactory;
 
   /**
    * The serializer.
@@ -116,8 +108,6 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
    *   The routing provider.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
    *   The field manager.
-   * @param \Drupal\schemata\SchemaFactory $schema_factory
-   *   The schema factory.
    * @param \Symfony\Component\Serializer\SerializerInterface $serializer
    *   The serializer.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
@@ -127,14 +117,13 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
    * @param \Drupal\Core\Authentication\AuthenticationCollectorInterface $authentication_collector
    *   The authentication collector.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $routing_provider, EntityFieldManagerInterface $field_manager, SchemaFactory $schema_factory, SerializerInterface $serializer, RequestStack $request_stack, ConfigFactoryInterface $config_factory, AuthenticationCollectorInterface $authentication_collector) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $routing_provider, EntityFieldManagerInterface $field_manager, SerializerInterface $serializer, RequestStack $request_stack, ConfigFactoryInterface $config_factory, AuthenticationCollectorInterface $authentication_collector) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->label = $this->getPluginDefinition()["label"];
     $this->entityTypeManager = $entity_type_manager;
     $this->routingProvider = $routing_provider;
     $this->fieldManager = $field_manager;
-    $this->schemaFactory = $schema_factory;
     $this->serializer = $serializer;
     $this->request = $request_stack->getCurrentRequest();
     $this->configFactory = $config_factory;
@@ -153,7 +142,6 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
       $container->get('entity_type.manager'),
       $container->get('router.route_provider'),
       $container->get('entity_field.manager'),
-      $container->get('schemata.schema_factory'),
       $container->get('serializer'),
       $container->get('request_stack'),
       $container->get('config.factory'),
@@ -212,6 +200,15 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
       'produces' => $this->getProduces(),
       'paths' => $this->getPaths(),
     ];
+
+    // Strip any empty arrays which aren't required.
+    $required = ['swagger',  'info', 'paths'];
+    foreach ($spec as $key => $item) {
+      if (!in_array($key, $required) && is_array($item) && !count($item)) {
+        unset($spec[$key]);
+      }
+    }
+
     return $spec;
   }
 
@@ -249,46 +246,49 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
    * {@inheritdoc}
    */
   public function getSecurityDefinitions() {
+    $base_url = $this->request->getSchemeAndHttpHost() . '/' . $this->request->getBasePath();
     $auth_providers = $this->authenticationCollector->getSortedProviders();
     $security_definitions = [];
 
     foreach ($auth_providers as $provider => $info) {
-      $def = [
-        'type' => 'unknown',
-        'description' => 'Unknown Authentication Provider',
-      ];
-      $base_url = $this->request->getSchemeAndHttpHost() . '/' . $this->request->getBasePath();
+      $def = NULL;
       switch($provider) {
         case 'basic_auth':
           $def = [
             'type' => 'basic'
           ];
           break;
-        case 'cookie':
-          $def = [
-            'type' => 'cookie',
-            'in' => 'cookie',
-            'name' => 'JSESSIONID',
-          ];
-          break;
-        case 'oauth':
-          $def = [
-            'type' => 'oauth1',
-            'flow' => 'implicit',
-            'authorizationUrl' => $base_url . 'authenticate',
-            'tokenUrl' => $base_url . 'oauth/access_token',
-            'x-requestUrl' => $base_url . 'request_token',
-          ];
-          break;
         case 'oauth2':
           $def = [
             'type' => 'oauth2',
-            'flow' => 'password',
-            'tokenUrl' => $base_url . 'oauth/token',
+            'description' => 'For more information see https://developers.getbase.com/docs/rest/articles/oauth2/requests',
+            'flows' => [
+              'password' => [
+                'tokenUrl' => $base_url . 'oauth/token',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+              'authorizationCode' => [
+                'authorizationUrl' => $base_url . 'oauth/authorize',
+                'tokenUrl' => $base_url . 'oauth/token',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+              'implicit' => [
+                'authorizationUrl' => $base_url . 'oauth/authorize',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+              'clientCredentials' => [
+                'tokenUrl' => $base_url . 'oauth/token',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+            ],
           ];
           break;
+        default:
+          continue 2;
       }
-      $security_definitions[$provider] = $def;
+      if ($def !== NULL) {
+        $security_definitions[$provider] = $def;
+      }
     }
 
     // Core's CSRF token doesn't have an auth provider.
@@ -296,7 +296,7 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
       'type' => 'apiKey',
       'name' => 'X-CSRF-Token',
       'in' => 'header',
-      'tokenUrl' => $base_url . 'user/token',
+      'x-tokenUrl' => $base_url . 'user/token',
     ];
 
     return $security_definitions;
@@ -358,36 +358,10 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
    *
    * @return array
    *   The JSON schema.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getJsonSchema($described_format, $entity_type_id, $bundle_name = NULL) {
-    if ($entity_type_id !== $bundle_name) {
-      $schema = $this->schemaFactory->create($entity_type_id, $bundle_name);
-    }
-    else {
-      $schema = $this->schemaFactory->create($entity_type_id);
-    }
-
-    if ($schema) {
-      $json_schema = $this->serializer->normalize($schema, "schema_json:$described_format");
-      unset($json_schema['$schema'], $json_schema['id']);
-      $json_schema = $this->cleanSchema($json_schema);
-      if (!$bundle_name) {
-        // Add discriminator field.
-        $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
-        if ($bundle_field = $entity_type->getKey('bundle')) {
-          $json_schema['discriminator'] = $bundle_field;
-        }
-      }
-    }
-    else {
-      $json_schema = [
-        'type' => 'object',
-        'title' => $this->t('@entity_type Schema', ['@entity_type' => $entity_type_id]),
-        'description' => $this->t('Describes the payload for @entity_type entities.', ['@entity_type' => $entity_type_id]),
-      ];
-    }
-    return $json_schema;
-  }
+  abstract protected function getJsonSchema($described_format, $entity_type_id, $bundle_name = NULL);
 
   /**
    * Cleans JSON schema definitions for OpenAPI.

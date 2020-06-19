@@ -11,14 +11,18 @@ use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Tests that OAuth and JSON:API are working together to authenticate, and
- * authorize interaction with entities.
+ * Tests that OAuth and JSON:API authenticate and authorize entity operations.
  *
  * @group lightning_api
  * @group headless
  * @group orca_public
  */
 class ApiTest extends BrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
@@ -93,7 +97,7 @@ class ApiTest extends BrowserTestBase {
   /**
    * Creates a user account with privileged API access.
    *
-   * @see ::createUser() for parameter documentation.
+   * @see ::createUser()
    *
    * @return string
    *   The user's access token.
@@ -256,8 +260,7 @@ class ApiTest extends BrowserTestBase {
   }
 
   /**
-   * Tests that authenticated and anonymous requests cannot get unauthorized
-   * data.
+   * Tests access to unauthorized data is denied, regardless of authentication.
    */
   public function testForbidden() {
     $this->createContentType(['type' => 'page']);
@@ -265,7 +268,7 @@ class ApiTest extends BrowserTestBase {
     // Cannot get unauthorized data (not in role/scope) even when authenticated.
     $response = $this->request('/jsonapi/user_role/user_role', 'get', $this->getCreator('page'));
     $body = $this->decodeResponse($response);
-    $this->assertInternalType('array', $body['meta']['omitted']['links']);
+    $this->assertSame('array', gettype($body['meta']['omitted']['links']));
     $this->assertNotEmpty($body['meta']['omitted']['links']);
     unset($body['meta']['omitted']['links']['help']);
 
@@ -281,9 +284,11 @@ class ApiTest extends BrowserTestBase {
     $unpublished_node = $this->drupalCreateNode()->setUnpublished();
     $unpublished_node->save();
     $url = $this->buildUrl('/jsonapi/node/page/' . $unpublished_node->uuid());
+
     // Unlike the roles test which requests a list, JSON API sends a 403 status
     // code when requesting a specific unauthorized resource instead of list.
-    $this->setExpectedException(ClientException::class, "Client error: `GET $url` resulted in a `403 Forbidden`");
+    $this->expectException(ClientException::class);
+    $this->expectExceptionMessage("Client error: `GET $url` resulted in a `403 Forbidden`");
     $this->container->get('http_client')->get($url);
   }
 
@@ -295,14 +300,15 @@ class ApiTest extends BrowserTestBase {
    * @param string $method
    *   The RESTful verb.
    * @param string $token
-   *   A valid OAuth token to send as an Authorization header with the request.
+   *   (optional) A valid OAuth token to send as an Authorization header with
+   *   the request.
    * @param array $data
-   *   Additional json data to send with the request.
+   *   (optional) Additional JSON data to send with the request.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   The response from the request.
    */
-  private function request($endpoint, $method = 'get', $token = NULL, $data = NULL) {
+  private function request($endpoint, $method = 'get', $token = NULL, array $data = NULL) {
     $options = NULL;
     if ($token) {
       $options = [

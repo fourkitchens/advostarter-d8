@@ -10,7 +10,7 @@ services:
   lightning.display_helper:
     class: '\Drupal\lightning_core\DisplayHelper'
     arguments:
-      - '@entity.query'
+      - '@entity_type.manager'
       - '@entity_field.manager'
 
   access_check.administrator_role:
@@ -29,10 +29,3 @@ services:
       - '@class_resolver'
       - '@config.factory'
       - '@extension.list.module'
-
-  lightning.command.update:
-    class: '\Drupal\lightning_core\Command\UpdateCommand'
-    arguments:
-      - '@lightning.update_manager'
-    tags:
-      - { name: drupal.command }

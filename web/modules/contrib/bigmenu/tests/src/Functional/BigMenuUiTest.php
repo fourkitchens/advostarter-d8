@@ -74,25 +74,88 @@ class BigMenuUiTest extends BrowserTestBase {
     ]);
     $item1_1_1->save();
 
-    $this->drupalGet('admin/structure/menu/manage/main');
-    $this->assertSession()->linkExistsExact('Item 1');
-    $this->assertSession()->linkNotExistsExact('Item 1 - 1');
-    $this->assertSession()->linkNotExistsExact('Item 1 - 1 - 1');
+    $item2 = MenuLinkContent::create([
+      'title' => 'Item 2 (with disabled children)',
+      'link' => [['uri' => 'internal:/']],
+      'menu_name' => 'main',
+    ]);
+    $item2->save();
+    $item2_1 = MenuLinkContent::create([
+      'title' => 'Item 2 - 1 (disabled)',
+      'link' => [['uri' => 'internal:/']],
+      'menu_name' => 'main',
+      'parent' => 'menu_link_content:' . $item2->uuid(),
+      'enabled' => FALSE,
+    ]);
+    $item2_1->save();
 
+    $this->drupalGet('admin/structure/menu/manage/main');
+    $this->assertLinkExists('#menu-overview', 'Item 1');
+    $this->assertLinkNotExists('#menu-overview', 'Item 1 - 1');
+    $this->assertLinkNotExists('#menu-overview', 'Item 1 - 1 - 1');
+    $this->assertSession()->elementNotExists('css', '.breadcrumb');
+
+    // Check 'Edit child items' is available for 'Item 1'.
     $href = $this->menu->toUrl('edit-form', [
       'query' => ['menu_link' => 'menu_link_content:' . $item1->uuid()],
     ])->toString();
     $this->assertSession()->linkByHrefExists($href);
 
-    $this->clickLink('Edit child items');
-    $this->assertSession()->linkExistsExact('Item 1');
-    $this->assertSession()->linkExistsExact('Item 1 - 1');
-    $this->assertSession()->linkNotExistsExact('Item 1 - 1 - 1');
+    // Check 'Edit child items' is available when all children are not enabled.
+    $href = $this->menu->toUrl('edit-form', [
+      'query' => ['menu_link' => 'menu_link_content:' . $item2->uuid()],
+    ])->toString();
+    $this->assertSession()->linkByHrefExists($href);
 
     $this->clickLink('Edit child items');
-    $this->assertSession()->linkNotExistsExact('Item 1');
-    $this->assertSession()->linkExistsExact('Item 1 - 1');
-    $this->assertSession()->linkExistsExact('Item 1 - 1 - 1');
+    $this->assertLinkExists('#menu-overview', 'Item 1');
+    $this->assertLinkExists('#menu-overview', 'Item 1 - 1');
+    $this->assertLinkNotExists('#menu-overview', 'Item 1 - 1 - 1');
+    $this->assertLinkExists('.breadcrumb', 'Back to Main navigation top level');
+
+    $this->clickLink('Edit child items');
+    $this->assertLinkNotExists('#menu-overview', 'Item 1');
+    $this->assertLinkExists('#menu-overview', 'Item 1 - 1');
+    $this->assertLinkExists('#menu-overview', 'Item 1 - 1 - 1');
+    $this->assertLinkExists('.breadcrumb', 'Back to Main navigation top level');
+    $this->assertLinkExists('.breadcrumb', 'Item 1');
+
+    // Test allowing more than one level of depth to appear.
+    $this->config('bigmenu.settings')->set('max_depth', 2)->save();
+    $this->drupalGet('admin/structure/menu/manage/main');
+    $this->assertLinkExists('#menu-overview', 'Item 1');
+    $this->assertLinkExists('#menu-overview', 'Item 1 - 1');
+    $this->assertLinkNotExists('#menu-overview', 'Item 1 - 1 - 1');
+  }
+
+  /**
+   * Assert a link doesn't exist, scoped to a container.
+   *
+   * @param string $container
+   *   The container selector.
+   * @param string $label
+   *   The exact label of the link.
+   */
+  protected function assertLinkNotExists($container, $label) {
+    $links = $this->getSession()->getPage()
+      ->find('css', $container)
+      ->findAll('named_exact', ['link', $label]);
+    $this->assert(empty($links));
+  }
+
+  /**
+   * Assert a link exist, scoped to a container.
+   *
+   * @param string $container
+   *   The container selector.
+   * @param string $label
+   *   The exact label of the link.
+   */
+  protected function assertLinkExists($container, $label) {
+    $links = $this->getSession()->getPage()
+      ->find('css', $container)
+      ->findAll('named_exact', ['link', $label]);
+    $this->assert(!empty($links));
   }
 
 }

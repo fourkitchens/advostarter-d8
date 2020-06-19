@@ -1,6 +1,10 @@
 services:
   lightning_core.hooks:
     class: '\Drupal\lightning_core\Commands\Hooks'
+    arguments:
+      - '@extension.list.profile'
+      - '%install_profile%'
+      - '@plugin.cache_clearer'
     tags:
       - { name: drush.command }
 

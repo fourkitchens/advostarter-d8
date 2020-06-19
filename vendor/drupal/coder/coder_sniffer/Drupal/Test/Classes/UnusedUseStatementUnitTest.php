@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Sniffs\Classes;
+namespace Drupal\Test\Classes;
 
 use Drupal\Test\CoderSniffUnitTest;
 
@@ -14,11 +14,13 @@ class UnusedUseStatementUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of errors that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getErrorList($testFile = NULL)
+    protected function getErrorList(string $testFile): array
     {
-        return array();
+        return [];
 
     }//end getErrorList()
 
@@ -29,23 +31,28 @@ class UnusedUseStatementUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of warnings that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getWarningList($testFile = NULL)
+    protected function getWarningList(string $testFile): array
     {
-        return array(
-                5 => 1,
-                6 => 1,
-                7 => 1,
-                10 => 1,
-                11 => 1,
-                12 => 1,
-                14 => 1,
-                16 => 1,
-                17 => 1,
-                19 => 1,
-                20 => 1,
-               );
+        return [
+            5  => 1,
+            6  => 1,
+            7  => 1,
+            10 => 1,
+            11 => 1,
+            12 => 1,
+            14 => 1,
+            16 => 1,
+            17 => 1,
+            19 => 1,
+            20 => 1,
+            21 => 1,
+            22 => 1,
+            23 => 1,
+        ];
 
     }//end getWarningList()
 

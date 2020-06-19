@@ -8,7 +8,6 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Handles files uploaded by Dropzone.
@@ -96,7 +95,7 @@ class UploadHandler implements UploadHandlerInterface {
     // Remove multiple consecutive non-alphabetical characters.
     $filename = preg_replace('/(_)_+|(\.)\.+|(-)-+/', '\\1\\2\\3', $filename);
     // Force lowercase to prevent issues on case-insensitive file systems.
-    $filename = Unicode::strtolower($filename);
+    $filename = strtolower($filename);
 
     // For security reasons append the txt extension. It will be removed in
     // Drupal\dropzonejs\Element::valueCallback when we will know the valid
@@ -120,17 +119,17 @@ class UploadHandler implements UploadHandlerInterface {
         case UPLOAD_ERR_INI_SIZE:
         case UPLOAD_ERR_FORM_SIZE:
           $message = $this->t('The file could not be saved because it exceeds the maximum allowed size for uploads.');
-          continue;
+          break;
 
         case UPLOAD_ERR_PARTIAL:
         case UPLOAD_ERR_NO_FILE:
           $message = $this->t('The file could not be saved because the upload did not complete.');
-          continue;
+          break;
 
         // Unknown error.
         default:
           $message = $this->t('The file could not be saved. An unknown error has occurred.');
-          continue;
+          break;
       }
 
       throw new UploadException(UploadException::FILE_UPLOAD_ERROR, $message);

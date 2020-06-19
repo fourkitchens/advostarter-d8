@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains hook implementations for Lightning Scheduler.
+ */
+
 use Drupal\Core\Cache\CacheCollectorInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -93,6 +98,7 @@ function lightning_scheduler_entity_base_field_info(EntityTypeInterface $entity_
     $fields['scheduled_transition_date'] = BaseFieldDefinition::create('datetime')
       ->setDisplayConfigurable('view', FALSE)
       ->setDisplayConfigurable('form', FALSE)
+      ->setLabel(t('Scheduled transition date'))
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
@@ -100,6 +106,7 @@ function lightning_scheduler_entity_base_field_info(EntityTypeInterface $entity_
     $fields['scheduled_transition_state'] = BaseFieldDefinition::create('string')
       ->setDisplayConfigurable('view', FALSE)
       ->setDisplayConfigurable('form', FALSE)
+      ->setLabel(t('Scheduled transition state'))
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);

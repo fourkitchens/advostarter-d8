@@ -2,11 +2,11 @@
 
 namespace Drupal\Tests\lightning_landing_page\Functional;
 
-use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Drupal\Tests\BrowserTestBase;
 
 /**
+ * Tests that landing pages get the correct URL aliases from Pathauto.
+ *
  * @group lightning_layout
  * @group lightning_landing_page
  */
@@ -15,25 +15,29 @@ class PathautoPatternTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
-    'lightning_landing_page',
-    'pathauto',
-  ];
+  protected $defaultTheme = 'stark';
 
   /**
-   * Tests that Landing page nodes are available at path '/[node:title]'.
+   * {@inheritdoc}
+   */
+  protected static $modules = ['lightning_landing_page'];
+
+  /**
+   * Tests that landing pages are available at path '/[node:title]'.
    */
   public function testLandingPagePattern() {
-    $node = Node::create([
+    // Install Pathauto so that the optional config which integrates landing
+    // pages with it will be picked up.
+    $this->container->get('module_installer')->install(['pathauto']);
+
+    $node = $this->drupalCreateNode([
       'type' => 'landing_page',
-      'title' => 'Foo Bar',
-      'status' => NodeInterface::PUBLISHED,
-      'uid' => 1,
     ]);
-    $node->save();
+    $this->assertSame(SAVED_UPDATED, $node->setTitle('Foo Bar')->setPublished()->save());
+
     $this->drupalGet('/foo-bar');
-    $this->assertSession()->pageTextContains('Foo Bar');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains($node->getTitle());
   }
 
 }

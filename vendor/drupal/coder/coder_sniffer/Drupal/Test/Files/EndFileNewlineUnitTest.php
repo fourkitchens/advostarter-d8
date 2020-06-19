@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Sniffs\Files;
+namespace Drupal\Test\Files;
 
 use Drupal\Test\CoderSniffUnitTest;
 
@@ -14,19 +14,19 @@ class EndFileNewlineUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of errors that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getErrorList($testFile = NULL)
+    protected function getErrorList(string $testFile): array
     {
         // All the good files have no error.
         if (strpos($testFile, 'good') !== false) {
-            return array();
+            return [];
         } else {
             // All other files have one error on line one (they have all just one
             // code line in them).
-            return array(
-                    1 => 1,
-                   );
+            return [1 => 1];
         }
 
     }//end getErrorList()
@@ -38,11 +38,13 @@ class EndFileNewlineUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of warnings that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getWarningList($testFile = NULL)
+    protected function getWarningList(string $testFile): array
     {
-        return array();
+        return [];
 
     }//end getWarningList()
 

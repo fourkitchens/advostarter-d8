@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Sniffs\Semantics;
+namespace Drupal\Test\Semantics;
 
 use Drupal\Test\CoderSniffUnitTest;
 
@@ -14,13 +14,13 @@ class FunctionTUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of errors that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getErrorList($testFile = NULL)
+    protected function getErrorList(string $testFile): array
     {
-        return array(
-                29 => 1,
-               );
+        return [29 => 1];
 
     }//end getErrorList()
 
@@ -31,18 +31,20 @@ class FunctionTUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of warnings that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getWarningList($testFile = NULL)
+    protected function getWarningList(string $testFile): array
     {
-        return array(
-                4 => 1,
-                17 => 1,
-                20 => 1,
-                25 => 1,
-                29 => 1,
-                33 => 1,
-               );
+        return [
+            4  => 1,
+            17 => 1,
+            20 => 1,
+            25 => 1,
+            29 => 1,
+            33 => 1,
+        ];
 
     }//end getWarningList()
 

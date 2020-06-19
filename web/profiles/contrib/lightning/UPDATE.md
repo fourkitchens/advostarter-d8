@@ -24,85 +24,55 @@ that is managed by your VCS, you would generally follow these steps:
 1. Read the [release notes](https://github.com/acquia/lightning/releases)
    for the release to which you are updating, and any other releases between
    your current version.
-
+   
 1. Update your codebase, replacing `[LIGHTNING_VERSION]` with the most recent
    version of Lightning. For example, `3.1.1`.
-
+  
   ```
   composer self-update
   composer require acquia/lightning:~[LIGHTNING_VERSION] --no-update
   composer update acquia/lightning --with-all-dependencies
   ```
 1. Run any database updates.
-
+  
   ```
   drush cache:rebuild
   drush updatedb
   ```
 1. Run any Lightning configuration updates.
-
+  
   ```
   drush cache:rebuild
   drush update:lightning
   ```
 1. Export the new configuration.
 
-
+  
   ```
   drush config:export
   ```
 1. Commit the code and configuration changes to your VCS and push them to your
    destination environment.
-
+  
 #### On your destination environment.
 
 1. Run any database updates.
-
+  
   ```
   drush cache:rebuild
   drush updatedb
   ```
 
 1. Import any configuration changes.
-
+  
   ```
   drush cache:rebuild
   drush config:import
   ```
 
-### 3.x branch
-Before updating to the 3.x branch of Lightning, you should first update to
-Lightning 2.2.8 including all database updates and migrations. For example, if
-you are updating from 2.2.3:
-
-1. Make sure you have the latest version of Composer:
-
-  ```
-  composer self-update
-  ```
-2. Update your codebase to 2.2.8:
-
-  ```
-  composer require acquia/lightning:2.2.8 --no-update
-  composer update acquia/lightning --with-all-dependencies
-  ```
-3. Rebuild Drupal's cache and run database updates:
-
-  ```
-  drush cache:rebuild
-  drush updatedb
-  ```
-4. Cleanup cruft from the Media migration:
-
-  ```
-  drush pm-uninstall entity media_entity
-  ```
-5. Follow the "Configuration updates" steps below, starting with
-   "2.2.3 to 2.2.4".
-
 #### Configuration Management
 If you are using configuration management to move your configuration between
-development, staging, and production environments, you should export
+development, staging, and production environments, you should export 
 configuration after #5 and deploy.
 
 ### Composer
@@ -170,7 +140,87 @@ are currently running 2.2.0 and are trying to update to 2.2.6, you will need to
 follow the instructions for updating from 2.2.0 to 2.2.1, then from 2.2.1 to
 2.2.2, in that order.
 
-### 3.2.7 to 3.3.0
+### 4.1.4 to 4.1.5
+There are no manual update steps for this version.
+
+### 4.1.3 to 4.1.4
+There are no manual update steps for this version.
+
+### 4.1.2 to 4.1.3
+There are no manual update steps for this version.
+
+### 4.1.1 to 4.1.2
+There are no manual update steps for this version.
+
+### 4.1.0 to 4.1.1
+There are no manual update steps for this version.
+
+### 4.1.0-beta1 to 4.1.0
+**IMPORTANT!!** This release includes Pathauto 1.6. If you are already using
+Pathauto 1.5 or lower, you MUST update Pathauto before updating to this release
+of Lightning! See https://www.drupal.org/project/drupal/releases/8.8.0, under
+the section "Changes to path aliases and a critical note for sites using the
+Pathauto contributed module":
+
+> If you have the contributed Pathauto module enabled, you must update to the
+> latest version of Pathauto _before_ you update to Drupal 8.8.0. **Failure to
+> update Pathauto before updating core could result in data loss.** Drupal
+> 8.8.0 declares a conflict with Pathauto 8.x-1.5 or lower for this reason.
+
+### 4.0.5 to 4.1.0-beta1
+There are no manual update steps for this version.
+
+### 4.0.4 to 4.0.5
+* If you would like to enable support for autosave on your site, install the
+  Autosave Form and Conflict modules.
+* If you would like to enable improved redirect handling, install the Redirect
+  module.
+
+### 4.0.3 to 4.0.4
+There are no manual update steps for this version.
+
+### 4.0.2 to 4.0.3
+There are no manual update steps for this version.
+
+### 4.0.1 to 4.0.2
+There are no manual update steps for this version.
+
+### 4.0.0 to 4.0.1
+There are no manual update steps for this version.
+
+### 3.3.1 to 4.0.0
+Lightning 4.0.0 includes Lightning Layout 2.0, which uses Layout Builder in
+place of Panels and Panelizer. However, both modules are still packaged with
+Lightning Layout, allowing you to migrate your layouts manually to Layout
+Builder as needed. An automated migration path will eventually be introduced,
+but until then, any Panelizer/Panels layouts you have should continue to work
+as before.
+
+### 3.3.0 to 3.3.1
+There are no manual update steps for this version.
+
+### 3.2.9 to 3.3.0
+There are no manual update steps for this version. However, there is a known
+bug in the update path of the Consumers module (packaged with Lightning API)
+which may cause problems when updating from Drupal 8.6 to 8.7 *and* updating
+from an older version of Consumers at the same time. A temporary workaround is
+to update the Consumers module to its latest version *before* updating to Drupal
+core 8.7. If you have a Composer-based build of Lightning, you can update
+Consumers like so:
+
+```
+$ composer update drupal/consumers --with-all-dependencies
+$ drush updatedb
+```
+
+Once this is done, you should be able to update to Drupal 8.7 without trouble.
+See https://www.drupal.org/project/consumers/issues/3052959 for more information
+about this bug.
+
+### 3.2.8 to 3.2.9
+There are no manual update steps for this version.
+
+### 3.2.7 to 3.2.8
 There are no manual update steps for this version.
 
 ### 3.2.6 to 3.2.7
@@ -193,8 +243,11 @@ There are no manual update steps for this version.
      at the command line with Drush (or, if you have Devel installed, at the
      `/devel/php` path) to do it:
 ```
-drush php:eval "entity_load('entity_browser', 'media_browser')->createDuplicate()->setName('ckeditor_media_browser')
->setLabel('Media browser (CKEditor)')->save();"
+drush php:eval "entity_load('entity_browser', 'media_browser')
+  ->createDuplicate()
+  ->setName('ckeditor_media_browser')
+  ->setLabel('Media browser (CKEditor)')
+  ->save();"
 ```
   2. Configure the "Media browser" embed button to use the duplicate you just
      created.
@@ -205,7 +258,10 @@ drush php:eval "entity_load('entity_browser', 'media_browser')->createDuplicate(
      command line with Drush, as in this example, or at `/devel/php` if you have
      Devel installed):
 ```
-drush php:eval "Drupal::service('lightning.content_roles')->grantPermissions('creator', 'use ckeditor_media_browser entity browser pages');"
+drush php:eval "Drupal::service('lightning.content_roles')
+  ->grantPermissions('creator', [
+    'use ckeditor_media_browser entity browser pages',
+  ]);"
 ```
   5. Edit the pre-existing media browser -- _not_ the duplicate -- to use the
      Modal display plugin. Leave the "Width" and "Height" options empty to make
@@ -232,7 +288,8 @@ There are no manual update steps for this version.
   3. Rewrite the content of the "Moderation state" field to this Twig template
      code:
 ```
-Set to <strong>{{ moderation_state }}</strong> on {{ revision_timestamp }} by {{ revision_uid }}
+Set to <strong>{{ moderation_state }}</strong> on
+{{ revision_timestamp }} by {{ revision_uid }}
 ```
 
 ### 3.2.2 to 3.2.3
@@ -333,7 +390,7 @@ $ composer update acquia/lightning drupal/core --with-all-dependencies
   for example), you can "purge" it in the UI, or at the command line by running
   `drush lightning:scheduler:purge ENTITY_TYPE_ID`. Purging must be done one
   entity type at a time, e.g. `drush lightning:scheduler:purge paragraph`.
-
+  
   Once all entity types have been migrated or purged, the old base fields will
   need to be uninstalled. You can perform this clean-up work automatically by
   running `drush entity-updates`.
@@ -364,7 +421,7 @@ There are no manual update steps for this version.
 There are no manual update steps for this version.
 
 ### 3.0.0 to 3.0.1
-There are no manual update steps for this version.
+There are no manual update steps for this version. 
 
 ### 2.2.8 to 3.0.0
 There are no manual update steps for this version.
@@ -422,7 +479,7 @@ There are no manual update steps for this version.
   replaces `lightning_scheduled_updates` in this release.
 * Uninstall Scheduled Updates and Lightning Scheduled Updates, and enable the
   Lightning Scheduler module.
-
+  
   ```
   drush pm-uninstall scheduled_updates lightning_scheduled_updates
   drush pm-enable lightning_scheduler
@@ -457,7 +514,7 @@ There are no manual update steps for this version.
   "Disabled" section and press "Save".
 
 ### 2.1.8 to 2.2.0
-There are no manual update steps for this version.
+There are no manual update steps for this version. 
 
 ### 2.1.7 to 2.1.8
 * Lightning now ships with support for image cropping, using the Image Widget
@@ -555,8 +612,9 @@ There are no manual update steps for this version.
 
 **Note:**  
 There is a known issue with Metatag version 8.x-1.1 where you might need to
-clear your site's cache after updating. See [Metatag 8.x-1.1 Release notes][metatag8.x-1.1]
-and this [related issue][2882954].
+clear your site's cache after updating. See
+[Metatag 8.x-1.1 Release notes][metatag8.x-1.1] and this
+[related issue][2882954].
 
 As per our Dependency Constraint Policy, Lightning doesn't pin to a specific
 version of Metatag, so depending on your your setup, Metatag is likely to be
@@ -722,88 +780,5 @@ There are no manual update steps for this version.
 
 ### 1.00 to 1.01
 There are no manual update steps for this version.
-
-### RC7 to 1.00
-There are no manual update steps for this version.
-
-### RC6 to RC7
-After running `drush updatedb` or visiting `/update.php`:
-
-* Go to *Structure > Content types* and choose **Manage Display** for the
-  Landing Page content type.
-* Under "Custom Display Settings", make sure the the **Full content** box is
-  checked.
-* Scroll down and ensure the **Panelize this view mode** and **Allow custom
-  overrides of each entity** boxes are checked.
-* Press Save.
-* Click the **Full content** tab.
-* Scroll down and ensure that the **Panelize this view mode**, **Allow custom
-  overrides of each entity**, and **Allow panelizer default choice** boxes are
-  checked.
-* Press Save.
-* Click the **Manage form display** tab.
-* Move the **Panelizer** field out the Disabled area. Be sure that "Panelizer"
-  is selected as the widget type, and press Save.
-
-Depending on what customizations you made to Landing Page prior to the update,
-some, all, or none of these setting might already be enabled.
-
-### RC5 to RC6
-There are no manual update steps for this version. There are several database
-updates. So, as always, be sure to run `drush updatedb` or visit `/update.php`.
-
-### RC4 to RC5
-There are no manual update steps for this version.
-
-### RC3 to RC4
-* Add ```<br>``` to the Rich Text filter format's list of allowed HTML tags.
-* Add the following permissions to Media Creator role:
-  * Access the Media overview page
-* Add the following permissions to the Media Manager role:
-  * Access the Media overview page
-  * Administer media bundles
-* Edit the **Media** view. Change the **Media** display, and under
-  **Page Settings**, set the access permission to "Access the Media overview page".
-
-### RC2 to RC3
-There are no manual update steps for this version.
-
-### RC1 to RC2
-There are no manual update steps for this version.
-
-### Beta 5 to RC1
-There are no manual update steps for this version.
-
-### Beta 4 to Beta 5
-* Scheduled updates which change several pieces of content at once were broken.
-  The fix is a change to configuration that is owned by the site, so Lightning
-  does not attempt to make the change automatically. To implement the fix
-  manually:
-  * Go to *Configuration > Scheduled Updates Overview > Scheduled Update Types*
-  * Edit the **Publish multiple nodes at a certain time** update type
-  * Under "Update Runner Settings", select **Default** from the "Update Runner"
-    field
-  * Select every content type listed in the "Content type" field
-  * Press Save
-
-### Beta 3 to Beta 4
-There are no manual update steps for this version.
-
-### Beta 2 to Beta 3
-* Scheduled updates to content are broken by Lightning's content moderation
-  functionality. Beta 3 includes a workaround out-of-the-box which is NOT
-  applied by the update. To implement the fix manually:
-  * Go to *Configuration > Scheduled Updates Overview > Scheduled Update Types*
-  * Edit the **Publish single node at certain time** update type
-  * Under "Update Runner Settings", select **Latest Revision** from the
-    "Update Runner" field
-  * Under "Advanced Runner Options", select **The owner of the update.** from the
-    "Run update as" field
-  * Press Save
-
-### Beta 1 to Beta 2
-* Enable the ```view media``` permission for the ```anonymous``` and
-  ```authenticated``` user roles.
-* Install the Lightning Workflow module.
 
 [sub-profile documentation]: https://github.com/acquia/lightning/wiki/Lightning-as-a-Base-Profile "Lightning sub-profile documentation"

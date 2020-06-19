@@ -11,11 +11,15 @@ use Drupal\simple_oauth\Service\Filesystem\FileSystemChecker;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * The settings form.
+ *
  * @internal
  */
 class Oauth2TokenSettingsForm extends ConfigFormBase {
 
   /**
+   * The file system checker.
+   *
    * @var \Drupal\simple_oauth\Service\Filesystem\FileSystemChecker
    */
   protected $fileSystemChecker;
@@ -26,7 +30,6 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
-
 
   /**
    * Oauth2TokenSettingsForm constructor.
@@ -45,7 +48,13 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Creates the form.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container.
+   *
+   * @return \Drupal\simple_oauth\Entity\Form\Oauth2TokenSettingsForm
+   *   The form.
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -83,10 +92,13 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $settings = $this->config('simple_oauth.settings');
     $settings->set('access_token_expiration', $form_state->getValue('access_token_expiration'));
+    $settings->set('authorization_code_expiration', $form_state->getValue('authorization_code_expiration'));
     $settings->set('refresh_token_expiration', $form_state->getValue('refresh_token_expiration'));
+    $settings->set('token_cron_batch_size', $form_state->getValue('token_cron_batch_size'));
     $settings->set('public_key', $form_state->getValue('public_key'));
     $settings->set('private_key', $form_state->getValue('private_key'));
     $settings->set('remember_clients', $form_state->getValue('remember_clients'));
+    $settings->set('use_implicit', $form_state->getValue('use_implicit'));
     $settings->save();
     parent::submitForm($form, $form_state);
   }
@@ -110,11 +122,25 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
       '#description' => $this->t('The default value, in seconds, to be used as expiration time when creating new tokens.'),
       '#default_value' => $config->get('access_token_expiration'),
     ];
+    $form['authorization_code_expiration'] = [
+      '#type' => 'number',
+      '#title' => t('Authorization code expiration time'),
+      '#description' => t('The default value, in seconds, to be used as expiration time when creating new authorization codes. If you are not sure about this value, use the same value as above for <em>Access token expiration time</em>.'),
+      '#default_value' => \Drupal::config('simple_oauth.settings')
+        ->get('authorization_code_expiration'),
+      '#weight' => 0,
+    ];
     $form['refresh_token_expiration'] = [
       '#type' => 'number',
       '#title' => $this->t('Refresh token expiration time'),
       '#description' => $this->t('The default value, in seconds, to be used as expiration time when creating new tokens.'),
       '#default_value' => $config->get('refresh_token_expiration'),
+    ];
+    $form['token_cron_batch_size'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Token batch size.'),
+      '#description' => $this->t('The number of expired token to delete per batch during cron cron.'),
+      '#default_value' => $config->get('token_cron_batch_size') ?: 0,
     ];
     $form['public_key'] = [
       '#type' => 'textfield',
@@ -175,6 +201,12 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
         'warning'
       );
     }
+    $form['use_implicit'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Enable the implicit grant?'),
+      '#description' => t('The implicit grant has the potential to be used in an insecure way. Only enable this if you understand the risks. See https://tools.ietf.org/html/rfc6819#section-4.4.2 for more information.'),
+      '#default_value' => \Drupal::config('simple_oauth.settings')->get('use_implicit'),
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -189,7 +221,7 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
    * @param array $complete_form
    *   The complete form structure.
    */
-  public function validateExistingFile(&$element, FormStateInterface $form_state, &$complete_form) {
+  public function validateExistingFile(array &$element, FormStateInterface $form_state, array &$complete_form) {
     if (!empty($element['#value'])) {
       $path = $element['#value'];
       // Does the file exist?

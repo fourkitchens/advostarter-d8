@@ -1,11 +1,12 @@
 <?php
 
-namespace Drupal\Sniffs\Commenting;
+namespace Drupal\Test\Commenting;
 
 use Drupal\Test\CoderSniffUnitTest;
 
 class DocCommentStarUnitTest extends CoderSniffUnitTest
 {
+
 
     /**
      * Returns the lines where errors should occur.
@@ -13,19 +14,21 @@ class DocCommentStarUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of errors that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getErrorList($testFile = NULL)
+    protected function getErrorList(string $testFile): array
     {
          switch ($testFile) {
-            case 'DocCommentStarUnitTest.inc':
-                return array(
-                        9 => 1,
-                        16 => 1,
-                       );
-            default:
-                return array();
-        }
+        case 'DocCommentStarUnitTest.inc':
+            return [
+                9  => 1,
+                16 => 1,
+            ];
+        default:
+            return [];
+         }
 
     }//end getErrorList()
 
@@ -36,11 +39,13 @@ class DocCommentStarUnitTest extends CoderSniffUnitTest
      * The key of the array should represent the line number and the value
      * should represent the number of warnings that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    public function getWarningList($testFile = NULL)
+    protected function getWarningList(string $testFile): array
     {
-        return array();
+        return [];
 
     }//end getWarningList()
 

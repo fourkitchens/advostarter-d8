@@ -1,3 +1,46 @@
+## 3.15.0
+* Added compatibility with Drupal 9.
+* Added the ability to opt into moderation when creating a new content type in
+  the UI.
+* Updated Conflict to 2.0-alpha2.
+* Removed a deprecated Views relationship from the moderation history view
+  (Issue #3102417).
+
+## 3.14.0
+* Made Lightning Workflow compatible any installation profile.
+  (Issue #3089223)
+* Fixed a bug where Lightning Scheduler's JavaScript libraries were not
+  properly declared as external. (Issue #3089153)
+
+## 3.13.0
+There are no user-facing changes in this version.
+
+## 3.12.0
+* Hotfixed a bug that could prevent tests from running under SimpleTest. There
+  are no user-facing changes in this version.
+
+## 3.11.0
+* Added support for Drupal core 8.8.x.
+
+## 3.10.0
+* Changes to internal testing infrastructure, but nothing that should 
+  affect users of Lightning Workflow.
+
+## 3.9.0
+* Added the Autosave Form and Conflict modules as soft dependencies to
+  Lightning Workflow. (Issue #3060244)
+* Updated Moderation Sidebar to 1.2.
+* Added labels to the base fields created by Lightning Scheduler
+  (Issues #3070984 and #3031460)
+
+## 3.8.0
+* Internal changes to testing infrastructure, but nothing that
+  should affect users of Lightning Workflow.
+
+## 3.7.0
+* Many changes to internal testing infrastructure, but nothing that
+  should affect users of Lightning Workflow.
+
 ## 3.6.0
 * Fixed a bug that could occur with Drupal 8.7 when installing the
   moderation_history view.

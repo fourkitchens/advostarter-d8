@@ -5,9 +5,16 @@ namespace Acquia\LightningExtension\Context;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 use Drupal\DrupalExtension\Context\MinkContext;
+use Webmozart\Assert\Assert;
 
 /**
  * Contains step definitions for interacting with Lightning's media browser.
+ *
+ * @internal
+ *   This is an internal part of Lightning Media's testing system and may be
+ *   changed or removed at any time without warning. It should not be extended,
+ *   instantiated, or used in any way by external code! If you need to use this
+ *   functionality, you should copy the relevant code into your own project.
  */
 final class MediaBrowserContext extends DrupalSubContextBase {
 
@@ -26,12 +33,16 @@ final class MediaBrowserContext extends DrupalSubContextBase {
    * @BeforeScenario
    */
   public function setUp(ScenarioScope $scope) {
-    /** @var MinkContext $mink_context */
+    // Set the MinkContext's files_path parameter so that the "I attach the file
+    // :file to :field"'s :file parameter can be given relative to the test
+    // files' directory.
     $mink_context = $this->getContext(MinkContext::class);
+    if ($mink_context instanceof MinkContext) {
+      $path = $mink_context->getMinkParameter('files_path');
 
-    $path = $mink_context->getMinkParameter('files_path');
-    if (empty($path)) {
-      $mink_context->setMinkParameter('files_path', __DIR__ . '/../files');
+      if (empty($path)) {
+        $mink_context->setMinkParameter('files_path', __DIR__ . '/../files');
+      }
     }
 
     // Check if the feature or scenario has the 'javascript' tag.
@@ -51,7 +62,7 @@ final class MediaBrowserContext extends DrupalSubContextBase {
    * @When I open the media browser
    */
   public function open($button = 'media_browser') {
-    $this->isJS ? $this->openJS($button) : $this->openNoJS();
+    $this->isJS ? $this->openJs($button) : $this->openNoJs();
   }
 
   /**
@@ -62,7 +73,7 @@ final class MediaBrowserContext extends DrupalSubContextBase {
    * @param string $browser
    *   (optional) The entity browser ID.
    */
-  private function openJS($button = 'media_browser', $browser = 'ckeditor_media_browser') {
+  private function openJs($button = 'media_browser', $browser = 'ckeditor_media_browser') {
     $this
       ->getContext(CkEditorContext::class)
       ->execute('editdrupalentity', NULL, [
@@ -81,7 +92,7 @@ final class MediaBrowserContext extends DrupalSubContextBase {
    * @param string $browser_id
    *   (optional) The entity browser ID.
    */
-  private function openNoJS($browser_id = 'media_browser') {
+  private function openNoJs($browser_id = 'media_browser') {
     $uuid = $this->assertSession()
       ->elementExists('named', ['button', 'Add media'])
       ->getAttribute('data-uuid');
@@ -111,7 +122,7 @@ final class MediaBrowserContext extends DrupalSubContextBase {
     $session = $this->getSession();
 
     $frame = $session->evaluateScript('window.name') ?: $session->evaluateScript('window.active_iframe.name');
-    assert(! empty($frame));
+    Assert::notEmpty($frame);
 
     $button = $assert->elementExists('named', ['button', 'Place'])->getXpath();
 
@@ -124,7 +135,7 @@ END;
     $session->executeScript($js);
 
     $this->awaitElement('form.entity-embed-dialog');
-    $assert->elementExists('named', ['button', 'Embed'])->press();
+    $this->getSession()->getPage()->pressButton('Embed');
     $this->awaitAjax();
   }
 
@@ -144,7 +155,7 @@ END;
       ->elementExists('css', 'nav.eb-tabs ul li a[data-button-id="edit-tab-selector-8b142f33-59d1-47b1-9e3a-4ae85d8376fa"]')
       ->click();
 
-    $this->getContext(MinkContext::class)->fillField('input', $code);
+    $this->getSession()->getPage()->fillField('input', $code);
 
     // The change event, which triggers AJAX, is fired automatically after 600
     // milliseconds.
@@ -162,18 +173,23 @@ END;
    * @When I upload :file
    */
   public function upload($file) {
-    $this->isJS ? $this->uploadJS($file) : $this->uploadNoJS($file);
+    $file = __DIR__ . '/../files/' . $file;
+    Assert::fileExists($file);
+
+    $this->isJS ? $this->uploadJs($file) : $this->uploadNoJs($file);
   }
 
   /**
    * Uploads a file in the media browser using JavaScript.
    *
    * @param string $file
-   *   The path to the file, relative to the test files directory.
+   *   The absolute path to the file.
    */
-  private function uploadJS($file) {
-    $this->assertSession()->elementExists('named', ['link', 'Upload'])->click();
-    $this->getContext(MinkContext::class)->attachFileToField('File', $file);
+  private function uploadJs($file) {
+    $page = $this->getSession()->getPage();
+
+    $page->clickLink('Upload');
+    $page->attachFileToField('File', $file);
     $this->awaitExpression('jQuery("#entity").children().length');
   }
 
@@ -181,30 +197,32 @@ END;
    * Uploads a file in the media browser without using JavaScript.
    *
    * @param string $file
-   *   The path to the file, relative to the test files directory.
+   *   The absolute path to the file.
    */
-  private function uploadNoJS($file) {
+  private function uploadNoJs($file) {
+    $page = $this->getSession()->getPage();
     $assert = $this->assertSession();
 
     // Switch to the "Upload" tab of the media browser, which should be the
     // first button named "Upload" on the page.
-    $assert->elementExists('named', ['button', 'Upload'])->press();
+    $page->pressButton('Upload');
 
-    $this->getContext(MinkContext::class)->attachFileToField('File', $file);
-    $wrapper = $assert->elementExists('css', '.js-form-managed-file');
-    $assert->elementExists('named', ['button', 'Upload'], $wrapper)->press();
+    $page->attachFileToField('File', $file);
+    $assert->elementExists('css', '.js-form-managed-file')->pressButton('Upload');
   }
 
   /**
-   * @param $title
-   * @param $file
+   * Creates a media item from a file upload.
+   *
+   * @param string $title
+   *   The name of the media item to create.
+   * @param string $file
+   *   The local path to the file to upload.
    *
    * @When I create media named :title by uploading :file
    */
   public function createFromUpload($title, $file) {
-    /** @var MinkContext $mink_context */
-    $mink_context = $this->getContext(MinkContext::class);
-    $mink_context->assertAtPath('/entity-browser/modal/media_browser');
+    $this->visitPath('/entity-browser/modal/media_browser');
 
     $this->upload($file);
 
@@ -218,9 +236,9 @@ END;
       $context->assertCrop();
     }
 
-    $assert = $this->assertSession();
-    $assert->fieldExists('Name')->setValue($title);
-    $assert->elementExists('named', ['button', 'Place'])->press();
+    $page = $this->getSession()->getPage();
+    $page->fillField('Name', $title);
+    $page->pressButton('Place');
   }
 
   /**
@@ -234,16 +252,14 @@ END;
    * @When I create media named :title using the embed code :embed_code
    */
   public function createFromEmbedCode($title, $embed_code) {
-    /** @var MinkContext $mink_context */
-    $mink_context = $this->getContext(MinkContext::class);
-    $mink_context->assertAtPath('/entity-browser/modal/media_browser');
+    $this->visitPath('/entity-browser/modal/media_browser');
 
-    $assert = $this->assertSession();
-    $assert->elementExists('named', ['button', 'Create embed'])->press();
-    $assert->fieldExists('input')->setValue($embed_code);
-    $assert->elementExists('named', ['button', 'Update'])->press();
-    $assert->fieldExists('Name')->setValue($title);
-    $assert->elementExists('named', ['button', 'Place'])->press();
+    $page = $this->getSession()->getPage();
+    $page->pressButton('Create embed');
+    $page->fillField('input', $embed_code);
+    $page->pressButton('Update');
+    $page->fillField('Name', $title);
+    $page->pressButton('Place');
   }
 
 }

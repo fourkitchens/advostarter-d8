@@ -4,6 +4,8 @@ namespace Acquia\LightningExtension\Context;
 
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Mink\Driver\Selenium2Driver;
+use Behat\Mink\Element\DocumentElement;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
@@ -12,6 +14,12 @@ use Webmozart\Assert\Assert;
 
 /**
  * Contains step definitions for interacting with entity browser instances.
+ *
+ * @internal
+ *   This is an internal part of Lightning Media's testing system and may be
+ *   changed or removed at any time without warning. It should not be extended,
+ *   instantiated, or used in any way by external code! If you need to use this
+ *   functionality, you should copy the relevant code into your own project.
  */
 final class EntityBrowserContext extends DrupalSubContextBase {
 
@@ -69,8 +77,8 @@ final class EntityBrowserContext extends DrupalSubContextBase {
    * @param string $browser_id
    *   (optional) The entity browser ID.
    *
-   * @throws \Behat\Mink\Exception\ExpectationException if the entity browser
-   * contains fewer than $n items.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the entity browser contains fewer than $n items.
    *
    * @When I select item :n
    * @When I select item :n from the entity browser
@@ -95,8 +103,9 @@ final class EntityBrowserContext extends DrupalSubContextBase {
    * @param string $browser_id
    *   (optional) The entity browser ID.
    *
-   * @throws ExpectationException if the actual number of items in the entity
-   * browser does not match the expected number.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the actual number of items in the entity browser does not match the
+   *   expected number.
    *
    * @Then I should see :n item(s) in the entity browser
    */
@@ -106,26 +115,6 @@ final class EntityBrowserContext extends DrupalSubContextBase {
     if ($count !== (int) $n) {
       throw new ExpectationException("Expected $n items in the $browser_id entity browser, but there were $count.", $this->getSession()->getDriver());
     }
-  }
-
-  /**
-   * Clicks on a tab with the specified text in an active entity browser and
-   * waits for it to load.
-   *
-   * @param string $tab
-   *   The text of the tab to switch to.
-   *
-   * @When I switch to the :tab Entity Browser tab
-   */
-  public function switchToEBTab($tab) {
-    $this
-      ->assertSession()
-      ->elementExists('css', 'nav.eb-tabs')
-      ->clickLink($tab);
-
-    // I don't see any way to assert the tab specifically has loaded. So,
-    // instead we just wait a reasonable amount of time.
-    sleep(5);
   }
 
   /**
@@ -141,7 +130,7 @@ final class EntityBrowserContext extends DrupalSubContextBase {
       ->getXpath();
 
     $frame = $session->evaluateScript('window.name') ?: $session->evaluateScript('window.active_iframe.name');
-    assert(! empty($frame));
+    Assert::notEmpty($frame);
 
     // Switch out of the iFrame, because it will be destroyed as soon as we
     // press the button.
@@ -166,7 +155,7 @@ END;
    *   The entity browser ID.
    */
   public function open($id) {
-    $this->isJS ? $this->openJS($id) : $this->openNoJS($id);
+    $this->isJS ? $this->openJs($id) : $this->openNoJs($id);
   }
 
   /**
@@ -175,7 +164,7 @@ END;
    * @param string $id
    *   The entity browser ID.
    */
-  private function openJS($id) {
+  private function openJs($id) {
     $settings = $this->getEntityBrowserSettings($id);
 
     $this->assertSession()
@@ -183,8 +172,10 @@ END;
       ->click();
 
     $frame = "window.entity_browser_iframe_$id";
-    $this->awaitExpression($frame);
-    $this->awaitExpression("$frame.document.readyState === 'complete'");
+
+    $session = $this->getSession();
+    Assert::true($session->wait(10000, $frame));
+    Assert::true($session->wait(10000, "$frame.document.readyState === 'complete'"));
   }
 
   /**
@@ -193,7 +184,7 @@ END;
    * @param string $id
    *   The entity browser ID.
    */
-  private function openNoJS($id) {
+  private function openNoJs($id) {
     $settings = $this->getEntityBrowserSettings($id);
     Assert::notEmpty($settings['src']);
     $this->visitPath($settings['src']);
@@ -275,8 +266,8 @@ END;
    * @When I select :count item(s) from the :id entity browser
    */
   public function selectItems($count, $id) {
-    $this->isJS ? $this->switchJS($id) : $this->switchNoJS($id);
-    $this->switchToEBTab('Library');
+    $this->isJS ? $this->switchJs($id) : $this->switchNoJs($id);
+    $this->getSession()->getPage()->clickLink('Library');
     $this->awaitAjax();
     for ($n = 0; $n < $count; $n++) {
       $this->select($n + 1);
@@ -290,17 +281,27 @@ END;
    *
    * @param string $id
    *   The entity browser ID.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   *   If the entity browser iframe does not appear after 30 seconds.
    */
-  private function switchJS($id) {
-    $this->assertSession()
-      ->elementExists('named', ['button', 'Add media'])
-      ->press();
+  private function switchJs($id) {
+    $session = $this->getSession();
+    $page = $session->getPage();
 
-    $iframe_id = $this
-      ->awaitElement('iframe[name="entity_browser_iframe_' . $id . '"]', 30)
-      ->getAttribute('id');
+    $page->pressButton('Add media');
+    $selector = 'iframe[name="entity_browser_iframe_' . $id . '"]';
 
-    $this->getSession()->switchToIFrame($iframe_id);
+    $frame = $page->waitFor(30, function (DocumentElement $page) use ($selector) {
+      return $page->find('css', $selector);
+    });
+
+    if ($page) {
+      $session->switchToIFrame($frame->getAttribute('id'));
+    }
+    else {
+      throw new ElementNotFoundException($session->getDriver(), 'frame', 'css', $selector);
+    }
   }
 
   /**
@@ -309,7 +310,7 @@ END;
    * @param string $id
    *   The entity browser ID.
    */
-  private function switchNoJS($id) {
+  private function switchNoJs($id) {
     $settings = $this->getEntityBrowserSettings($id);
     Assert::notEmpty($settings['src']);
     $this->visitPath($settings['src']);

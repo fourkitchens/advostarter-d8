@@ -1,3 +1,24 @@
+## 4.5.0
+* Updated OpenAPI to 2.0-rc1 and shipped the new OpenAPI JSON:API and OpenAPI
+  REST modules with Lightning API (these dependencies will be removed in
+  Lightning API 5.0).
+* Switched to Simple OAuth 4.x and added an update to uninstall Simple
+  OAuth Extras, which has been merged into Simple OAuth. (Issue #3079579)
+* Updated Consumers to 1.10.
+
+## 4.4.0
+There are no user-facing changes in this version.
+
+## 4.3.0
+* Added support for Drupal core 8.8.x.
+* Updated OpenAPI to 1.0-beta6.
+
+## 4.2.0
+* Updated Simple OAuth to 3.16.
+* Updated OpenAPI to 1.0-beta3.
+* Many changes to underlying testing infrastructure, but nothing
+  that should affect users to Lightning API.
+
 ## 4.1.0
 * Fixed an issue in the module info file dependencies that could lead to the
   contrib JSON:API module being used instead of the one provided by core in 8.7.

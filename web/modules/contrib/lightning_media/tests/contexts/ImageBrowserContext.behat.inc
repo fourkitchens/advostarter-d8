@@ -7,6 +7,12 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains step definitions for interacting with Lightning's image browsers.
+ *
+ * @internal
+ *   This is an internal part of Lightning Media's testing system and may be
+ *   changed or removed at any time without warning. It should not be extended,
+ *   instantiated, or used in any way by external code! If you need to use this
+ *   functionality, you should copy the relevant code into your own project.
  */
 final class ImageBrowserContext extends DrupalSubContextBase {
 
@@ -27,9 +33,6 @@ final class ImageBrowserContext extends DrupalSubContextBase {
     $context->assertDetails($field)->pressButton('Select Image(s)');
     $this->awaitAjax();
     $context->enterFrame('entity_browser_iframe_image_browser');
-
-    // This might be vestigial.
-    sleep(10);
   }
 
   /**

@@ -4,10 +4,12 @@ namespace Drupal\Tests\lightning_workflow\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lightning_workflow\Update\Update330;
+use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 use Drupal\views\Entity\View;
-use Symfony\Component\Console\Style\StyleInterface;
 
 /**
+ * Tests configuration updates targeting Lightning Workflow 3.3.0.
+ *
  * @group lightning
  * @group lightning_workflow
  *
@@ -15,20 +17,39 @@ use Symfony\Component\Console\Style\StyleInterface;
  */
 class Update330Test extends KernelTestBase {
 
+  use ContentTypeCreationTrait;
+
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system'];
+  protected static $modules = [
+    'content_moderation',
+    'field',
+    'lightning_workflow',
+    'node',
+    'system',
+    'text',
+    'user',
+    'views',
+    'workflows',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+
+    $this->installConfig('lightning_workflow');
+    $this->installConfig('node');
+  }
 
   /**
    * @covers ::fixModerationHistory
    */
   public function testFixModerationHistory() {
-    $this->container->get('module_installer')->install([
-      'lightning_roles',
-      'views',
-    ]);
-    $view = View::create([
+    // Create the moderation_history view in a pre-update state.
+    View::create([
       'id' => 'moderation_history',
       'base_table' => 'node_field_revision',
       'display' => [
@@ -64,25 +85,32 @@ class Update330Test extends KernelTestBase {
           ],
         ],
       ],
+    ])->save();
+
+    // Create a content type that is opted into moderation.
+    $this->createContentType([
+      'type' => 'page',
+      'third_party_settings' => [
+        'lightning_workflow' => [
+          'workflow' => 'editorial',
+        ],
+      ],
     ]);
-    $view->save();
 
     // Run the update.
     $message = 'Do you want to fix the Moderation History view to prevent incorrect timestamps and authors from being displayed?';
-    $io = $this->prophesize(StyleInterface::class);
-    $io->confirm($message)->shouldBeCalled()->willReturn(TRUE);
-    $this->container->get('class_resolver')
-      ->getInstanceFromDefinition(Update330::class)
-      ->fixModerationHistory($io->reveal());
+    $io = $this->prophesize('\Symfony\Component\Console\Style\StyleInterface');
+    $io->confirm($message)->willReturn(TRUE)->shouldBeCalled();
+    Update330::create($this->container)->fixModerationHistory($io->reveal());
 
     // Assert the view has changed.
     $display = View::load('moderation_history')->getDisplay('default');
-    $this->assertInternalType('array', $display['display_options']['fields']['revision_uid']);
-    $this->assertInternalType('array', $display['display_options']['fields']['revision_timestamp']);
+    $this->assertSame('array', gettype($display['display_options']['fields']['revision_uid']));
+    $this->assertSame('array', gettype($display['display_options']['fields']['revision_timestamp']));
     $this->assertSame('Set to <strong>{{ moderation_state }}</strong> on {{ revision_timestamp }} by {{ revision_uid }}', $display['display_options']['fields']['moderation_state']['alter']['text']);
     $this->assertArrayNotHasKey('uid', $display['display_options']['fields']);
     $this->assertArrayNotHasKey('created', $display['display_options']['fields']);
-    $this->assertInternalType('array', $display['display_options']['relationships']['revision_uid']);
+    $this->assertSame('array', gettype($display['display_options']['relationships']['revision_uid']));
   }
 
 }

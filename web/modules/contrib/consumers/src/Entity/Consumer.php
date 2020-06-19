@@ -10,8 +10,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\user\EntityOwnerInterface;
-// @todo: Use Drupal\user\EntityOwnerInterface Drupal\user\EntityOwnerTrait when D8.7 is required.
-use Drupal\consumers\EntityOwnerTrait;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the Consumer entity.
@@ -33,6 +32,7 @@ use Drupal\consumers\EntityOwnerTrait;
  *     },
  *     "views_data" = "\Drupal\views\EntityViewsData",
  *     "access" = "Drupal\consumers\AccessControlHandler",
+ *     "storage" = "Drupal\consumers\ConsumerStorage",
  *   },
  *   base_table = "consumer",
  *   data_table = "consumer_field_data",
@@ -140,7 +140,7 @@ class Consumer extends ContentEntityBase implements EntityOwnerInterface {
         'weight' => -3,
       ])
       ->setDisplayOptions('form', [
-        'type' => 'image',
+        'type' => 'image_image',
         'weight' => -3,
         'settings' => [
           'preview_image_style' => 'thumbnail',

@@ -8,6 +8,7 @@ use Drupal\content_moderation\Plugin\Field\FieldWidget\ModerationStateWidget as 
 use Drupal\content_moderation\StateTransitionValidationInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -70,7 +71,7 @@ class ModerationStateWidget extends BaseModerationStateWidget {
    *   The config factory.
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, ModerationInformation $moderation_information, StateTransitionValidationInterface $validator, TransitionManager $transition_manager, ConfigFactoryInterface $config_factory) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $current_user,  $entity_type_manager, $moderation_information, $validator);
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $current_user, $entity_type_manager, $moderation_information, $validator);
     $this->transitionManager = $transition_manager;
     $this->configFactory = $config_factory;
   }
@@ -104,7 +105,7 @@ class ModerationStateWidget extends BaseModerationStateWidget {
 
     // The entity must have the proper fields.
     $has_fields = $entity->hasField('scheduled_transition_date') && $entity->hasField('scheduled_transition_state');
-    if (! $has_fields) {
+    if (!$has_fields) {
       return $element;
     }
 
@@ -112,11 +113,15 @@ class ModerationStateWidget extends BaseModerationStateWidget {
 
     // The latest revision, if there is one, is the canonical source of truth
     // regarding scheduled transitions.
-    $latest_revision = $this->moderationInformation
-      ->getLatestRevision(
+    if ($entity->isNew()) {
+      $latest_revision = $entity;
+    }
+    else {
+      $latest_revision = $this->getLatestRevision(
         $entity->getEntityTypeId(),
         $entity->id()
       ) ?: $entity;
+    }
 
     $transition_set = new TransitionSet(
       $latest_revision->get('scheduled_transition_date'),
@@ -142,7 +147,7 @@ class ModerationStateWidget extends BaseModerationStateWidget {
           ],
           [$this, 'storeValue'],
         ],
-        '#default_value' => $transition_set->toJSON(),
+        '#default_value' => $transition_set->toJson(),
         '#process' => [
           [$this, 'processComponentInput'],
         ],
@@ -157,7 +162,36 @@ class ModerationStateWidget extends BaseModerationStateWidget {
   }
 
   /**
-   * #process callback for the scheduler component's input element.
+   * Loads the latest revision of an entity.
+   *
+   * This is a shim around ModerationInformationInterface::getLatestRevision(),
+   * which was replaced by calling methods on the entity storage handler in
+   * Drupal 8.8.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param mixed $entity_id
+   *   The entity ID.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|null
+   *   The latest revision of the entity, if one exists.
+   */
+  private function getLatestRevision($entity_type_id, $entity_id) {
+    $storage = $this->entityTypeManager->getStorage($entity_type_id);
+
+    if ($storage instanceof RevisionableStorageInterface && method_exists($storage, 'getLatestRevisionId')) {
+      $revision_id = $storage->getLatestRevisionId($entity_id);
+      return isset($revision_id) ? $storage->loadRevision($revision_id) : NULL;
+    }
+    else {
+      // Use call_user_func() here because our deprecation testing tools are not
+      // smart enough to recognize the actual code path that leads here.
+      return call_user_func([$this->moderationInformation, 'getLatestRevision'], $entity_type_id, $entity_id);
+    }
+  }
+
+  /**
+   * Process callback for the scheduler component's input element.
    *
    * @param array $element
    *   The unprocessed element.
@@ -176,8 +210,7 @@ class ModerationStateWidget extends BaseModerationStateWidget {
   }
 
   /**
-   * Validation method that accesses the hidden input element, and stores its
-   * value in the form state.
+   * Accesses the hidden input element and stores its value in the form state.
    *
    * @param array $element
    *   The hidden input.
@@ -190,12 +223,17 @@ class ModerationStateWidget extends BaseModerationStateWidget {
     }
 
     $decoded = Json::decode($element['#value']);
-    assert(is_array($decoded));
-    $transition_storage = $form_state->getValue('transition_storage') ?: [];
-    // Support multiple widgets on one form (e.g. Inline Entity Form).
-    $uuid = $this->entity->uuid();
-    $transition_storage[$uuid] = $decoded;
-    $form_state->setValue('transition_storage', $transition_storage);
+
+    if (is_array($decoded)) {
+      $transition_storage = $form_state->getValue('transition_storage') ?: [];
+      // Support multiple widgets on one form (e.g. Inline Entity Form).
+      $uuid = $this->entity->uuid();
+      $transition_storage[$uuid] = $decoded;
+      $form_state->setValue('transition_storage', $transition_storage);
+    }
+    else {
+      throw new \InvalidArgumentException('Expected value of ' . $element['#name'] . ' to be an array.');
+    }
   }
 
   /**
@@ -211,16 +249,19 @@ class ModerationStateWidget extends BaseModerationStateWidget {
     // Do not use empty() here, because it's possible that the user is trying to
     // clear all scheduled transitions, which means $transitions[$uuid] will
     // be an empty array.
-    if (! isset($transitions[$uuid])) {
+    if (!isset($transitions[$uuid])) {
       return;
     }
 
     $states = array_map(function (array $transition) {
-      assert(!empty($transition['state']) && is_string($transition['state']));
-
-      return [
-        'value' => $transition['state'],
-      ];
+      if ($transition['state'] && is_string($transition['state'])) {
+        return [
+          'value' => $transition['state'],
+        ];
+      }
+      else {
+        throw new \InvalidArgumentException('Invalid transition state: ' . $transition['state']);
+      }
     }, $transitions[$uuid]);
 
     $dates = array_map(function (array $transition) {
@@ -229,11 +270,14 @@ class ModerationStateWidget extends BaseModerationStateWidget {
       ];
     }, $transitions[$uuid]);
 
-    assert(count($states) === count($dates));
-
-    $entity
-      ->set('scheduled_transition_state', $states)
-      ->set('scheduled_transition_date', $dates);
+    if (count($states) === count($dates)) {
+      $entity
+        ->set('scheduled_transition_state', $states)
+        ->set('scheduled_transition_date', $dates);
+    }
+    else {
+      throw new \LogicException('scheduled_transition_state and scheduled_transition_date fields must have the same number of items.');
+    }
   }
 
 }

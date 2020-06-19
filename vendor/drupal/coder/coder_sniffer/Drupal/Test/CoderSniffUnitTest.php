@@ -16,12 +16,12 @@ namespace Drupal\Test;
 use PHP_CodeSniffer\Config;
 use PHP_CodeSniffer\Ruleset;
 use PHP_CodeSniffer\Files\LocalFile;
-use PHP_CodeSniffer\RuntimeException;
+use PHP_CodeSniffer\Exceptions\RuntimeException;
 use PHP_CodeSniffer\Util\Common;
-use PHP_CodeSniffer\Autoload;
 use PHP_CodeSniffer\Util\Tokens;
+use PHPUnit\Framework\TestCase;
 
-abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
+abstract class CoderSniffUnitTest extends TestCase
 {
 
     /**
@@ -32,6 +32,13 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
      * @var boolean
      */
     protected $backupGlobals = false;
+
+    /**
+     * The path to the root folder of Coder.
+     *
+     * @var string
+     */
+    private $rootDir = null;
 
     /**
      * The path to the standard's main directory.
@@ -57,17 +64,19 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
     {
         $class = get_class($this);
 
-        $this->rootDir = __DIR__ . '/../../';
-        $this->testsDir = __DIR__.'/';
+        $this->rootDir      = __DIR__.'/../../';
+        $this->testsDir     = __DIR__.'/';
         $this->standardsDir = __DIR__.'/../';
         // Required to pull in all the defines from the tokens file.
         $tokens = new Tokens();
-        if (!defined('PHP_CODESNIFFER_VERBOSITY')) {
+        if (defined('PHP_CODESNIFFER_VERBOSITY') === false) {
             define('PHP_CODESNIFFER_VERBOSITY', 0);
         }
-        if (!defined('PHP_CODESNIFFER_CBF')) {
+
+        if (defined('PHP_CODESNIFFER_CBF') === false) {
             define('PHP_CODESNIFFER_CBF', 0);
         }
+
     }//end setUp()
 
 
@@ -79,11 +88,11 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $testFileBase The base path that the unit tests files will have.
      *
-     * @return string[]
+     * @return array<string>
      */
-    protected function getTestFiles($testFileBase)
+    protected function getTestFiles($testFileBase): array
     {
-        $testFiles = array();
+        $testFiles = [];
 
         $dir = substr($testFileBase, 0, strrpos($testFileBase, DIRECTORY_SEPARATOR));
         $di  = new \DirectoryIterator($dir);
@@ -108,7 +117,7 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * Should this test be skipped for some reason.
      *
-     * @return void
+     * @return bool
      */
     protected function shouldSkipTest()
     {
@@ -123,7 +132,7 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
      * @preserveGlobalState disabled
      *
      * @return void
-     * @throws PHPUnit_Framework_Error
+     * @throws \PHPUnit\Framework\Exception
      */
     final public function testSniff()
     {
@@ -137,7 +146,7 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
 
         // In the case where we are running all the sniffs, the standard will
         // be the root class name.
-        if ($this->allSniffCodes()) {
+        if ($this->checkAllSniffCodes() !== false) {
             list($standardName) = explode('\\', get_class($this));
         }
 
@@ -145,40 +154,35 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
 
         $this->standardsDir = $this->rootDir.$standardName.DIRECTORY_SEPARATOR;
         // $testFileBase = $this->testsDir.$categoryName.DIRECTORY_SEPARATOR.$sniffName.'UnitTest.';
-
         // Get a list of all test files to check.
         $testFiles = $this->getTestFiles($testFileBase);
 
-        $config = new Config();
+        $config        = new Config();
         $config->cache = false;
         $GLOBALS['PHP_CODESNIFFER_CONFIG'] = $config;
 
         // $config->standards = array($standardName);
-        $config->ignored = array();
-        $config->standards = array($this->standardsDir);
+        $config->ignored   = [];
+        $config->standards = [$this->standardsDir];
 
-        $failureMessages = array();
+        $failureMessages = [];
         foreach ($testFiles as $testFile) {
             // Setup to test the selected Sniff.
-            if ($this->allSniffCodes()) {
-              $config->sniffs = [];
+            if ($this->checkAllSniffCodes() !== false) {
+                $config->sniffs = [];
+            } else {
+                $config->sniffs = [$sniffCode];
             }
-            else {
-              $config->sniffs = array($sniffCode);
-            }
+
             $ruleset = new Ruleset($config);
             $GLOBALS['PHP_CODESNIFFER_RULESET'] = $ruleset;
 
             $filename  = basename($testFile);
             $oldConfig = $config->getSettings();
 
-            try {
-                $this->setCliValues($filename, $config);
-                $phpcsFile = new LocalFile($testFile, $ruleset, $config);
-                $phpcsFile->process();
-            } catch (RuntimeException $e) {
-                $this->fail('An unexpected exception has been caught: '.$e->getMessage());
-            }
+            $this->setCliValues($filename, $config);
+            $phpcsFile = new LocalFile($testFile, $ruleset, $config);
+            $phpcsFile->process();
 
             $failures        = $this->generateFailureMessages($phpcsFile);
             $failureMessages = array_merge($failureMessages, $failures);
@@ -186,7 +190,7 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
             if ($phpcsFile->getFixableCount() > 0) {
                 // Reinit to use all sniffs.
                 $config->sniffs = [];
-                $ruleset = new Ruleset($config);
+                $ruleset        = new Ruleset($config);
                 try {
                     $this->setCliValues($filename, $config);
                     $phpcsFile = new LocalFile($testFile, $ruleset, $config);
@@ -194,6 +198,7 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
                 } catch (RuntimeException $e) {
                     $this->fail('An unexpected exception has been caught: '.$e->getMessage());
                 }
+
                 // Attempt to fix the errors.
                 $phpcsFile->fixer->fixFile();
                 $fixable = $phpcsFile->getFixableCount();
@@ -211,7 +216,7 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
                         $failureMessages[] = "Fixed version of $filename does not match expected version in $fixedFilename; the diff is\n$diff";
                     }
                 }
-            }
+            }//end if
 
             // Restore the config.
             $config->setSettings($oldConfig);
@@ -227,12 +232,12 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * Generate a list of test failures for a given sniffed file.
      *
-     * @param PHP_CodeSniffer_File $file The file being tested.
+     * @param \PHP_CodeSniffer\Files\LocalFile $file The file being tested.
      *
-     * @return array
-     * @throws PHP_CodeSniffer_Exception
+     * @return array<string>
+     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException
      */
-    public function generateFailureMessages(LocalFile $file)
+    public function generateFailureMessages(LocalFile $file): array
     {
         $testFile = $file->getFilename();
 
@@ -241,14 +246,6 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
         $expectedErrors   = $this->getErrorList(basename($testFile));
         $expectedWarnings = $this->getWarningList(basename($testFile));
 
-        if (is_array($expectedErrors) === false) {
-            throw new RuntimeException('getErrorList() must return an array');
-        }
-
-        if (is_array($expectedWarnings) === false) {
-            throw new RuntimeException('getWarningList() must return an array');
-        }
-
         /*
             We merge errors and warnings together to make it easier
             to iterate over them and produce the errors string. In this way,
@@ -256,28 +253,28 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
             it's not really structured to allow that.
         */
 
-        $allProblems     = array();
-        $failureMessages = array();
-        $GLOBALS['PHP_CODESNIFFER_SNIFF_CODES'] = [];
+        $allProblems     = [];
+        $failureMessages = [];
+        $GLOBALS['PHP_CODESNIFFER_SNIFF_CODES']   = [];
         $GLOBALS['PHP_CODESNIFFER_FIXABLE_CODES'] = [];
 
         foreach ($foundErrors as $line => $lineErrors) {
             foreach ($lineErrors as $column => $errors) {
                 if (isset($allProblems[$line]) === false) {
-                    $allProblems[$line] = array(
-                                           'expected_errors'   => 0,
-                                           'expected_warnings' => 0,
-                                           'found_errors'      => array(),
-                                           'found_warnings'    => array(),
-                                          );
+                    $allProblems[$line] = [
+                        'expected_errors'   => 0,
+                        'expected_warnings' => 0,
+                        'found_errors'      => [],
+                        'found_warnings'    => [],
+                    ];
                 }
 
-                $foundErrorsTemp = array();
+                $foundErrorsTemp = [];
                 foreach ($allProblems[$line]['found_errors'] as $foundError) {
                     $foundErrorsTemp[] = $foundError;
                 }
 
-                $errorsTemp = array();
+                $errorsTemp = [];
                 foreach ($errors as $foundError) {
                     $errorsTemp[] = $foundError['message'].' ('.$foundError['source'].')';
 
@@ -307,12 +304,12 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
 
         foreach ($expectedErrors as $line => $numErrors) {
             if (isset($allProblems[$line]) === false) {
-                $allProblems[$line] = array(
-                                       'expected_errors'   => 0,
-                                       'expected_warnings' => 0,
-                                       'found_errors'      => array(),
-                                       'found_warnings'    => array(),
-                                      );
+                $allProblems[$line] = [
+                    'expected_errors'   => 0,
+                    'expected_warnings' => 0,
+                    'found_errors'      => [],
+                    'found_warnings'    => [],
+                ];
             }
 
             $allProblems[$line]['expected_errors'] = $numErrors;
@@ -321,20 +318,20 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
         foreach ($foundWarnings as $line => $lineWarnings) {
             foreach ($lineWarnings as $column => $warnings) {
                 if (isset($allProblems[$line]) === false) {
-                    $allProblems[$line] = array(
-                                           'expected_errors'   => 0,
-                                           'expected_warnings' => 0,
-                                           'found_errors'      => array(),
-                                           'found_warnings'    => array(),
-                                          );
+                    $allProblems[$line] = [
+                        'expected_errors'   => 0,
+                        'expected_warnings' => 0,
+                        'found_errors'      => [],
+                        'found_warnings'    => [],
+                    ];
                 }
 
-                $foundWarningsTemp = array();
+                $foundWarningsTemp = [];
                 foreach ($allProblems[$line]['found_warnings'] as $foundWarning) {
                     $foundWarningsTemp[] = $foundWarning;
                 }
 
-                $warningsTemp = array();
+                $warningsTemp = [];
                 foreach ($warnings as $warning) {
                     $warningsTemp[] = $warning['message'].' ('.$warning['source'].')';
                 }
@@ -353,12 +350,12 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
 
         foreach ($expectedWarnings as $line => $numWarnings) {
             if (isset($allProblems[$line]) === false) {
-                $allProblems[$line] = array(
-                                       'expected_errors'   => 0,
-                                       'expected_warnings' => 0,
-                                       'found_errors'      => array(),
-                                       'found_warnings'    => array(),
-                                      );
+                $allProblems[$line] = [
+                    'expected_errors'   => 0,
+                    'expected_warnings' => 0,
+                    'found_errors'      => [],
+                    'found_warnings'    => [],
+                ];
             }
 
             $allProblems[$line]['expected_warnings'] = $numWarnings;
@@ -428,12 +425,12 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * Get a list of CLI values to set before the file is tested.
+     * Set a list of CLI values before the file is tested.
      *
      * @param string                  $filename The name of the file being tested.
      * @param \PHP_CodeSniffer\Config $config   The config data for the run.
      *
-     * @return array
+     * @return void
      */
     public function setCliValues($filename, $config)
     {
@@ -448,9 +445,11 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
      * The key of the array should represent the line number and the value
      * should represent the number of errors that should occur on that line.
      *
+     * @param string $testFile The name of the file being tested.
+     *
      * @return array<int, int>
      */
-    abstract protected function getErrorList($testFile = NULL);
+    abstract protected function getErrorList(string $testFile): array;
 
 
     /**
@@ -459,20 +458,23 @@ abstract class CoderSniffUnitTest extends \PHPUnit_Framework_TestCase
      * The key of the array should represent the line number and the value
      * should represent the number of warnings that should occur on that line.
      *
-     * @return array(int => int)
+     * @param string $testFile The name of the file being tested.
+     *
+     * @return array<int, int>
      */
-    abstract protected function getWarningList($testFile = NULL);
+    abstract protected function getWarningList(string $testFile): array;
 
 
     /**
-     * Returns a list of sniff codes that should be checked in this test.
+     * False if just the current sniff should be checked, true if all sniffs should be checked.
      *
-     * @return array The list of sniff codes.
+     * @return bool
      */
-    protected function allSniffCodes() {
-      return FALSE;
-    }
+    protected function checkAllSniffCodes()
+    {
+        return false;
 
+    }//end checkAllSniffCodes()
 
 
 }//end class

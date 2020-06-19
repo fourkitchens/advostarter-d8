@@ -20,7 +20,7 @@ use Drupal\config_perms\CustomPermsEntityInterface;
  *     }
  *   },
  *   config_prefix = "custom_perms_entity",
- *   admin_permission = "administer site configuration",
+ *   admin_permission = "administer config permissions",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",

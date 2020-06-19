@@ -26,14 +26,14 @@ class GenderNeutralCommentSniff implements Sniff
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(
-                T_COMMENT,
-                T_DOC_COMMENT_STRING,
-               );
+        return [
+            T_COMMENT,
+            T_DOC_COMMENT_STRING,
+        ];
 
     }//end register()
 

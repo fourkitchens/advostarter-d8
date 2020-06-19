@@ -1,3 +1,68 @@
+## 5.2.0
+* Security updated Drupal core to 8.8.6.
+
+## 5.1.0
+* Updated Contact Storage to 1.0
+* Updated Drupal core to 8.8.5.
+* Updated Metatag to 1.13.
+* Updated Pathauto to 1.8.
+* Updated Redirect to 1.5.
+* Updated Token to 1.7.
+
+## 5.0.0
+* Updated Drupal core to 8.8.0.
+* Fixed all known deprecations. (Issue #3096212)
+* Updated Metatag to 1.10.
+* Updated Pathauto to 1.6.
+
+## 5.0.0-beta3
+* Fixed an incompatibility between Lightning Page and Lightning Workflow
+  3.14 and later.
+
+## 5.0.0-beta2
+There are no user-facing changes in this version.
+
+## 5.0.0-beta1
+* Updated Drupal core to 8.8.0-beta1.
+* Updated Pathauto to 1.6-alpha1.
+
+## 4.7.0
+* Lightning Core now includes the Redirect module as a soft dependency.
+* The base installation profile, if available, is now displayed on the
+  administrative status report page, and via
+  `drush core:status --field=base-profile`.
+
+## 4.6.0
+* It is now possible to suppress the entity revision UI on content
+  entity forms by modifying a third-party setting of entity form
+  displays.
+* Changes were made to internal testing infrastructure, but nothing
+  that should affect users of Lightning Core.
+
+## 4.5.0
+* Security updated Metatag to 1.9.
+* Fixed a Drupal Console-related error that could appear even if Drupal Console
+  is not installed. (Issue #3007425)
+* Module version numbers recorded in the lightning_core.versions config are
+  now sorted by key. (Issue #3050259)
+
+## 4.4.0
+* Hotfixed a Composer error caused by erroneous configuration shipped
+  with Lightning Core 4.3.0.
+
+## 4.3.0
+* Security updated Drupal core to 8.7.5. (SA-CORE-2019-008)
+* Lightning Core now allows any version of Acquia Connector to be installed.
+
+## 4.2.0
+* Updated Contact Storage to 1.0-beta10.
+* Updated Drupal core to 8.7.3.
+* Many changes to internal testing infrastructure, but nothing that
+  should affect users of Lightning Core.
+
+## 4.1.0
+* Security updated Drupal core to 8.7.1. (SA-CORE-2019-007)
+
 ## 4.0.0
 * Updated Drupal core to 8.7.0.
 

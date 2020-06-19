@@ -64,15 +64,53 @@ The same can be done for a Composer global installation.
 
 Check Drupal coding standards
 
-    phpcs --standard=Drupal /file/to/drupal/example_module
+    phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml /file/to/drupal/example_module
 
 Check Drupal best practices
 
-    phpcs --standard=DrupalPractice /file/to/drupal/example_module
+    phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml /file/to/drupal/example_module
 
 Automatically fix coding standards
 
-    phpcbf --standard=Drupal /file/to/drupal/example_module
+    phpcbf --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml /file/to/drupal/example_module
+
+
+## Store settings in a phpcs.xml.dist file
+
+In order to save and commit your PHPCS settings to Git you can use a
+phpcs.xml.dist file in your project like this:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="myproject">
+  <description>PHP CodeSniffer configuration for myproject development.</description>
+  <!-- Check all files in the current directory and below. -->
+  <file>.</file>
+  <arg name="extensions" value="php,module,inc,install,test,profile,theme,css,info,txt,md,yml"/>
+  <!-- Change this value to 7 if you want to check Drupal 7 code. -->
+  <config name="drupal_core_version" value="8"/>
+
+  <!-- If you have Coder installed locally then you can reference the Drupal
+  standards with relative paths. Otherwise simply use "Drupal" and
+  "DrupalPractice. -->
+  <rule ref="../vendor/drupal/coder/coder_sniffer/Drupal">
+    <!-- Example how you would disable a rule you are not compliant with yet:
+    <exclude name="Drupal.Commenting.Deprecated"/>
+    -->
+  </rule>
+  <rule ref="../vendor/drupal/coder/coder_sniffer/DrupalPractice"/>
+
+  <!-- Example how you would disable an external rule you do not like:
+  <rule ref="PEAR.Functions.ValidDefaultValue.NotAtEnd">
+    <severity>0</severity>
+  </rule>
+  -->
+</ruleset>
+```
+
+Then you can invoke phpcs without any options and it will read phpcs.xml.dist
+from the current directory. This can also be useful for Continuous Integration
+setups.
 
 
 ## Working with Editors
@@ -91,7 +129,7 @@ Editors:
 - [Visual Studio Code (VSCode)](https://www.drupal.org/node/1419996)
 
 
-## Automated Testing (PHPUnit + PHPCS)
+## Automated Testing (PHPUnit + PHPCS + PHPStan)
 
 Coder Sniffer comes with a PHPUnit test suite to make sure the sniffs work correctly.
 Use Composer to install the dependencies:
@@ -105,6 +143,10 @@ Then execute the tests:
 Then execute the coding standards checker on Coder itself:
 
     ./vendor/bin/phpcs
+
+Then execute static analysis:
+
+    ./vendor/bin/phpstan analyse
 
 
 ## Contributing

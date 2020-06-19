@@ -7,12 +7,13 @@ namespace Drupal\Tests\entity_browser\FunctionalJavascript;
  *
  * @group entity_browser
  */
-class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
+class EntityBrowserTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * Tests single widget selector.
    */
   public function testSingleWidgetSelector() {
+
     // Sets the single widget selector.
     /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
     $browser = $this->container->get('entity_type.manager')
@@ -84,6 +85,10 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
    * Tests the field widget with a multi-cardinality field.
    */
   public function testMultiCardinalityField() {
+    $assert_session = $this->assertSession();
+    $session = $this->getSession();
+    $page = $session->getPage();
+
     $this->container->get('entity_type.manager')
       ->getStorage('field_storage_config')
       ->load('node.field_reference')
@@ -98,27 +103,28 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     $this->drupalGet('node/add/article');
 
-    $this->assertSession()->linkExists('Select entities');
-    $this->assertSession()->pageTextContains('You can select up to 3 file entities (3 left).');
-    $this->getSession()->getPage()->clickLink('Select entities');
+    $assert_session->linkExists('Select entities');
+    $assert_session->pageTextContains('You can select up to 3 files (3 left).');
+    $page->clickLink('Select entities');
 
-    $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
+    $session->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
-    $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $images[0]->id() . ']');
-    $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $images[1]->id() . ']');
-    $this->getSession()->getPage()->pressButton('Select entities');
+    $page->checkField('entity_browser_select[file:' . $images[0]->id() . ']');
+    $page->checkField('entity_browser_select[file:' . $images[1]->id() . ']');
+    $page->pressButton('Select entities');
 
     // Switch back to the main page.
-    $this->getSession()->switchToIFrame();
+    $session->switchToIFrame();
     $this->waitForAjaxToFinish();
     // Selections have been made, so the message should be different.
-    $this->assertSession()->pageTextContains('You can select up to 3 file entities (1 left).');
+    $assert_session->pageTextContains('You can select up to 3 files (1 left).');
   }
 
   /**
    * Tests tabs widget selector.
    */
   public function testTabsWidgetSelector() {
+
     // Sets the tabs widget selector.
     /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
     $browser = $this->container->get('entity_type.manager')
@@ -175,8 +181,11 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->linkNotExists('dummy');
     $this->assertSession()->linkExists('view');
     $this->assertSession()->linkExists('upload');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
 
+    // Commenting out header checks for now:
+    // Behat\Mink\Exception\UnsupportedDriverActionException: Response headers are not available
+    // from Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver
+    // $this->assertHeader('X-Drupal-Cache-Contexts', 'eb_dummy');
     // Move dummy widget to the first place and make sure it does not appear.
     $browser = $this->container->get('entity_type.manager')
       ->getStorage('entity_browser')
@@ -188,13 +197,13 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->linkExists('view');
     $this->assertSession()->linkExists('upload');
     $this->assertSession()->pageTextNotContains('This is dummy widget.');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
    * Tests dropdown widget selector.
    */
   public function testDropdownWidgetSelector() {
+
     // Sets the dropdown widget selector.
     /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
     $browser = $this->container->get('entity_type.manager')
@@ -241,7 +250,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     // Selects the upload widget.
     // $this->getSession()
     // ->getPage()
-    // ->selectFieldOption('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
+    // ->selectFieldOption('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');.
     \Drupal::state()->set('eb_test_dummy_widget_access', FALSE);
     $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
     // Dummy.
@@ -250,8 +259,6 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
     // View.
     $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
-
     // Move dummy widget to the first place and make sure it does not appear.
     $browser = $this->container->get('entity_type.manager')
       ->getStorage('entity_browser')
@@ -266,13 +273,13 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     // View.
     $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
     $this->assertSession()->pageTextNotContains('This is dummy widget.');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
    * Tests views selection display.
    */
   public function testViewsSelectionDisplayWidget() {
+
     // Sets the dropdown widget selector.
     /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
     $browser = $this->container->get('entity_type.manager')
@@ -282,6 +289,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $browser->save();
 
     $this->assertEquals($browser->getSelectionDisplay()->getPluginId(), 'view', 'Selection display is set to view.');
+
   }
 
   /**
@@ -328,15 +336,12 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
   }
 
   /**
-   * Tests the EntityBrowserWidgetContext argument_default views plugin.
+   * Tests the EntityBrowserWidgetContext default argument plugin.
    */
-  public function testContextualFilter() {
-    $this->drupalCreateContentType(['type' => 'type_one', 'name' => 'Type One']);
-    $this->drupalCreateContentType(['type' => 'type_two', 'name' => 'Type Two']);
-    $this->drupalCreateContentType(['type' => 'type_three', 'name' => 'Type Three']);
-    $this->createNode(['type' => 'type_one', 'title' => 'Type one node']);
-    $this->createNode(['type' => 'type_two', 'title' => 'Type two node']);
-    $this->createNode(['type' => 'type_three', 'title' => 'Type three node']);
+  public function testEntityBrowserWidgetContext() {
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'article', 'title' => 'Darth']);
 
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
     $form_display = $this->container->get('entity_type.manager')
@@ -346,7 +351,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $form_display->setComponent('field_reference', [
       'type' => 'entity_browser_entity_reference',
       'settings' => [
-        'entity_browser' => 'test_contextual_filter',
+        'entity_browser' => 'widget_context_default_value',
         'field_widget_display' => 'label',
         'open' => TRUE,
       ],
@@ -358,14 +363,24 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
       ->load('node.article.field_reference');
     $handler_settings = $field_config->getSetting('handler_settings');
     $handler_settings['target_bundles'] = [
-      'type_one' => 'type_one',
-      'type_three' => 'type_three',
+      'shark' => 'shark',
+      'jet' => 'jet',
     ];
     $field_config->setSetting('handler_settings', $handler_settings);
     $field_config->save();
 
+    // Set auto open to false on the entity browser.
+    $entity_browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('widget_context_default_value');
+
+    $display_configuration = $entity_browser->get('display_configuration');
+    $display_configuration['auto_open'] = FALSE;
+    $entity_browser->set('display_configuration', $display_configuration);
+    $entity_browser->save();
+
     $account = $this->drupalCreateUser([
-      'access test_contextual_filter entity browser pages',
+      'access widget_context_default_value entity browser pages',
       'create article content',
       'access content',
     ]);
@@ -375,12 +390,246 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     // Open the entity browser widget form.
     $this->getSession()->getPage()->clickLink('Select entities');
-    $this->getSession()->switchToIFrame('entity_browser_iframe_test_contextual_filter');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
 
     // Check that only nodes of an allowed type are listed.
-    $this->assertSession()->pageTextContains('Type one node');
-    $this->assertSession()->pageTextNotContains('Type two node');
-    $this->assertSession()->pageTextContains('Type three node');
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.article.field_reference');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'article' => 'article',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/article');
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->waitForAjaxToFinish();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
+
+  }
+
+  /**
+   * Tests the ContextualBundle filter plugin.
+   */
+  public function testContextualBundle() {
+
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'article', 'title' => 'Darth']);
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    $form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.article.default');
+
+    $form_display->setComponent('field_reference', [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'bundle_filter',
+        'field_widget_display' => 'label',
+        'open' => TRUE,
+      ],
+    ])->save();
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.article.field_reference');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'shark' => 'shark',
+      'jet' => 'jet',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    // Set auto open to false on the entity browser.
+    $entity_browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('bundle_filter');
+
+    $display_configuration = $entity_browser->get('display_configuration');
+    $display_configuration['auto_open'] = FALSE;
+    $entity_browser->set('display_configuration', $display_configuration);
+    $entity_browser->save();
+
+    $account = $this->drupalCreateUser([
+      'access bundle_filter entity browser pages',
+      'create article content',
+      'access content',
+    ]);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('node/add/article');
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.article.field_reference');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'article' => 'article',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/article');
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
+
+  }
+
+  /**
+   * Tests the ContextualBundle filter plugin with exposed option.
+   */
+  public function testContextualBundleExposed() {
+
+    $this->config('entity_browser.browser.bundle_filter')
+      ->set('widgets.b882a89d-9ce4-4dfe-9802-62df93af232a.settings.view', 'bundle_filter_exposed')
+      ->save();
+
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'article', 'title' => 'Darth']);
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    $form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.article.default');
+
+    $form_display->setComponent('field_reference', [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'bundle_filter',
+        'field_widget_display' => 'label',
+        'open' => TRUE,
+      ],
+    ])->save();
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.article.field_reference');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'shark' => 'shark',
+      'jet' => 'jet',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    // Set auto open to false on the entity browser.
+    $entity_browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('bundle_filter');
+
+    $display_configuration = $entity_browser->get('display_configuration');
+    $display_configuration['auto_open'] = FALSE;
+    $entity_browser->set('display_configuration', $display_configuration);
+    $entity_browser->save();
+
+    $account = $this->drupalCreateUser([
+      'access bundle_filter entity browser pages',
+      'create article content',
+      'access content',
+    ]);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('node/add/article');
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    // Test exposed form type filter.
+    $this->assertSession()->selectExists('Type')->selectOption('jet');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    $this->assertSession()->selectExists('Type')->selectOption('shark');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    $this->assertSession()->selectExists('Type')->selectOption('All');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.article.field_reference');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'article' => 'article',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/article');
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
+
+    // If there is just one target_bundle, the contextual filter
+    // should not be visible.
+    $this->assertSession()->fieldNotExists('Type');
+
   }
 
 }
