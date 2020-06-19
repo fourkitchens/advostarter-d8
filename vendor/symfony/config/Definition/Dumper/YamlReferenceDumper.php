@@ -33,7 +33,7 @@ class YamlReferenceDumper
         return $this->dumpNode($configuration->getConfigTreeBuilder()->buildTree());
     }
 
-    public function dumpAtPath(ConfigurationInterface $configuration, $path)
+    public function dumpAtPath(ConfigurationInterface $configuration, string $path)
     {
         $rootNode = $node = $configuration->getConfigTreeBuilder()->buildTree();
 
@@ -69,11 +69,7 @@ class YamlReferenceDumper
         return $ref;
     }
 
-    /**
-     * @param int  $depth
-     * @param bool $prototypedArray
-     */
-    private function writeNode(NodeInterface $node, NodeInterface $parentNode = null, $depth = 0, $prototypedArray = false)
+    private function writeNode(NodeInterface $node, NodeInterface $parentNode = null, int $depth = 0, bool $prototypedArray = false)
     {
         $comments = [];
         $default = '';
@@ -124,7 +120,8 @@ class YamlReferenceDumper
 
         // deprecated?
         if ($node->isDeprecated()) {
-            $comments[] = sprintf('Deprecated (%s)', $node->getDeprecationMessage($node->getName(), $parentNode ? $parentNode->getPath() : $node->getPath()));
+            $deprecation = $node->getDeprecation($node->getName(), $parentNode ? $parentNode->getPath() : $node->getPath());
+            $comments[] = sprintf('Deprecated (%s)', ($deprecation['package'] || $deprecation['version'] ? "Since {$deprecation['package']} {$deprecation['version']}: " : '').$deprecation['message']);
         }
 
         // example
@@ -177,11 +174,8 @@ class YamlReferenceDumper
 
     /**
      * Outputs a single config reference line.
-     *
-     * @param string $text
-     * @param int    $indent
      */
-    private function writeLine($text, $indent = 0)
+    private function writeLine(string $text, int $indent = 0)
     {
         $indent = \strlen($text) + $indent;
         $format = '%'.$indent.'s';
@@ -189,7 +183,7 @@ class YamlReferenceDumper
         $this->reference .= sprintf($format, $text)."\n";
     }
 
-    private function writeArray(array $array, $depth)
+    private function writeArray(array $array, int $depth)
     {
         $isIndexed = array_values($array) === $array;
 
@@ -212,10 +206,7 @@ class YamlReferenceDumper
         }
     }
 
-    /**
-     * @return array
-     */
-    private function getPrototypeChildren(PrototypedArrayNode $node)
+    private function getPrototypeChildren(PrototypedArrayNode $node): array
     {
         $prototype = $node->getPrototype();
         $key = $node->getKeyAttribute();

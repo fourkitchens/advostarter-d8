@@ -44,10 +44,10 @@ class XmlUtils
      * @throws InvalidXmlException When parsing of XML with schema or callable produces any errors unrelated to the XML parsing itself
      * @throws \RuntimeException   When DOM extension is missing
      */
-    public static function parse($content, $schemaOrCallable = null)
+    public static function parse(string $content, $schemaOrCallable = null)
     {
         if (!\extension_loaded('dom')) {
-            throw new \RuntimeException('Extension DOM is required.');
+            throw new \LogicException('Extension DOM is required.');
         }
 
         $internalErrors = libxml_use_internal_errors(true);
@@ -80,7 +80,7 @@ class XmlUtils
             $e = null;
             if (\is_callable($schemaOrCallable)) {
                 try {
-                    $valid = \call_user_func($schemaOrCallable, $dom, $internalErrors);
+                    $valid = $schemaOrCallable($dom, $internalErrors);
                 } catch (\Exception $e) {
                     $valid = false;
                 }
@@ -120,7 +120,7 @@ class XmlUtils
      * @throws XmlParsingException       When XML parsing returns any errors
      * @throws \RuntimeException         When DOM extension is missing
      */
-    public static function loadFile($file, $schemaOrCallable = null)
+    public static function loadFile(string $file, $schemaOrCallable = null)
     {
         if (!is_file($file)) {
             throw new \InvalidArgumentException(sprintf('Resource "%s" is not a file.', $file));
@@ -163,7 +163,7 @@ class XmlUtils
      *
      * @return mixed
      */
-    public static function convertDomElementToArray(\DOMElement $element, $checkPrefix = true)
+    public static function convertDomElementToArray(\DOMElement $element, bool $checkPrefix = true)
     {
         $prefix = (string) $element->prefix;
         $empty = true;
@@ -256,7 +256,7 @@ class XmlUtils
         }
     }
 
-    protected static function getXmlErrors($internalErrors)
+    protected static function getXmlErrors(bool $internalErrors)
     {
         $errors = [];
         foreach (libxml_get_errors() as $error) {

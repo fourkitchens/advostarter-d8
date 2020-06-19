@@ -18,8 +18,10 @@ namespace Symfony\Component\Config\Resource;
  * The resource must be a fully-qualified class name.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @final
  */
-class ClassExistenceResource implements SelfCheckingResourceInterface, \Serializable
+class ClassExistenceResource implements SelfCheckingResourceInterface
 {
     private $resource;
     private $exists;
@@ -32,7 +34,7 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, \Serializ
      * @param string    $resource The fully-qualified class name
      * @param bool|null $exists   Boolean when the existency check has already been done
      */
-    public function __construct($resource, $exists = null)
+    public function __construct(string $resource, bool $exists = null)
     {
         $this->resource = $resource;
         if (null !== $exists) {
@@ -43,7 +45,7 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, \Serializ
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->resource;
     }
@@ -51,7 +53,7 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, \Serializ
     /**
      * @return string The file path to the resource
      */
-    public function getResource()
+    public function getResource(): string
     {
         return $this->resource;
     }
@@ -61,7 +63,7 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, \Serializ
      *
      * @throws \ReflectionException when a parent class/interface/trait is not found
      */
-    public function isFresh($timestamp)
+    public function isFresh(int $timestamp): bool
     {
         $loaded = class_exists($this->resource, false) || interface_exists($this->resource, false) || trait_exists($this->resource, false);
 
@@ -112,22 +114,20 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, \Serializ
     /**
      * @internal
      */
-    public function serialize()
+    public function __sleep(): array
     {
         if (null === $this->exists) {
             $this->isFresh(0);
         }
 
-        return serialize([$this->resource, $this->exists]);
+        return ['resource', 'exists'];
     }
 
     /**
      * @internal
      */
-    public function unserialize($serialized)
+    public function __wakeup()
     {
-        list($this->resource, $this->exists) = unserialize($serialized);
-
         if (\is_bool($this->exists)) {
             $this->exists = [$this->exists, null];
         }
@@ -149,7 +149,7 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, \Serializ
      *
      * @internal
      */
-    public static function throwOnRequiredClass($class, \Exception $previous = null)
+    public static function throwOnRequiredClass(string $class, \Exception $previous = null)
     {
         // If the passed class is the resource being checked, we shouldn't throw.
         if (null === $previous && self::$autoloadedClass === $class) {

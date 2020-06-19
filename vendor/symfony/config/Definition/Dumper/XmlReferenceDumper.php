@@ -26,12 +26,12 @@ class XmlReferenceDumper
 {
     private $reference;
 
-    public function dump(ConfigurationInterface $configuration, $namespace = null)
+    public function dump(ConfigurationInterface $configuration, string $namespace = null)
     {
         return $this->dumpNode($configuration->getConfigTreeBuilder()->buildTree(), $namespace);
     }
 
-    public function dumpNode(NodeInterface $node, $namespace = null)
+    public function dumpNode(NodeInterface $node, string $namespace = null)
     {
         $this->reference = '';
         $this->writeNode($node, 0, true, $namespace);
@@ -41,12 +41,7 @@ class XmlReferenceDumper
         return $ref;
     }
 
-    /**
-     * @param int    $depth
-     * @param bool   $root      If the node is the root node
-     * @param string $namespace The namespace of the node
-     */
-    private function writeNode(NodeInterface $node, $depth = 0, $root = false, $namespace = null)
+    private function writeNode(NodeInterface $node, int $depth = 0, bool $root = false, string $namespace = null)
     {
         $rootName = ($root ? 'config' : $node->getName());
         $rootNamespace = ($namespace ?: ($root ? 'http://example.org/schema/dic/'.$node->getName() : null));
@@ -96,7 +91,7 @@ class XmlReferenceDumper
                 }
 
                 if ($prototype instanceof PrototypedArrayNode) {
-                    $prototype->setName($key);
+                    $prototype->setName($key ?? '');
                     $children = [$key => $prototype];
                 } elseif ($prototype instanceof ArrayNode) {
                     $children = $prototype->getChildren();
@@ -153,7 +148,8 @@ class XmlReferenceDumper
                     }
 
                     if ($child->isDeprecated()) {
-                        $comments[] = sprintf('Deprecated (%s)', $child->getDeprecationMessage($child->getName(), $node->getPath()));
+                        $deprecation = $child->getDeprecation($child->getName(), $node->getPath());
+                        $comments[] = sprintf('Deprecated (%s)', ($deprecation['package'] || $deprecation['version'] ? "Since {$deprecation['package']} {$deprecation['version']}: " : '').$deprecation['message']);
                     }
 
                     if ($child instanceof EnumNode) {
@@ -258,11 +254,8 @@ class XmlReferenceDumper
 
     /**
      * Outputs a single config reference line.
-     *
-     * @param string $text
-     * @param int    $indent
      */
-    private function writeLine($text, $indent = 0)
+    private function writeLine(string $text, int $indent = 0)
     {
         $indent = \strlen($text) + $indent;
         $format = '%'.$indent.'s';
@@ -274,10 +267,8 @@ class XmlReferenceDumper
      * Renders the string conversion of the value.
      *
      * @param mixed $value
-     *
-     * @return string
      */
-    private function writeValue($value)
+    private function writeValue($value): string
     {
         if ('%%%%not_defined%%%%' === $value) {
             return '';

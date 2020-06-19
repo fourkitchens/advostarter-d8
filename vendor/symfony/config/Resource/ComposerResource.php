@@ -15,8 +15,10 @@ namespace Symfony\Component\Config\Resource;
  * ComposerResource tracks the PHP version and Composer dependencies.
  *
  * @author Nicolas Grekas <p@tchwork.com>
+ *
+ * @final
  */
-class ComposerResource implements SelfCheckingResourceInterface, \Serializable
+class ComposerResource implements SelfCheckingResourceInterface
 {
     private $vendors;
 
@@ -28,7 +30,7 @@ class ComposerResource implements SelfCheckingResourceInterface, \Serializable
         $this->vendors = self::$runtimeVendors;
     }
 
-    public function getVendors()
+    public function getVendors(): array
     {
         return array_keys($this->vendors);
     }
@@ -36,7 +38,7 @@ class ComposerResource implements SelfCheckingResourceInterface, \Serializable
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
         return __CLASS__;
     }
@@ -44,27 +46,11 @@ class ComposerResource implements SelfCheckingResourceInterface, \Serializable
     /**
      * {@inheritdoc}
      */
-    public function isFresh($timestamp)
+    public function isFresh(int $timestamp): bool
     {
         self::refresh();
 
         return array_values(self::$runtimeVendors) === array_values($this->vendors);
-    }
-
-    /**
-     * @internal
-     */
-    public function serialize()
-    {
-        return serialize($this->vendors);
-    }
-
-    /**
-     * @internal
-     */
-    public function unserialize($serialized)
-    {
-        $this->vendors = unserialize($serialized);
     }
 
     private static function refresh()
@@ -74,8 +60,8 @@ class ComposerResource implements SelfCheckingResourceInterface, \Serializable
         foreach (get_declared_classes() as $class) {
             if ('C' === $class[0] && 0 === strpos($class, 'ComposerAutoloaderInit')) {
                 $r = new \ReflectionClass($class);
-                $v = \dirname(\dirname($r->getFileName()));
-                if (file_exists($v.'/composer/installed.json')) {
+                $v = \dirname($r->getFileName(), 2);
+                if (is_file($v.'/composer/installed.json')) {
                     self::$runtimeVendors[$v] = @filemtime($v.'/composer/installed.json');
                 }
             }
