@@ -214,7 +214,7 @@
     "html_report": "../../web/backstop/html_report",
     "ci_report": "../../web/backstop/ci_report"
   },
-  "report": ["CI"],
+  "report": ["CI", "browser"],
   "engine": "puppeteer",
   "engineOptions": {
     "args": ["--no-sandbox"]
