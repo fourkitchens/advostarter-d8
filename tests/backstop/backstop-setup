@@ -163,6 +163,12 @@ function copy_live_db_to_environment($site, $environment) {
     return;
   }
 
+  $me = trim(`terminus auth:whoami`);
+  if (!$me) {
+    echo "You're not logged in via terminus.  Try `lando terminus auth:login`.\n";
+    die;
+  }
+
   $site =  escapeshellarg($site);
   $environment =  escapeshellarg($environment);
 
@@ -171,7 +177,7 @@ function copy_live_db_to_environment($site, $environment) {
   passthru("terminus env:clone-content $site.live $environment --cc --updatedb -y", $return);
   if ($return) {
     echo "The DB and files could not be copied.\n";
-    return;
+    die;
   }
 
   $framework = trim(`terminus site:info --field=framework $site`);
