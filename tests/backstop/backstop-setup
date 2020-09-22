@@ -69,6 +69,7 @@ $copy_db_reference = $environment_reference !== 'live'
   && ask_boolean_question("Are you sure that you want to blow away the existing DB on $environment_reference? (Y/n)", 'y');
 if ($copy_db_test) {
   copy_live_db_to_environment($site, $environment_test);
+  echo "If you have DB updates you should probably run those now.";
 }
 if ($copy_db_reference) {
   copy_live_db_to_environment($site, $environment_reference);
@@ -189,6 +190,7 @@ function copy_live_db_to_environment($site, $environment) {
       if ($return) {
         echo "Config could not be imported.\n";
       }
+      passthru("terminus drush $site.$environment -- cache-clear all -y", $return);
       break;
 
     case 'drupal8':
@@ -197,11 +199,14 @@ function copy_live_db_to_environment($site, $environment) {
       if ($return) {
         echo "Config could not be imported.\n";
       }
+      passthru("terminus drush $site.$environment -- cr -y", $return);
       break;
 
     default:
       echo "You should probably also import config.  This script can't yet do that for $framework.\n";
       break;
   }
+
+
 
 }
