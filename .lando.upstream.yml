@@ -23,7 +23,7 @@ tooling:
         lando backstop test
       See tests/backstop/README.md for more info.
     cmd:
-      - cd /app/tests/backstop && backstop --config=/app/tests/backstop/backstop-local.json
+      - /app/tests/backstop/backstop-run
   backstop-setup:
     service: appserver
     description: |

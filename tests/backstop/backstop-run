@@ -1,0 +1,9 @@
+#!/bin/sh
+# Run backstop commands within Lando with our configuration.
+cd /app/tests/backstop
+backstop --config=/app/tests/backstop/backstop-local.json "$@"
+if [ "$1" = "reference" ]; then
+  echo 'Typically the next step is to run `lando backstop test`'
+elif [ "$1" = "test" ]; then
+  echo 'Review the report at http://<lando-domain>/backstop/html_report/index.html'
+fi
